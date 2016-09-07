@@ -1,0 +1,455 @@
+Rules never reduced
+
+    3 token: token
+
+
+State 27 conflicts: 26 reduce/reduce
+State 29 conflicts: 26 reduce/reduce
+
+
+Grammar
+
+    0 $accept: tokenlist $end
+
+    1 tokenlist: tokenlist token
+    2          | token
+
+    3 token: token
+    4      | ID
+    5      | NUMCONST
+    6      | CHARCONST
+    7      | NOT
+    8      | AND
+    9      | OR
+   10      | ADDASS
+   11      | SUBASS
+   12      | MULASS
+   13      | DIVASS
+   14      | DEC
+   15      | INC
+   16      | EQ
+   17      | NOTEQ
+   18      | LESSEQ
+   19      | LT
+   20      | GRTEQ
+   21      | GT
+   22      | ASS
+   23      | MUL
+   24      | ADD
+   25      | SUB
+   26      | DIV
+   27      | MOD
+   28      | ERR
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+NUMCONST (258) 5
+CHARCONST (259) 6
+ID (260) 4
+NOT (261) 7
+AND (262) 8
+OR (263) 9
+ADDASS (264) 10
+SUBASS (265) 11
+MULASS (266) 12
+DIVASS (267) 13
+DEC (268) 14
+INC (269) 15
+EQ (270) 16
+NOTEQ (271) 17
+LESSEQ (272) 18
+LT (273) 19
+GRTEQ (274) 20
+GT (275) 21
+ASS (276) 22
+MUL (277) 23
+ADD (278) 24
+SUB (279) 25
+DIV (280) 26
+MOD (281) 27
+ERR (282) 28
+
+
+Nonterminals, with rules where they appear
+
+$accept (28)
+    on left: 0
+tokenlist (29)
+    on left: 1 2, on right: 0 1
+token (30)
+    on left: 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+    24 25 26 27 28, on right: 1 2 3
+
+
+state 0
+
+    0 $accept: . tokenlist $end
+
+    NUMCONST   shift, and go to state 1
+    CHARCONST  shift, and go to state 2
+    ID         shift, and go to state 3
+    NOT        shift, and go to state 4
+    AND        shift, and go to state 5
+    OR         shift, and go to state 6
+    ADDASS     shift, and go to state 7
+    SUBASS     shift, and go to state 8
+    MULASS     shift, and go to state 9
+    DIVASS     shift, and go to state 10
+    DEC        shift, and go to state 11
+    INC        shift, and go to state 12
+    EQ         shift, and go to state 13
+    NOTEQ      shift, and go to state 14
+    LESSEQ     shift, and go to state 15
+    LT         shift, and go to state 16
+    GRTEQ      shift, and go to state 17
+    GT         shift, and go to state 18
+    ASS        shift, and go to state 19
+    MUL        shift, and go to state 20
+    ADD        shift, and go to state 21
+    SUB        shift, and go to state 22
+    DIV        shift, and go to state 23
+    MOD        shift, and go to state 24
+    ERR        shift, and go to state 25
+
+    tokenlist  go to state 26
+    token      go to state 27
+
+
+state 1
+
+    5 token: NUMCONST .
+
+    $default  reduce using rule 5 (token)
+
+
+state 2
+
+    6 token: CHARCONST .
+
+    $default  reduce using rule 6 (token)
+
+
+state 3
+
+    4 token: ID .
+
+    $default  reduce using rule 4 (token)
+
+
+state 4
+
+    7 token: NOT .
+
+    $default  reduce using rule 7 (token)
+
+
+state 5
+
+    8 token: AND .
+
+    $default  reduce using rule 8 (token)
+
+
+state 6
+
+    9 token: OR .
+
+    $default  reduce using rule 9 (token)
+
+
+state 7
+
+   10 token: ADDASS .
+
+    $default  reduce using rule 10 (token)
+
+
+state 8
+
+   11 token: SUBASS .
+
+    $default  reduce using rule 11 (token)
+
+
+state 9
+
+   12 token: MULASS .
+
+    $default  reduce using rule 12 (token)
+
+
+state 10
+
+   13 token: DIVASS .
+
+    $default  reduce using rule 13 (token)
+
+
+state 11
+
+   14 token: DEC .
+
+    $default  reduce using rule 14 (token)
+
+
+state 12
+
+   15 token: INC .
+
+    $default  reduce using rule 15 (token)
+
+
+state 13
+
+   16 token: EQ .
+
+    $default  reduce using rule 16 (token)
+
+
+state 14
+
+   17 token: NOTEQ .
+
+    $default  reduce using rule 17 (token)
+
+
+state 15
+
+   18 token: LESSEQ .
+
+    $default  reduce using rule 18 (token)
+
+
+state 16
+
+   19 token: LT .
+
+    $default  reduce using rule 19 (token)
+
+
+state 17
+
+   20 token: GRTEQ .
+
+    $default  reduce using rule 20 (token)
+
+
+state 18
+
+   21 token: GT .
+
+    $default  reduce using rule 21 (token)
+
+
+state 19
+
+   22 token: ASS .
+
+    $default  reduce using rule 22 (token)
+
+
+state 20
+
+   23 token: MUL .
+
+    $default  reduce using rule 23 (token)
+
+
+state 21
+
+   24 token: ADD .
+
+    $default  reduce using rule 24 (token)
+
+
+state 22
+
+   25 token: SUB .
+
+    $default  reduce using rule 25 (token)
+
+
+state 23
+
+   26 token: DIV .
+
+    $default  reduce using rule 26 (token)
+
+
+state 24
+
+   27 token: MOD .
+
+    $default  reduce using rule 27 (token)
+
+
+state 25
+
+   28 token: ERR .
+
+    $default  reduce using rule 28 (token)
+
+
+state 26
+
+    0 $accept: tokenlist . $end
+    1 tokenlist: tokenlist . token
+
+    $end       shift, and go to state 28
+    NUMCONST   shift, and go to state 1
+    CHARCONST  shift, and go to state 2
+    ID         shift, and go to state 3
+    NOT        shift, and go to state 4
+    AND        shift, and go to state 5
+    OR         shift, and go to state 6
+    ADDASS     shift, and go to state 7
+    SUBASS     shift, and go to state 8
+    MULASS     shift, and go to state 9
+    DIVASS     shift, and go to state 10
+    DEC        shift, and go to state 11
+    INC        shift, and go to state 12
+    EQ         shift, and go to state 13
+    NOTEQ      shift, and go to state 14
+    LESSEQ     shift, and go to state 15
+    LT         shift, and go to state 16
+    GRTEQ      shift, and go to state 17
+    GT         shift, and go to state 18
+    ASS        shift, and go to state 19
+    MUL        shift, and go to state 20
+    ADD        shift, and go to state 21
+    SUB        shift, and go to state 22
+    DIV        shift, and go to state 23
+    MOD        shift, and go to state 24
+    ERR        shift, and go to state 25
+
+    token  go to state 29
+
+
+state 27
+
+    2 tokenlist: token .
+    3 token: token .
+
+    $end       reduce using rule 2 (tokenlist)
+    $end       [reduce using rule 3 (token)]
+    NUMCONST   reduce using rule 2 (tokenlist)
+    NUMCONST   [reduce using rule 3 (token)]
+    CHARCONST  reduce using rule 2 (tokenlist)
+    CHARCONST  [reduce using rule 3 (token)]
+    ID         reduce using rule 2 (tokenlist)
+    ID         [reduce using rule 3 (token)]
+    NOT        reduce using rule 2 (tokenlist)
+    NOT        [reduce using rule 3 (token)]
+    AND        reduce using rule 2 (tokenlist)
+    AND        [reduce using rule 3 (token)]
+    OR         reduce using rule 2 (tokenlist)
+    OR         [reduce using rule 3 (token)]
+    ADDASS     reduce using rule 2 (tokenlist)
+    ADDASS     [reduce using rule 3 (token)]
+    SUBASS     reduce using rule 2 (tokenlist)
+    SUBASS     [reduce using rule 3 (token)]
+    MULASS     reduce using rule 2 (tokenlist)
+    MULASS     [reduce using rule 3 (token)]
+    DIVASS     reduce using rule 2 (tokenlist)
+    DIVASS     [reduce using rule 3 (token)]
+    DEC        reduce using rule 2 (tokenlist)
+    DEC        [reduce using rule 3 (token)]
+    INC        reduce using rule 2 (tokenlist)
+    INC        [reduce using rule 3 (token)]
+    EQ         reduce using rule 2 (tokenlist)
+    EQ         [reduce using rule 3 (token)]
+    NOTEQ      reduce using rule 2 (tokenlist)
+    NOTEQ      [reduce using rule 3 (token)]
+    LESSEQ     reduce using rule 2 (tokenlist)
+    LESSEQ     [reduce using rule 3 (token)]
+    LT         reduce using rule 2 (tokenlist)
+    LT         [reduce using rule 3 (token)]
+    GRTEQ      reduce using rule 2 (tokenlist)
+    GRTEQ      [reduce using rule 3 (token)]
+    GT         reduce using rule 2 (tokenlist)
+    GT         [reduce using rule 3 (token)]
+    ASS        reduce using rule 2 (tokenlist)
+    ASS        [reduce using rule 3 (token)]
+    MUL        reduce using rule 2 (tokenlist)
+    MUL        [reduce using rule 3 (token)]
+    ADD        reduce using rule 2 (tokenlist)
+    ADD        [reduce using rule 3 (token)]
+    SUB        reduce using rule 2 (tokenlist)
+    SUB        [reduce using rule 3 (token)]
+    DIV        reduce using rule 2 (tokenlist)
+    DIV        [reduce using rule 3 (token)]
+    MOD        reduce using rule 2 (tokenlist)
+    MOD        [reduce using rule 3 (token)]
+    ERR        reduce using rule 2 (tokenlist)
+    ERR        [reduce using rule 3 (token)]
+    $default   reduce using rule 2 (tokenlist)
+
+
+state 28
+
+    0 $accept: tokenlist $end .
+
+    $default  accept
+
+
+state 29
+
+    1 tokenlist: tokenlist token .
+    3 token: token .
+
+    $end       reduce using rule 1 (tokenlist)
+    $end       [reduce using rule 3 (token)]
+    NUMCONST   reduce using rule 1 (tokenlist)
+    NUMCONST   [reduce using rule 3 (token)]
+    CHARCONST  reduce using rule 1 (tokenlist)
+    CHARCONST  [reduce using rule 3 (token)]
+    ID         reduce using rule 1 (tokenlist)
+    ID         [reduce using rule 3 (token)]
+    NOT        reduce using rule 1 (tokenlist)
+    NOT        [reduce using rule 3 (token)]
+    AND        reduce using rule 1 (tokenlist)
+    AND        [reduce using rule 3 (token)]
+    OR         reduce using rule 1 (tokenlist)
+    OR         [reduce using rule 3 (token)]
+    ADDASS     reduce using rule 1 (tokenlist)
+    ADDASS     [reduce using rule 3 (token)]
+    SUBASS     reduce using rule 1 (tokenlist)
+    SUBASS     [reduce using rule 3 (token)]
+    MULASS     reduce using rule 1 (tokenlist)
+    MULASS     [reduce using rule 3 (token)]
+    DIVASS     reduce using rule 1 (tokenlist)
+    DIVASS     [reduce using rule 3 (token)]
+    DEC        reduce using rule 1 (tokenlist)
+    DEC        [reduce using rule 3 (token)]
+    INC        reduce using rule 1 (tokenlist)
+    INC        [reduce using rule 3 (token)]
+    EQ         reduce using rule 1 (tokenlist)
+    EQ         [reduce using rule 3 (token)]
+    NOTEQ      reduce using rule 1 (tokenlist)
+    NOTEQ      [reduce using rule 3 (token)]
+    LESSEQ     reduce using rule 1 (tokenlist)
+    LESSEQ     [reduce using rule 3 (token)]
+    LT         reduce using rule 1 (tokenlist)
+    LT         [reduce using rule 3 (token)]
+    GRTEQ      reduce using rule 1 (tokenlist)
+    GRTEQ      [reduce using rule 3 (token)]
+    GT         reduce using rule 1 (tokenlist)
+    GT         [reduce using rule 3 (token)]
+    ASS        reduce using rule 1 (tokenlist)
+    ASS        [reduce using rule 3 (token)]
+    MUL        reduce using rule 1 (tokenlist)
+    MUL        [reduce using rule 3 (token)]
+    ADD        reduce using rule 1 (tokenlist)
+    ADD        [reduce using rule 3 (token)]
+    SUB        reduce using rule 1 (tokenlist)
+    SUB        [reduce using rule 3 (token)]
+    DIV        reduce using rule 1 (tokenlist)
+    DIV        [reduce using rule 3 (token)]
+    MOD        reduce using rule 1 (tokenlist)
+    MOD        [reduce using rule 3 (token)]
+    ERR        reduce using rule 1 (tokenlist)
+    ERR        [reduce using rule 3 (token)]
+    $default   reduce using rule 1 (tokenlist)
