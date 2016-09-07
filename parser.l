@@ -69,8 +69,8 @@ whitespace 	[ \t]+
 letter 		[a-zA-Z]
 digit 		[0-9]
 letdig 		{digit}|{letter}
-ID 			{letter}|{letdig}*
 NUMCONST	{digit}+
+ID 			{letter}|{letdig}*
 CHARCONST 	\'\\?.\'
 
 comment		"//".* 
@@ -87,6 +87,12 @@ comment		"//".*
 "int"			{return setTokenData(INT, "INT");}
 "bool"			{return setTokenData(BOOL, "BOOL");}
 "char"			{return setTokenData(CHAR, "CHAR");}
+
+"if"			{return setTokenData(IF, "IF");}
+"else"			{return setTokenData(ELSE, "ELSE");}
+"while"			{return setTokenData(WHILE, "WHILE");}
+"return"		{return setTokenData(RETURN, "RETURN");}
+"break"			{return setTokenData(BREAK, "BREAK");}
 
 "==" 			{return setTokenData(EQ, "EQ");}	
 "!="			{return setTokenData(NOTEQ, "NOTEQ");}

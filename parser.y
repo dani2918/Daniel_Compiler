@@ -61,7 +61,7 @@ atoken 			: NUMCONST 	{printf("Line %d Token: NUMCONST Value: %d Input: %s\n", $
 				| CHAR	 	{printToken($1->lineno, $1->tokenString);}
 
 				| PTR	{printToken($1->lineno, $1->tokenString);}
-				
+
 				| ADDASS	{printToken($1->lineno, $1->tokenString);}
 				| SUBASS	{printToken($1->lineno, $1->tokenString);}
 				| MULASS 	{printToken($1->lineno, $1->tokenString);}
