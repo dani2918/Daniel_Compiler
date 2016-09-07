@@ -45,25 +45,31 @@
      NOT = 261,
      AND = 262,
      OR = 263,
-     ADDASS = 264,
-     SUBASS = 265,
-     MULASS = 266,
-     DIVASS = 267,
-     DEC = 268,
-     INC = 269,
-     EQ = 270,
-     NOTEQ = 271,
-     LESSEQ = 272,
-     LT = 273,
-     GRTEQ = 274,
-     GT = 275,
-     ASS = 276,
-     MUL = 277,
-     ADD = 278,
-     SUB = 279,
-     DIV = 280,
-     MOD = 281,
-     ERR = 282
+     RECORD = 264,
+     STATIC = 265,
+     INT = 266,
+     BOOL = 267,
+     CHAR = 268,
+     PTR = 269,
+     ADDASS = 270,
+     SUBASS = 271,
+     MULASS = 272,
+     DIVASS = 273,
+     DEC = 274,
+     INC = 275,
+     EQ = 276,
+     NOTEQ = 277,
+     LESSEQ = 278,
+     LT = 279,
+     GRTEQ = 280,
+     GT = 281,
+     ASS = 282,
+     MUL = 283,
+     ADD = 284,
+     SUB = 285,
+     DIV = 286,
+     MOD = 287,
+     ERR = 288
    };
 #endif
 /* Tokens.  */
@@ -73,37 +79,43 @@
 #define NOT 261
 #define AND 262
 #define OR 263
-#define ADDASS 264
-#define SUBASS 265
-#define MULASS 266
-#define DIVASS 267
-#define DEC 268
-#define INC 269
-#define EQ 270
-#define NOTEQ 271
-#define LESSEQ 272
-#define LT 273
-#define GRTEQ 274
-#define GT 275
-#define ASS 276
-#define MUL 277
-#define ADD 278
-#define SUB 279
-#define DIV 280
-#define MOD 281
-#define ERR 282
+#define RECORD 264
+#define STATIC 265
+#define INT 266
+#define BOOL 267
+#define CHAR 268
+#define PTR 269
+#define ADDASS 270
+#define SUBASS 271
+#define MULASS 272
+#define DIVASS 273
+#define DEC 274
+#define INC 275
+#define EQ 276
+#define NOTEQ 277
+#define LESSEQ 278
+#define LT 279
+#define GRTEQ 280
+#define GT 281
+#define ASS 282
+#define MUL 283
+#define ADD 284
+#define SUB 285
+#define DIV 286
+#define MOD 287
+#define ERR 288
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 41 "parser.y"
+#line 42 "parser.y"
 {
 	TokenData *tokenData;
 }
 /* Line 1529 of yacc.c.  */
-#line 107 "parser.tab.h"
+#line 119 "parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

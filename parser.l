@@ -82,6 +82,11 @@ comment		"//".*
 "not"			{return setTokenData(NOT, "NOT");}
 "and"			{return setTokenData(AND, "AND");}
 "or"			{return setTokenData(OR, "OR");}
+"record"		{return setTokenData(RECORD, "RECORD");}
+"static"		{return setTokenData(STATIC, "STATIC");}
+"int"			{return setTokenData(INT, "INT");}
+"bool"			{return setTokenData(BOOL, "BOOL");}
+"char"			{return setTokenData(CHAR, "CHAR");}
 
 "==" 			{return setTokenData(EQ, "EQ");}	
 "!="			{return setTokenData(NOTEQ, "NOTEQ");}
@@ -97,8 +102,14 @@ comment		"//".*
 "--"			{return setTokenData(DEC, "DEC");}
 "++"			{return setTokenData(INC, "INC");}
 
+
+"*"				{return setTokenData(PTR);}
+"?"				{return setTokenData(PTR);}
+
+
+
 "="				{return setTokenData(ASS, "ASS");}
-"*"				{return setTokenData(MUL, "MUL");}
+
 "+"				{return setTokenData(ADD, "ADD");}
 "-"				{return setTokenData(SUB, "SUB");}
 "/"				{return setTokenData(DIV, "DIV");}
@@ -114,8 +125,8 @@ comment		"//".*
 
 /*/////////////////
 
-
-
+// Unary/binary op, will work when we institue grammar
+"*"				{return setTokenData(MUL, "MUL");}
 
 
 // int main()
