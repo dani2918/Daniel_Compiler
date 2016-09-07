@@ -31,7 +31,7 @@ void printErrToken(int lineno, char* tokenString)
 %token <tokenData> NUMCONST
 %token <tokenData> CHARCONST
 %token <tokenData> ID
-%token <tokenData> NOT AND OR RECORD STATIC INT BOOL CHAR
+%token <tokenData> NOT AND OR RECORD STATIC INT BOOL CHAR IF ELSE WHILE RETURN BREAK
 %token <tokenData> PTR
 %token <tokenData> ADDASS SUBASS MULASS DIVASS DEC INC
 %token <tokenData> EQ NOTEQ LESSEQ LT GRTEQ GT
@@ -48,9 +48,9 @@ tokenlist		: tokenlist atoken
 				| atoken
 				;
 
-atoken 			: NUMCONST 	{printf("Line %d Token: NUMCONST Value: %d Input: %s\n", $1->lineno, $1->numVal,  $1->tokenString);}
+atoken 			: NUMCONST 	{printf("Line %d Token: NUMCONST Value: %d  Input: %s\n", $1->lineno, $1->numVal,  $1->tokenString);}
 				| ID 		{printf("Line %d Token: ID Value: %s\n", $1->lineno, $1->idVal);}
-				| CHARCONST {printf("Line %d Token: CHARCONST Value: '%c' Input: %s\n", $1->lineno, $1->charVal, $1->tokenString);}
+				| CHARCONST {printf("Line %d Token: CHARCONST Value: '%c'  Input: %s\n", $1->lineno, $1->charVal, $1->tokenString);}
 				| NOT 		{printToken($1->lineno, $1->tokenString);}
 				| AND		{printToken($1->lineno, $1->tokenString);}
 				| OR		{printToken($1->lineno, $1->tokenString);}
@@ -59,6 +59,12 @@ atoken 			: NUMCONST 	{printf("Line %d Token: NUMCONST Value: %d Input: %s\n", $
 				| INT 		{printToken($1->lineno, $1->tokenString);}
 				| BOOL 		{printToken($1->lineno, $1->tokenString);}
 				| CHAR	 	{printToken($1->lineno, $1->tokenString);}
+				| IF	 	{printToken($1->lineno, $1->tokenString);}
+				| ELSE	 	{printToken($1->lineno, $1->tokenString);}
+				| WHILE	 	{printToken($1->lineno, $1->tokenString);}
+				| RETURN	{printToken($1->lineno, $1->tokenString);}
+				| BREAK	 	{printToken($1->lineno, $1->tokenString);}
+
 
 				| PTR	{printToken($1->lineno, $1->tokenString);}
 

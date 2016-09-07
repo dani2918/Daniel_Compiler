@@ -1,13 +1,13 @@
 Line 1 Token: ID Value: CharConstTests
-Line 2 Token: CHARCONST Value: 'x' Input: 'x'
-Line 3 Token: CHARCONST Value: '"' Input: '"'
-Line 4 Token: CHARCONST Value: ''' Input: '\''
-Line 5 Token: CHARCONST Value: '"' Input: '\"'
+Line 2 Token: CHARCONST Value: 'x'  Input: 'x'
+Line 3 Token: CHARCONST Value: '"'  Input: '"'
+Line 4 Token: CHARCONST Value: '''  Input: '\''
+Line 5 Token: CHARCONST Value: '"'  Input: '\"'
 Line 6 Token: CHARCONST Value: '
-' Input: '\n'
+'  Input: '\n'
 Line 7 Token: CHARCONST Value: '
-' Input: '\0'
-Line 8 Token: CHARCONST Value: '\' Input: '\\'
+'  Input: '\0'
+Line 8 Token: CHARCONST Value: '\'  Input: '\\'
 ERROR(9): Invalid or misplaced input character: "'"
 Line 9 Token: ID Value: dogs
 ERROR(9): Invalid or misplaced input character: "'"
@@ -36,7 +36,7 @@ Line 18 Token: ID Value: n
 ERROR(18): Invalid or misplaced input character: """
 ERROR(19): Invalid or misplaced input character: """
 ERROR(19): Invalid or misplaced input character: "\"
-Line 19 Token: NUMCONST Value: 0 Input: 0
+Line 19 Token: NUMCONST Value: 0  Input: 0
 ERROR(19): Invalid or misplaced input character: """
 ERROR(20): Invalid or misplaced input character: """
 ERROR(20): Invalid or misplaced input character: "\"
@@ -75,11 +75,11 @@ Line 26 Token: ID Value: cats
 ERROR(26): Invalid or misplaced input character: """
 ERROR(27): Invalid or misplaced input character: """
 ERROR(27): Invalid or misplaced input character: "\"
-Line 27 Token: NUMCONST Value: 0 Input: 0
+Line 27 Token: NUMCONST Value: 0  Input: 0
 ERROR(27): Invalid or misplaced input character: "\"
-Line 27 Token: NUMCONST Value: 0 Input: 0
+Line 27 Token: NUMCONST Value: 0  Input: 0
 ERROR(27): Invalid or misplaced input character: "\"
-Line 27 Token: NUMCONST Value: 0 Input: 0
+Line 27 Token: NUMCONST Value: 0  Input: 0
 ERROR(27): Invalid or misplaced input character: "\"
 Line 27 Token: ID Value: 0dogs
 Line 27 Token: AND
@@ -195,18 +195,18 @@ ERROR(51): Invalid or misplaced input character: "&"
 ERROR(51): Invalid or misplaced input character: "{"
 ERROR(51): Invalid or misplaced input character: "}"
 Line 52 Token: BOOL
-Line 53 Token: ID Value: break
+Line 53 Token: BREAK
 Line 54 Token: CHAR
-Line 55 Token: ID Value: else
+Line 55 Token: ELSE
 Line 56 Token: ID Value: foreach
-Line 57 Token: ID Value: if
+Line 57 Token: IF
 Line 58 Token: ID Value: in
 Line 59 Token: INT
 Line 60 Token: RECORD
 Line 61 Token: ID Value: string
-Line 62 Token: ID Value: return
+Line 62 Token: RETURN
 Line 63 Token: STATIC
-Line 64 Token: ID Value: while
+Line 64 Token: WHILE
 Line 65 Token: ID Value: false
 Line 66 Token: ID Value: true
 Line 67 Token: ID Value: trueAsTheSkyIsBlue
@@ -223,31 +223,31 @@ Line 73 Token: ID Value: abc
 ERROR(73): Invalid or misplaced input character: "#"
 Line 73 Token: ID Value: abcd
 Line 74 Token: SUB
-Line 74 Token: NUMCONST Value: 666 Input: 666
+Line 74 Token: NUMCONST Value: 666  Input: 666
 Line 75 Token: ADD
-Line 75 Token: NUMCONST Value: 666 Input: 666
-Line 76 Token: NUMCONST Value: 0 Input: 0
-Line 77 Token: NUMCONST Value: 7 Input: 007
-Line 78 Token: NUMCONST Value: 700 Input: 700
+Line 75 Token: NUMCONST Value: 666  Input: 666
+Line 76 Token: NUMCONST Value: 0  Input: 0
+Line 77 Token: NUMCONST Value: 7  Input: 007
+Line 78 Token: NUMCONST Value: 700  Input: 700
 Line 79 Token: ID Value: k9
 Line 79 Token: ID Value: k
 ERROR(79): Invalid or misplaced input character: "_"
-Line 79 Token: NUMCONST Value: 9 Input: 9
+Line 79 Token: NUMCONST Value: 9  Input: 9
 Line 79 Token: ID Value: 9k
-Line 81 Token: NUMCONST Value: 3 Input: 3
+Line 81 Token: NUMCONST Value: 3  Input: 3
 ERROR(81): Invalid or misplaced input character: "."
-Line 81 Token: NUMCONST Value: -1241815933 Input: 14159265358979
-Line 82 Token: NUMCONST Value: 3 Input: 3
+Line 81 Token: NUMCONST Value: -1241815933  Input: 14159265358979
+Line 82 Token: NUMCONST Value: 3  Input: 3
 ERROR(82): Invalid or misplaced input character: "."
 ERROR(83): Invalid or misplaced input character: "."
-Line 83 Token: NUMCONST Value: 14 Input: 14
-Line 84 Token: NUMCONST Value: 3 Input: 3
+Line 83 Token: NUMCONST Value: 14  Input: 14
+Line 84 Token: NUMCONST Value: 3  Input: 3
 ERROR(84): Invalid or misplaced input character: "."
-Line 84 Token: NUMCONST Value: 0 Input: 0
-Line 85 Token: NUMCONST Value: 0 Input: 0
+Line 84 Token: NUMCONST Value: 0  Input: 0
+Line 85 Token: NUMCONST Value: 0  Input: 0
 ERROR(85): Invalid or misplaced input character: "."
-Line 85 Token: NUMCONST Value: 14 Input: 14
+Line 85 Token: NUMCONST Value: 14  Input: 14
 Line 86 Token: ADD
-Line 86 Token: NUMCONST Value: 7 Input: 7
+Line 86 Token: NUMCONST Value: 7  Input: 7
 Line 89 Token: ID Value: AllWorkAndNoPlayMakesJackADullBoyAllWorkAndNoPlayMakesJackADullBoyAllWorkAndNoPlayMakesJackADullBoy
 Line 90 Token: ID Value: redrum

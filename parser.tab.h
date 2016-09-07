@@ -50,26 +50,31 @@
      INT = 266,
      BOOL = 267,
      CHAR = 268,
-     PTR = 269,
-     ADDASS = 270,
-     SUBASS = 271,
-     MULASS = 272,
-     DIVASS = 273,
-     DEC = 274,
-     INC = 275,
-     EQ = 276,
-     NOTEQ = 277,
-     LESSEQ = 278,
-     LT = 279,
-     GRTEQ = 280,
-     GT = 281,
-     ASS = 282,
-     MUL = 283,
-     ADD = 284,
-     SUB = 285,
-     DIV = 286,
-     MOD = 287,
-     ERR = 288
+     IF = 269,
+     ELSE = 270,
+     WHILE = 271,
+     RETURN = 272,
+     BREAK = 273,
+     PTR = 274,
+     ADDASS = 275,
+     SUBASS = 276,
+     MULASS = 277,
+     DIVASS = 278,
+     DEC = 279,
+     INC = 280,
+     EQ = 281,
+     NOTEQ = 282,
+     LESSEQ = 283,
+     LT = 284,
+     GRTEQ = 285,
+     GT = 286,
+     ASS = 287,
+     MUL = 288,
+     ADD = 289,
+     SUB = 290,
+     DIV = 291,
+     MOD = 292,
+     ERR = 293
    };
 #endif
 /* Tokens.  */
@@ -84,26 +89,31 @@
 #define INT 266
 #define BOOL 267
 #define CHAR 268
-#define PTR 269
-#define ADDASS 270
-#define SUBASS 271
-#define MULASS 272
-#define DIVASS 273
-#define DEC 274
-#define INC 275
-#define EQ 276
-#define NOTEQ 277
-#define LESSEQ 278
-#define LT 279
-#define GRTEQ 280
-#define GT 281
-#define ASS 282
-#define MUL 283
-#define ADD 284
-#define SUB 285
-#define DIV 286
-#define MOD 287
-#define ERR 288
+#define IF 269
+#define ELSE 270
+#define WHILE 271
+#define RETURN 272
+#define BREAK 273
+#define PTR 274
+#define ADDASS 275
+#define SUBASS 276
+#define MULASS 277
+#define DIVASS 278
+#define DEC 279
+#define INC 280
+#define EQ 281
+#define NOTEQ 282
+#define LESSEQ 283
+#define LT 284
+#define GRTEQ 285
+#define GT 286
+#define ASS 287
+#define MUL 288
+#define ADD 289
+#define SUB 290
+#define DIV 291
+#define MOD 292
+#define ERR 293
 
 
 
@@ -115,7 +125,7 @@ typedef union YYSTYPE
 	TokenData *tokenData;
 }
 /* Line 1529 of yacc.c.  */
-#line 119 "parser.tab.h"
+#line 129 "parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
