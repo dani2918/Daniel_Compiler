@@ -413,7 +413,7 @@ union yyalloc
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  3
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  29
+#define YYNRULES  28
 /* YYNRULES -- Number of states.  */
 #define YYNSTATES  30
 
@@ -465,18 +465,18 @@ static const yytype_uint8 yyprhs[] =
 {
        0,     0,     3,     6,     8,    10,    12,    14,    16,    18,
       20,    22,    24,    26,    28,    30,    32,    34,    36,    38,
-      40,    42,    44,    46,    48,    50,    52,    54,    56,    58
+      40,    42,    44,    46,    48,    50,    52,    54,    56
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      29,     0,    -1,    29,    30,    -1,    30,    -1,    30,    -1,
-       5,    -1,     3,    -1,     4,    -1,     6,    -1,     7,    -1,
-       8,    -1,     9,    -1,    10,    -1,    11,    -1,    12,    -1,
-      13,    -1,    14,    -1,    15,    -1,    16,    -1,    17,    -1,
-      18,    -1,    19,    -1,    20,    -1,    21,    -1,    22,    -1,
-      23,    -1,    24,    -1,    25,    -1,    26,    -1,    27,    -1
+      29,     0,    -1,    29,    30,    -1,    30,    -1,     3,    -1,
+       5,    -1,     4,    -1,     6,    -1,     7,    -1,     8,    -1,
+       9,    -1,    10,    -1,    11,    -1,    12,    -1,    13,    -1,
+      14,    -1,    15,    -1,    16,    -1,    17,    -1,    18,    -1,
+      19,    -1,    20,    -1,    21,    -1,    22,    -1,    23,    -1,
+      24,    -1,    25,    -1,    26,    -1,    27,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
@@ -484,7 +484,7 @@ static const yytype_uint8 yyrline[] =
 {
        0,    46,    46,    47,    50,    51,    52,    53,    54,    55,
       56,    57,    58,    59,    60,    61,    62,    63,    64,    65,
-      66,    67,    68,    69,    70,    71,    72,    73,    74,    75
+      66,    67,    68,    69,    70,    71,    72,    73,    74
 };
 #endif
 
@@ -516,7 +516,7 @@ static const yytype_uint8 yyr1[] =
 {
        0,    28,    29,    29,    30,    30,    30,    30,    30,    30,
       30,    30,    30,    30,    30,    30,    30,    30,    30,    30,
-      30,    30,    30,    30,    30,    30,    30,    30,    30,    30
+      30,    30,    30,    30,    30,    30,    30,    30,    30
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
@@ -524,7 +524,7 @@ static const yytype_uint8 yyr2[] =
 {
        0,     2,     2,     1,     1,     1,     1,     1,     1,     1,
        1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-       1,     1,     1,     1,     1,     1,     1,     1,     1,     1
+       1,     1,     1,     1,     1,     1,     1,     1,     1
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -532,9 +532,9 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     6,     7,     5,     8,     9,    10,    11,    12,    13,
-      14,    15,    16,    17,    18,    19,    20,    21,    22,    23,
-      24,    25,    26,    27,    28,    29,     0,     3,     1,     2
+       0,     4,     6,     5,     7,     8,     9,    10,    11,    12,
+      13,    14,    15,    16,    17,    18,    19,    20,    21,    22,
+      23,    24,    25,    26,    27,    28,     0,     3,     1,     2
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
@@ -1404,19 +1404,24 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 5:
+        case 4:
+#line 50 "parser.y"
+    {printf("Line %d Token: NUMCONST Value: '%d' Input: %s\n", (yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->numVal,  (yyvsp[(1) - (1)].tokenData)->tokenString);;}
+    break;
+
+  case 5:
 #line 51 "parser.y"
     {printf("Line %d Token: ID Value: %s\n", (yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->idVal);;}
     break;
 
   case 6:
 #line 52 "parser.y"
-    {printf("Line %d Token: NUMCONST Value: '%d' Input: %s\n", (yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->numVal,  (yyvsp[(1) - (1)].tokenData)->tokenString);;}
+    {printf("Line %d Token: CHARCONST Value: '%c' Input: %s\n", (yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->charVal, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
     break;
 
   case 7:
 #line 53 "parser.y"
-    {printf("Line %d Token: CHARCONST Value: '%c' Input: %s\n", (yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->charVal, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
+    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
     break;
 
   case 8:
@@ -1521,11 +1526,6 @@ yyreduce:
 
   case 28:
 #line 74 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 29:
-#line 75 "parser.y"
     {printErrToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
     break;
 
@@ -1745,7 +1745,7 @@ yyreturn:
 }
 
 
-#line 78 "parser.y"
+#line 77 "parser.y"
 
 
 int main(int argc, char *argv[])

@@ -387,11 +387,11 @@ struct yy_trans_info
 	};
 static yyconst flex_int16_t yy_accept[47] =
     {   0,
-       27,   27,   30,   25,    1,    3,   25,   24,   25,   20,
-       21,   22,   23,   25,   10,   19,   12,   25,   25,   25,
-       25,    1,    8,    0,    0,   15,   18,   13,   17,   14,
-        2,   16,   26,   27,    9,    7,   11,   27,   27,    6,
-       28,   28,    2,    5,    4,    0
+       26,   26,   30,   28,    1,    3,   28,   24,   28,   20,
+       21,   22,   23,   25,   10,   19,   12,   26,   26,   26,
+       26,    1,    8,    0,    0,   15,   18,   13,   17,   14,
+        2,   16,   25,   26,    9,    7,   11,   26,   26,    6,
+       27,   27,    2,    5,    4,    0
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
@@ -959,26 +959,26 @@ YY_RULE_SETUP
 case 25:
 YY_RULE_SETUP
 #line 107 "parser.l"
-{return setTokenData(ERR, yytext);}
+{return setTokenData(NUMCONST);}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 109 "parser.l"
-{return setTokenData(NUMCONST);}
+#line 108 "parser.l"
+{return setTokenData(ID);}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 110 "parser.l"
-{return setTokenData(ID);}
+#line 109 "parser.l"
+{return setTokenData(CHARCONST);}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 111 "parser.l"
-{return setTokenData(CHARCONST);}
+{return setTokenData(ERR, yytext);}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 113 "parser.l"
+#line 112 "parser.l"
 ECHO;
 	YY_BREAK
 #line 985 "lex.yy.c"
@@ -1990,7 +1990,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 113 "parser.l"
+#line 112 "parser.l"
 
 
 
@@ -2006,10 +2006,5 @@ void yyfree (void * ptr )
 // 	yylex();	
 // }
 
-// {letdig} { printf("Letdig!");}
-// {ID} { printf("ID");}
-// {CHARCONST} {printf("CHARCONST!");}
-// {NUMCONST} {printf("NUMCONST");}
-// {digit} {printf("Digit!");}
 
 //////////*/

@@ -104,12 +104,11 @@ comment		"//".*
 "/"				{return setTokenData(DIV, "DIV");}
 "%"				{return setTokenData(MOD, "MOD");}
 
-.				{return setTokenData(ERR, yytext);}
-
 {NUMCONST}		{return setTokenData(NUMCONST);}
 {ID}			{return setTokenData(ID);}
 {CHARCONST}		{return setTokenData(CHARCONST);}
 
+.				{return setTokenData(ERR, yytext);}
 %%
 
 
@@ -124,10 +123,5 @@ comment		"//".*
 // 	yylex();	
 // }
 
-// {letdig} { printf("Letdig!");}
-// {ID} { printf("ID");}
-// {CHARCONST} {printf("CHARCONST!");}
-// {NUMCONST} {printf("NUMCONST");}
-// {digit} {printf("Digit!");}
 
 //////////*/

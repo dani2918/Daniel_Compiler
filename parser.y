@@ -47,9 +47,8 @@ tokenlist		: tokenlist atoken
 				| atoken
 				;
 
-atoken 			: atoken
+atoken 			: NUMCONST 	{printf("Line %d Token: NUMCONST Value: '%d' Input: %s\n", $1->lineno, $1->numVal,  $1->tokenString);}
 				| ID 		{printf("Line %d Token: ID Value: %s\n", $1->lineno, $1->idVal);}
-				| NUMCONST 	{printf("Line %d Token: NUMCONST Value: '%d' Input: %s\n", $1->lineno, $1->numVal,  $1->tokenString);}
 				| CHARCONST {printf("Line %d Token: CHARCONST Value: '%c' Input: %s\n", $1->lineno, $1->charVal, $1->tokenString);}
 				| NOT 		{printToken($1->lineno, $1->tokenString);}
 				| AND		{printToken($1->lineno, $1->tokenString);}
