@@ -136,7 +136,7 @@
  extern FILE *yyin;
 
 #define YYERROR_VERBOSE
-void yyerror(char *errMsg)
+void yyerror(const char *errMsg)
 {
  	printf("ERROR(): %s\n", errMsg);
 }
@@ -148,7 +148,7 @@ void printToken(int lineno, char* tokenString)
 
 void printErrToken(int lineno, char* tokenString)
 {
-	printf("ERROR(%d) Invalid or misplaced input character: \"%s\"\n", lineno, tokenString);
+	printf("ERROR(%d): Invalid or misplaced input character: \"%s\"\n", lineno, tokenString);
 }
 
  
@@ -496,7 +496,7 @@ static const char *const yytname[] =
   "$end", "error", "$undefined", "NUMCONST", "CHARCONST", "ID", "NOT",
   "AND", "OR", "ADDASS", "SUBASS", "MULASS", "DIVASS", "DEC", "INC", "EQ",
   "NOTEQ", "LESSEQ", "LT", "GRTEQ", "GT", "ASS", "MUL", "ADD", "SUB",
-  "DIV", "MOD", "ERR", "$accept", "tokenlist", "token", 0
+  "DIV", "MOD", "ERR", "$accept", "tokenlist", "atoken", 0
 };
 #endif
 

@@ -10,7 +10,7 @@
  extern FILE *yyin;
 
 #define YYERROR_VERBOSE
-void yyerror(char *errMsg)
+void yyerror(const char *errMsg)
 {
  	printf("ERROR(): %s\n", errMsg);
 }
@@ -22,7 +22,7 @@ void printToken(int lineno, char* tokenString)
 
 void printErrToken(int lineno, char* tokenString)
 {
-	printf("ERROR(%d) Invalid or misplaced input character: \"%s\"\n", lineno, tokenString);
+	printf("ERROR(%d): Invalid or misplaced input character: \"%s\"\n", lineno, tokenString);
 }
 
  %}
@@ -43,11 +43,11 @@ void printErrToken(int lineno, char* tokenString)
 }
 
 %%
-tokenlist		: tokenlist token
-				| token
+tokenlist		: tokenlist atoken
+				| atoken
 				;
 
-token 			: token
+atoken 			: atoken
 				| ID 		{printf("Line %d Token: ID Value: %s\n", $1->lineno, $1->idVal);}
 				| NUMCONST 	{printf("Line %d Token: NUMCONST Value: '%d' Input: %s\n", $1->lineno, $1->numVal,  $1->tokenString);}
 				| CHARCONST {printf("Line %d Token: CHARCONST Value: '%c' Input: %s\n", $1->lineno, $1->charVal, $1->tokenString);}
