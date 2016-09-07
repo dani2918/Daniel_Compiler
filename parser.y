@@ -31,11 +31,13 @@ void printErrToken(int lineno, char* tokenString)
 %token <tokenData> NUMCONST
 %token <tokenData> CHARCONST
 %token <tokenData> ID
+%token <tokenData> BOOLCONST
 %token <tokenData> NOT AND OR RECORD STATIC INT BOOL CHAR IF ELSE WHILE RETURN BREAK
-%token <tokenData> PTR
+%token <tokenData> OPT DOT
 %token <tokenData> ADDASS SUBASS MULASS DIVASS DEC INC
 %token <tokenData> EQ NOTEQ LESSEQ LT GRTEQ GT
 %token <tokenData> ASS MUL ADD SUB DIV MOD
+%token <tokenData> LPAREN RPAREN LBRAC RBRAC LCUR RCUR COMMA COL SEMI
 %token <tokenData> ERR
 
 %union
@@ -51,6 +53,7 @@ tokenlist		: tokenlist atoken
 atoken 			: NUMCONST 	{printf("Line %d Token: NUMCONST Value: %d  Input: %s\n", $1->lineno, $1->numVal,  $1->tokenString);}
 				| ID 		{printf("Line %d Token: ID Value: %s\n", $1->lineno, $1->idVal);}
 				| CHARCONST {printf("Line %d Token: CHARCONST Value: '%c'  Input: %s\n", $1->lineno, $1->charVal, $1->tokenString);}
+				| BOOLCONST {printf("Line %d Token: BOOLCONST Value: %d  Input: %s\n", $1->lineno, $1->bvalue, $1->tokenString);}
 				| NOT 		{printToken($1->lineno, $1->tokenString);}
 				| AND		{printToken($1->lineno, $1->tokenString);}
 				| OR		{printToken($1->lineno, $1->tokenString);}
@@ -66,7 +69,8 @@ atoken 			: NUMCONST 	{printf("Line %d Token: NUMCONST Value: %d  Input: %s\n", 
 				| BREAK	 	{printToken($1->lineno, $1->tokenString);}
 
 
-				| PTR	{printToken($1->lineno, $1->tokenString);}
+				| OPT		{printToken($1->lineno, $1->tokenString);}
+				| DOT		{printToken($1->lineno, $1->tokenString);}	
 
 				| ADDASS	{printToken($1->lineno, $1->tokenString);}
 				| SUBASS	{printToken($1->lineno, $1->tokenString);}
@@ -86,6 +90,17 @@ atoken 			: NUMCONST 	{printf("Line %d Token: NUMCONST Value: %d  Input: %s\n", 
 				| SUB 		{printToken($1->lineno, $1->tokenString);}
 				| DIV 		{printToken($1->lineno, $1->tokenString);}
 				| MOD		{printToken($1->lineno, $1->tokenString);}
+
+				| LPAREN	{printToken($1->lineno, $1->tokenString);}
+				| RPAREN	{printToken($1->lineno, $1->tokenString);}
+				| LBRAC		{printToken($1->lineno, $1->tokenString);}
+				| RBRAC		{printToken($1->lineno, $1->tokenString);}
+				| LCUR		{printToken($1->lineno, $1->tokenString);}
+				| RCUR		{printToken($1->lineno, $1->tokenString);}
+				| COMMA		{printToken($1->lineno, $1->tokenString);}
+				| COL		{printToken($1->lineno, $1->tokenString);}
+				| SEMI		{printToken($1->lineno, $1->tokenString);}
+
 				| ERR		{printErrToken($1->lineno, $1->tokenString);}
 				;
 

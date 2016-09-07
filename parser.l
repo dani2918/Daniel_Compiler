@@ -43,6 +43,15 @@ int setTokenData(int tokenClass)
 				yylval.tokenData->charVal = yytext[1];
 			}
 			break;
+		case BOOLCONST:
+			if(yytext[0] == 't')
+			{
+				yylval.tokenData->bvalue = true;
+			}
+			else
+			{
+				yylval.tokenData->bvalue = false;
+			}
 
 }
 
@@ -70,14 +79,17 @@ letter 		[a-zA-Z]
 digit 		[0-9]
 letdig 		{digit}|{letter}
 NUMCONST	{digit}+
-ID 			{letter}|{letdig}*
+ID 			{letter}{letdig}*
 CHARCONST 	\'\\?.\'
 
 comment		"//".* 
 %%
-{whitespace}	;
+
 {comment}		;
 \n 				{lineno++;}
+
+"true"			{return setTokenData(BOOLCONST);}
+"false"			{return setTokenData(BOOLCONST);}
 
 "not"			{return setTokenData(NOT, "NOT");}
 "and"			{return setTokenData(AND, "AND");}
@@ -97,9 +109,9 @@ comment		"//".*
 "==" 			{return setTokenData(EQ, "EQ");}	
 "!="			{return setTokenData(NOTEQ, "NOTEQ");}
 "<="			{return setTokenData(LESSEQ, "LESSEQ");}
-"<"				{return setTokenData(LT, "LT");}
+"<"				{return setTokenData(LT);}
 ">="			{return setTokenData(GRTEQ, "GRTEQ");}
-">"				{return setTokenData(GT, "GT");}
+">"				{return setTokenData(GT);}
 
 "+="			{return setTokenData(ADDASS, "ADDASS");}
 "-="			{return setTokenData(SUBASS, "SUBASS");}
@@ -109,22 +121,33 @@ comment		"//".*
 "++"			{return setTokenData(INC, "INC");}
 
 
-"*"				{return setTokenData(PTR);}
-"?"				{return setTokenData(PTR);}
+"*"				{return setTokenData(MUL);}
+"?"				{return setTokenData(OPT);}
+"."				{return setTokenData(DOT);}
 
+"="				{return setTokenData(ASS);}
 
+"+"				{return setTokenData(ADD);}
+"-"				{return setTokenData(SUB);}
+"/"				{return setTokenData(DIV);}
+"%"				{return setTokenData(MOD);}
 
-"="				{return setTokenData(ASS, "ASS");}
+"("				{return setTokenData(LPAREN);}
+")"				{return setTokenData(RPAREN);}
+"["				{return setTokenData(RBRAC);}
+"]"				{return setTokenData(LBRAC);}
+"{"				{return setTokenData(LCUR);}
+"}"				{return setTokenData(RCUR);}
+","				{return setTokenData(COMMA);}
+":"				{return setTokenData(COL);}
+";"				{return setTokenData(SEMI);}
 
-"+"				{return setTokenData(ADD, "ADD");}
-"-"				{return setTokenData(SUB, "SUB");}
-"/"				{return setTokenData(DIV, "DIV");}
-"%"				{return setTokenData(MOD, "MOD");}
 
 {NUMCONST}		{return setTokenData(NUMCONST);}
 {ID}			{return setTokenData(ID);}
 {CHARCONST}		{return setTokenData(CHARCONST);}
 
+{whitespace}	;
 .				{return setTokenData(ERR, yytext);}
 %%
 
