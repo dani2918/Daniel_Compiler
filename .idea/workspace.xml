@@ -1,18 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9e995d07-3892-43bc-9af5-1aacd8322a89" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/c-" afterPath="$PROJECT_DIR$/c-" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lex.yy.o" afterPath="$PROJECT_DIR$/lex.yy.o" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/parser.tab.o" afterPath="$PROJECT_DIR$/parser.tab.o" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lex.yy.c" afterPath="$PROJECT_DIR$/lex.yy.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/parser.l" afterPath="$PROJECT_DIR$/parser.l" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/parser.output" afterPath="$PROJECT_DIR$/parser.output" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/parser.tab.c" afterPath="$PROJECT_DIR$/parser.tab.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/parser.tab.h" afterPath="$PROJECT_DIR$/parser.tab.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/parser.y" afterPath="$PROJECT_DIR$/parser.y" />
-    </list>
+    <list default="true" id="9e995d07-3892-43bc-9af5-1aacd8322a89" name="Default" comment="" />
     <ignored path="Daniel_Compiler.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -623,12 +612,12 @@
       <workItem from="1473189758263" duration="158000" />
       <workItem from="1473283138178" duration="466000" />
       <workItem from="1473283823734" duration="42000" />
-      <workItem from="1473283881938" duration="1847000" />
+      <workItem from="1473283881938" duration="1959000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="2513000" />
+    <option name="totallyTimeSpent" value="2625000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1788" y="-27" width="1186" height="709" extended-state="0" />

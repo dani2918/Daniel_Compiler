@@ -25,7 +25,7 @@ int setTokenData(int tokenClass)
 		case CHARCONST:
 			if(yytext[1] == '\\')
 			{
-				if(yytext[2] == 'n' || yytext[2] == '0')
+				if(yytext[2] == 'n')
 				{
 					yylval.tokenData->charVal = '\n';
 				}
