@@ -448,18 +448,18 @@ union yyalloc
 #endif
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  50
+#define YYFINAL  18
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   96
+#define YYLAST   5
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  50
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  3
+#define YYNNTS  17
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  50
+#define YYNRULES  19
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  52
+#define YYNSTATES  23
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -509,39 +509,25 @@ static const yytype_uint8 yytranslate[] =
    YYRHS.  */
 static const yytype_uint8 yyprhs[] =
 {
-       0,     0,     3,     6,     8,    10,    12,    14,    16,    18,
-      20,    22,    24,    26,    28,    30,    32,    34,    36,    38,
-      40,    42,    44,    46,    48,    50,    52,    54,    56,    58,
-      60,    62,    64,    66,    68,    70,    72,    74,    76,    78,
-      80,    82,    84,    86,    88,    90,    92,    94,    96,    98,
-     100
+       0,     0,     3,     5,     8,    10,    12,    15,    19,    21,
+      23,    25,    27,    29,    31,    33,    35,    37,    39,    41
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      51,     0,    -1,    51,    52,    -1,    52,    -1,     3,    -1,
-       5,    -1,     4,    -1,     6,    -1,     7,    -1,     8,    -1,
-       9,    -1,    10,    -1,    11,    -1,    12,    -1,    13,    -1,
-      14,    -1,    15,    -1,    16,    -1,    17,    -1,    18,    -1,
-      19,    -1,    20,    -1,    21,    -1,    22,    -1,    23,    -1,
-      24,    -1,    25,    -1,    26,    -1,    27,    -1,    28,    -1,
-      29,    -1,    30,    -1,    31,    -1,    32,    -1,    33,    -1,
-      34,    -1,    35,    -1,    36,    -1,    37,    -1,    38,    -1,
-      39,    -1,    40,    -1,    41,    -1,    42,    -1,    43,    -1,
-      44,    -1,    45,    -1,    46,    -1,    47,    -1,    48,    -1,
-      49,    -1
+      51,     0,    -1,    52,    -1,    52,    53,    -1,    53,    -1,
+      54,    -1,    55,    48,    -1,    55,    46,    56,    -1,    56,
+      -1,    57,    -1,    58,    -1,    59,    -1,    60,    -1,    61,
+      -1,    62,    -1,    63,    -1,    64,    -1,    65,    -1,    66,
+      -1,     3,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    49,    49,    50,    53,    54,    55,    56,    57,    58,
-      59,    60,    61,    62,    63,    64,    65,    66,    67,    68,
-      69,    72,    73,    75,    76,    77,    78,    79,    80,    81,
-      82,    83,    84,    85,    86,    87,    88,    89,    90,    91,
-      92,    94,    95,    96,    97,    98,    99,   100,   101,   102,
-     104
+       0,    49,    49,    52,    53,    58,    62,    67,    68,    71,
+      76,    80,    83,    88,    91,    94,    97,   100,   103,   106
 };
 #endif
 
@@ -556,7 +542,10 @@ static const char *const yytname[] =
   "SUBASS", "MULASS", "DIVASS", "DEC", "INC", "EQ", "NOTEQ", "LESSEQ",
   "LT", "GRTEQ", "GT", "ASS", "MUL", "ADD", "SUB", "DIV", "MOD", "LPAREN",
   "RPAREN", "LBRAC", "RBRAC", "LCUR", "RCUR", "COMMA", "COL", "SEMI",
-  "ERR", "$accept", "tokenlist", "atoken", 0
+  "ERR", "$accept", "program", "declarationList", "declaration",
+  "varDeclaration", "varDeclList", "varDeclInitialize", "simpleExpression",
+  "andExpression", "unaryRelExpression", "relExpression", "sumExpression",
+  "term", "unaryExpression", "factor", "immutable", "constant", 0
 };
 #endif
 
@@ -576,23 +565,15 @@ static const yytype_uint16 yytoknum[] =
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    50,    51,    51,    52,    52,    52,    52,    52,    52,
-      52,    52,    52,    52,    52,    52,    52,    52,    52,    52,
-      52,    52,    52,    52,    52,    52,    52,    52,    52,    52,
-      52,    52,    52,    52,    52,    52,    52,    52,    52,    52,
-      52,    52,    52,    52,    52,    52,    52,    52,    52,    52,
-      52
+       0,    50,    51,    52,    52,    53,    54,    55,    55,    56,
+      57,    58,    59,    60,    61,    62,    63,    64,    65,    66
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     2,     1,     1,     1,     1,     1,     1,     1,
-       1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-       1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-       1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-       1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-       1
+       0,     2,     1,     2,     1,     1,     2,     3,     1,     1,
+       1,     1,     1,     1,     1,     1,     1,     1,     1,     1
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -600,37 +581,33 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     4,     6,     5,     7,     8,     9,    10,    11,    12,
-      13,    14,    15,    16,    17,    18,    19,    20,    21,    22,
-      23,    24,    25,    26,    27,    28,    29,    30,    31,    32,
-      33,    34,    35,    36,    37,    38,    39,    40,    41,    42,
-      43,    44,    45,    46,    47,    48,    49,    50,     0,     3,
-       1,     2
+       0,    19,     0,     2,     4,     5,     0,     8,     9,    10,
+      11,    12,    13,    14,    15,    16,    17,    18,     1,     3,
+       0,     6,     7
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,    48,    49
+      -1,     2,     3,     4,     5,     6,     7,     8,     9,    10,
+      11,    12,    13,    14,    15,    16,    17
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -48
+#define YYPACT_NINF -47
 static const yytype_int8 yypact[] =
 {
-      47,   -48,   -48,   -48,   -48,   -48,   -48,   -48,   -48,   -48,
-     -48,   -48,   -48,   -48,   -48,   -48,   -48,   -48,   -48,   -48,
-     -48,   -48,   -48,   -48,   -48,   -48,   -48,   -48,   -48,   -48,
-     -48,   -48,   -48,   -48,   -48,   -48,   -48,   -48,   -48,   -48,
-     -48,   -48,   -48,   -48,   -48,   -48,   -48,   -48,     0,   -48,
-     -48,   -48
+      -2,   -47,     3,    -2,   -47,   -47,   -46,   -47,   -47,   -47,
+     -47,   -47,   -47,   -47,   -47,   -47,   -47,   -47,   -47,   -47,
+      -2,   -47,   -47
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -48,   -48,   -47
+     -47,   -47,   -47,     1,   -47,   -47,   -15,   -47,   -47,   -47,
+     -47,   -47,   -47,   -47,   -47,   -47,   -47
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -640,42 +617,21 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-      50,    51,     0,     1,     2,     3,     4,     5,     6,     7,
-       8,     9,    10,    11,    12,    13,    14,    15,    16,    17,
-      18,    19,    20,    21,    22,    23,    24,    25,    26,    27,
-      28,    29,    30,    31,    32,    33,    34,    35,    36,    37,
-      38,    39,    40,    41,    42,    43,    44,    45,    46,    47,
-       1,     2,     3,     4,     5,     6,     7,     8,     9,    10,
-      11,    12,    13,    14,    15,    16,    17,    18,    19,    20,
-      21,    22,    23,    24,    25,    26,    27,    28,    29,    30,
-      31,    32,    33,    34,    35,    36,    37,    38,    39,    40,
-      41,    42,    43,    44,    45,    46,    47
+      20,     1,    21,    18,    19,    22
 };
 
-static const yytype_int8 yycheck[] =
+static const yytype_uint8 yycheck[] =
 {
-       0,    48,    -1,     3,     4,     5,     6,     7,     8,     9,
-      10,    11,    12,    13,    14,    15,    16,    17,    18,    19,
-      20,    21,    22,    23,    24,    25,    26,    27,    28,    29,
-      30,    31,    32,    33,    34,    35,    36,    37,    38,    39,
-      40,    41,    42,    43,    44,    45,    46,    47,    48,    49,
-       3,     4,     5,     6,     7,     8,     9,    10,    11,    12,
-      13,    14,    15,    16,    17,    18,    19,    20,    21,    22,
-      23,    24,    25,    26,    27,    28,    29,    30,    31,    32,
-      33,    34,    35,    36,    37,    38,    39,    40,    41,    42,
-      43,    44,    45,    46,    47,    48,    49
+      46,     3,    48,     0,     3,    20
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,     4,     5,     6,     7,     8,     9,    10,    11,
-      12,    13,    14,    15,    16,    17,    18,    19,    20,    21,
-      22,    23,    24,    25,    26,    27,    28,    29,    30,    31,
-      32,    33,    34,    35,    36,    37,    38,    39,    40,    41,
-      42,    43,    44,    45,    46,    47,    48,    49,    51,    52,
-       0,    52
+       0,     3,    51,    52,    53,    54,    55,    56,    57,    58,
+      59,    60,    61,    62,    63,    64,    65,    66,     0,    53,
+      46,    48,    56
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1489,244 +1445,14 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 4:
-#line 53 "parser.y"
+        case 19:
+#line 106 "parser.y"
     {printf("Line %d Token: NUMCONST Value: %d  Input: %s\n", (yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->numVal,  (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 5:
-#line 54 "parser.y"
-    {printf("Line %d Token: ID Value: %s\n", (yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->idVal);;}
-    break;
-
-  case 6:
-#line 55 "parser.y"
-    {printf("Line %d Token: CHARCONST Value: '%c'  Input: %s\n", (yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->charVal, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 7:
-#line 56 "parser.y"
-    {printf("Line %d Token: BOOLCONST Value: %d  Input: %s\n", (yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->bvalue, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 8:
-#line 57 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 9:
-#line 58 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 10:
-#line 59 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 11:
-#line 60 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 12:
-#line 61 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 13:
-#line 62 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 14:
-#line 63 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 15:
-#line 64 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 16:
-#line 65 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 17:
-#line 66 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 18:
-#line 67 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 19:
-#line 68 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 20:
-#line 69 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 21:
-#line 72 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 22:
-#line 73 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 23:
-#line 75 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 24:
-#line 76 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 25:
-#line 77 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 26:
-#line 78 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 27:
-#line 79 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 28:
-#line 80 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 29:
-#line 81 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 30:
-#line 82 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 31:
-#line 83 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 32:
-#line 84 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 33:
-#line 85 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 34:
-#line 86 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 35:
-#line 87 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 36:
-#line 88 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 37:
-#line 89 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 38:
-#line 90 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 39:
-#line 91 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 40:
-#line 92 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 41:
-#line 94 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 42:
-#line 95 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 43:
-#line 96 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 44:
-#line 97 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 45:
-#line 98 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 46:
-#line 99 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 47:
-#line 100 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 48:
-#line 101 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 49:
-#line 102 "parser.y"
-    {printToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
-    break;
-
-  case 50:
-#line 104 "parser.y"
-    {printErrToken((yyvsp[(1) - (1)].tokenData)->lineno, (yyvsp[(1) - (1)].tokenData)->tokenString);;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1730 "parser.tab.c"
+#line 1456 "parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1940,7 +1666,7 @@ yyreturn:
 }
 
 
-#line 107 "parser.y"
+#line 110 "parser.y"
 
 
 int main(int argc, char *argv[])

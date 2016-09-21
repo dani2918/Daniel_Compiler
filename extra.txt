@@ -1,0 +1,68 @@
+program					: declarationList
+						;
+
+declarationList			: declarationList declaration 
+						| declaration
+						;
+
+declarationList 		: varDeclaration	
+						| funDeclaration
+						| recDeclaration
+						;
+
+recDeclaration 			: record ID {localDeclarations}
+						;
+
+varDeclaration			: typeSpecifier varDeclList';'
+						;
+
+scopedVarDeclaration	: scopedTypeSpecifier varDeclList';'					
+						;
+
+varDeclList				: varDeclList ',' varDeclInitialize
+						| varDeclInitialize
+						;
+
+varDeclInitialize 		: varDeclId
+						| varDeclId ':' simpleExpression
+						;
+
+varDeclId				: ID 
+						| ID'['NUMCONST']'			
+						;
+
+scopedTypeSpecifier 	: static typeSpecifier
+						| typeSpecifier
+						;
+
+typeSpecifier 			: returnTypeSpecifier 
+						| RECTYPE
+						;
+
+returnTypeSpecifier		: int
+						| bool
+						| char
+						;
+
+funDeclaration			: returnTypeSpecifier ID '('params')' statement
+						| ID '('params')' statement
+						;
+
+params					: paramList
+						| ''
+						;
+
+paramList				: paramList';'paramTypeList 
+						| paramTypeList
+						;
+
+paramTypeList			: typeSpecifier paramIdList
+						;
+
+paramIdList				: paramIdList , paramId 
+						| paramId
+						;
+
+paramId 				: ID
+						| ID '['']'
+						;
