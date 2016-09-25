@@ -121,8 +121,8 @@ paramId 				: ID
 
 statement 				: expressionStmt /* TODO: look at grabbing sel/iter as match, unmatched*/
 						| compoundStmt
-						| selectionStmts 
-						| iterationStmt 
+						| selectIterStmts 
+						/*| iterationStmt */
 						| returnStmt
 						| breakStmt
 						;
@@ -145,25 +145,30 @@ expressionStmt			: expression SEMI
 
 /* TODO: Fix if/while*/
 
-selectionStmts			: selectionStmts selectionStmt 
-						| selectionStmt
+selectIterStmts			: selectIterStmts selectIterStmt 
+						| selectIterStmt
 						;
 
-selectionStmt 			: firstmatched 
+selectIterStmt 			: firstmatched 
 						| unmatched
 						;
 
 /* Need to find an if, or we go into infinite loop*/
 firstmatched			: IF LPAREN simpleExpression RPAREN matched ELSE matched 
+						| WHILE LPAREN simpleExpression RPAREN matched
 						;
 
 matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched 
+						| WHILE LPAREN simpleExpression RPAREN matched
 						| statement
 						;
 
 unmatched				: IF LPAREN simpleExpression RPAREN matched	
 						| IF LPAREN simpleExpression RPAREN unmatched						
 						| IF LPAREN simpleExpression RPAREN ELSE unmatched
+					    | WHILE LPAREN simpleExpression RPAREN matched	
+						| WHILE LPAREN simpleExpression RPAREN unmatched						
+						| WHILE LPAREN simpleExpression RPAREN ELSE unmatched
 						;
 
 
