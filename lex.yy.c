@@ -1086,12 +1086,12 @@ YY_RULE_SETUP
 case 40:
 YY_RULE_SETUP
 #line 137 "parser.l"
-{return setTokenData(RBRAC);}
+{return setTokenData(LBRAC);}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
 #line 138 "parser.l"
-{return setTokenData(LBRAC);}
+{return setTokenData(RBRAC);}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
@@ -1140,12 +1140,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 151 "parser.l"
-{return setTokenData(ERR, yytext);}
+#line 152 "parser.l"
+{printf("ERROR(%d): Invalid or misplaced input character: \"%s\"\n", lineno, yytext);}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 152 "parser.l"
+#line 153 "parser.l"
 ECHO;
 	YY_BREAK
 #line 1152 "lex.yy.c"
@@ -2157,21 +2157,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 152 "parser.l"
+#line 153 "parser.l"
 
 
 
-
-/*/////////////////
-
-// Unary/binary op, will work when we institue grammar
-"*"				{return setTokenData(MUL, "MUL");}
-
-
-// int main()
-// {
-// 	yylex();	
-// }
-
-
-//////////*/

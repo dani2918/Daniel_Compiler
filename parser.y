@@ -2,6 +2,7 @@
 %{
  #include <stdio.h>
  #include <stdlib.h>
+ #include <unistd.h>
  #include "scanType.h"
  #include "parser.tab.h"
  
@@ -9,7 +10,7 @@
  extern int yyparse();
  extern FILE *yyin;
 
-#define YYERROR_VERBOSE
+#define YYERROR_VERBOSE 1
 void yyerror(const char *errMsg)
 {
  	printf("ERROR(): %s\n", errMsg);
@@ -39,6 +40,7 @@ void printErrToken(int lineno, char* tokenString)
 %token <tokenData> ASS MUL ADD SUB DIV MOD
 %token <tokenData> LPAREN RPAREN LBRAC RBRAC LCUR RCUR COMMA COL SEMI
 %token <tokenData> ERR
+%error-verbose
 
 %union
 {
@@ -94,7 +96,7 @@ returnTypeSpecifier		: INT
 						| CHAR
 						;
 
-funDeclaration			: returnTypeSpecifier ID LPAREN params RPAREN statement
+funDeclaration			: typeSpecifier ID LPAREN params RPAREN statement
 						| ID LPAREN params RPAREN statement
 						;
 
@@ -119,7 +121,7 @@ paramId 				: ID
 
 statement 				: expressionStmt /* TODO: look at grabbing sel/iter as match, unmatched*/
 						| compoundStmt
-						| selectionStmt 
+						| selectionStmts 
 						| iterationStmt 
 						| returnStmt
 						| breakStmt
@@ -142,9 +144,28 @@ expressionStmt			: expression SEMI
 
 
 /* TODO: Fix if/while*/
-selectionStmt			: IF LPAREN simpleExpression RPAREN statement 
-						| IF LPAREN simpleExpression RPAREN statement ELSE
+
+selectionStmts			: selectionStmts selectionStmt 
+						| selectionStmt
 						;
+
+selectionStmt 			: firstmatched 
+						| unmatched
+						;
+
+/* Need to find an if, or we go into infinite loop*/
+firstmatched			: IF LPAREN simpleExpression RPAREN matched ELSE matched 
+						;
+
+matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched 
+						| statement
+						;
+
+unmatched				: IF LPAREN simpleExpression RPAREN matched	
+						| IF LPAREN simpleExpression RPAREN unmatched						
+						| IF LPAREN simpleExpression RPAREN ELSE unmatched
+						;
+
 
 
 iterationStmt			: WHILE LPAREN simpleExpression RPAREN statement
@@ -153,13 +174,13 @@ iterationStmt			: WHILE LPAREN simpleExpression RPAREN statement
 
 
 returnStmt				: RETURN SEMI
-						| RETURN expression
+						| RETURN expression SEMI
 						;
 
 breakStmt 				: BREAK SEMI
 						;
 
-expression 				: mutable EQ expression 
+expression 				: mutable ASS expression 
 						| mutable ADDASS expression
 						| mutable SUBASS expression
 						| mutable MULASS expression
@@ -227,7 +248,7 @@ factor					: immutable
 						;
 
 mutable					: ID 
-						| ID LBRAC expression RBRAC 
+						| mutable LBRAC expression RBRAC 
 						| mutable DOT ID
 						;						
 
@@ -248,9 +269,9 @@ argList					: argList COMMA expression
 						| expression
 						;
 
-constant	 			: NUMCONST 	{printf("Line %d Token: NUMCONST Value: %d  Input: %s\n", $1->lineno, $1->numVal,  $1->tokenString);}
-						| CHARCONST {printf("Line %d Token: CHARCONST Value: '%c'  Input: %s\n", $1->lineno, $1->charVal, $1->tokenString);}
-						| BOOLCONST {printf("Line %d Token: BOOLCONST Value: %d  Input: %s\n", $1->lineno, $1->bvalue, $1->tokenString);}
+constant	 			: NUMCONST 	
+						| CHARCONST 
+						| BOOLCONST 
 						;
 
 %%
@@ -258,10 +279,27 @@ constant	 			: NUMCONST 	{printf("Line %d Token: NUMCONST Value: %d  Input: %s\n
 int main(int argc, char *argv[])
 {
 
-	FILE *infile = fopen(argv[1], "r");
+	extern int yydebug;
+	int optCount = 1;
+
+	// for options
+	int opt; 
+
+	while ((opt = getopt(argc, argv, "d::")) != -1)
+	{
+		switch (opt)
+		{
+			case 'd':
+				yydebug = 1;
+				break;
+		}
+		optCount++;
+	}
+	FILE *infile = fopen(argv[optCount], "r");
 	yyin = infile;
+
 	yyparse();
 	fclose(yyin);
-
+//	printf("DONE!");
 	return 0;
 }

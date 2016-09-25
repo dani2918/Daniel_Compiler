@@ -134,8 +134,8 @@ comment		"//".*
 
 "("				{return setTokenData(LPAREN);}
 ")"				{return setTokenData(RPAREN);}
-"["				{return setTokenData(RBRAC);}
-"]"				{return setTokenData(LBRAC);}
+"["				{return setTokenData(LBRAC);}
+"]"				{return setTokenData(RBRAC);}
 "{"				{return setTokenData(LCUR);}
 "}"				{return setTokenData(RCUR);}
 ","				{return setTokenData(COMMA);}
@@ -148,20 +148,6 @@ comment		"//".*
 {CHARCONST}		{return setTokenData(CHARCONST);}
 
 {whitespace}	;
-.				{return setTokenData(ERR, yytext);}
+
+.				{printf("ERROR(%d): Invalid or misplaced input character: \"%s\"\n", lineno, yytext);}
 %%
-
-
-/*/////////////////
-
-// Unary/binary op, will work when we institue grammar
-"*"				{return setTokenData(MUL, "MUL");}
-
-
-// int main()
-// {
-// 	yylex();	
-// }
-
-
-//////////*/
