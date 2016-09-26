@@ -3,19 +3,21 @@
  #include <stdio.h>
  #include <stdlib.h>
  #include <unistd.h>
+ #include "globals.h"
  #include "scanType.h"
  #include "parser.tab.h"
- #include "treeNode.h"
  #include "syntaxTree.h"
- 
+
+
  extern int yylex();
  extern int yyparse();
  extern FILE *yyin;
+ extern int lineno;
 
-#define YYERROR_VERBOSE 1
+//#define YYERROR_VERBOSE 1
 void yyerror(const char *errMsg)
 {
- 	printf("ERROR(): %s\n", errMsg);
+ 	printf("ERROR(%d): %s\n", lineno, errMsg);
 }
 
 void printToken(int lineno, char* tokenString)

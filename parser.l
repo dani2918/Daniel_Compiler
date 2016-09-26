@@ -4,8 +4,9 @@
 #include <ctype.h>	
 #include "scanType.h"
 #include "parser.tab.h"
+#include "globals.h"
 
-static int lineno = 1;
+int lineno = 1;
 
 int setTokenData(int tokenClass)
 {
@@ -148,6 +149,9 @@ comment		"//".*
 {CHARCONST}		{return setTokenData(CHARCONST);}
 
 {whitespace}	;
-
 .				{printf("ERROR(%d): Invalid or misplaced input character: \"%s\"\n", lineno, yytext);}
+
 %%
+
+
+

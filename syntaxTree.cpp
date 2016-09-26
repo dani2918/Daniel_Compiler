@@ -9,5 +9,18 @@ September 20, 2016
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include "treeNode.h"
+#include "globals.h"
 #include "syntaxTree.h"
+
+
+void printTree()
+{
+	
+}
+
+TreeNode * newTestNode()
+{
+	TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
+	t -> sibling = NULL;
+	return t;
+}

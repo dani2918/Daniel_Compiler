@@ -142,7 +142,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 48 "parser.y"
+#line 50 "parser.y"
 {
 	TokenData *tokenData;
 }

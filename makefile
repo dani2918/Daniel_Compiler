@@ -1,7 +1,7 @@
 BIN  = parser
 CC   = g++
-SRCS = $(BIN).y $(BIN).l scanType.h globals.h syntaxTree.cpp
-OBJS = lex.yy.o $(BIN).tab.o
+SRCS = $(BIN).y $(BIN).l syntaxTree.cpp 
+OBJS = lex.yy.o $(BIN).tab.o syntaxTree.o
 LIBS = -lm 
 
 
@@ -14,6 +14,8 @@ $(BIN).tab.h $(BIN).tab.c: $(BIN).y
 lex.yy.c: $(BIN).l $(BIN).tab.h
 	flex $(BIN).l #-d debug
 
+syntaxTree.o: syntaxTree.cpp syntaxTree.h globals.h 
+	$(CC) $(CCFLAGS) -c syntaxTree.cpp
 
 all: 
 	touch $(SRCS)
