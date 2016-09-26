@@ -1,5 +1,5 @@
-#ifndef SCANTYPEH
-#define SCANTYPEH
+#ifndef SCANTYPE_H
+#define SCANTYPE_H
 
 struct TokenData
 {
@@ -11,5 +11,7 @@ struct TokenData
 	char *idVal;
 	bool bvalue;
 };
+
+
 
 #endif

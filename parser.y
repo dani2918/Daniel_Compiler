@@ -5,6 +5,8 @@
  #include <unistd.h>
  #include "scanType.h"
  #include "parser.tab.h"
+ #include "treeNode.h"
+ #include "syntaxTree.h"
  
  extern int yylex();
  extern int yyparse();
@@ -119,13 +121,18 @@ paramId 				: ID
 						| ID LBRAC RBRAC
 						;
 
-statement 				: expressionStmt /* TODO: look at grabbing sel/iter as match, unmatched*/
+
+statement 				: selectIterStmt
+						| otherStatement
+						;
+
+otherStatement 			: expressionStmt /* TODO: look at grabbing sel/iter as match, unmatched*/
 						| compoundStmt
-						| selectIterStmts 
 						/*| iterationStmt */
 						| returnStmt
 						| breakStmt
 						;
+					
 
 compoundStmt			: LCUR localDeclarations statementList RCUR
 						;
@@ -145,22 +152,13 @@ expressionStmt			: expression SEMI
 
 /* TODO: Fix if/while*/
 
-selectIterStmts			: selectIterStmts selectIterStmt 
-						| selectIterStmt
-						;
-
-selectIterStmt 			: firstmatched 
+selectIterStmt 			: matched  
 						| unmatched
-						;
-
-/* Need to find an if, or we go into infinite loop*/
-firstmatched			: IF LPAREN simpleExpression RPAREN matched ELSE matched 
-						| WHILE LPAREN simpleExpression RPAREN matched
-						;
+						; 
 
 matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched 
 						| WHILE LPAREN simpleExpression RPAREN matched
-						| statement
+						| otherStatement
 						;
 
 unmatched				: IF LPAREN simpleExpression RPAREN matched	
@@ -173,10 +171,10 @@ unmatched				: IF LPAREN simpleExpression RPAREN matched
 
 
 
-iterationStmt			: WHILE LPAREN simpleExpression RPAREN statement
+/*iterationStmt			: WHILE LPAREN simpleExpression RPAREN statement
 						;
 
-
+*/
 
 returnStmt				: RETURN SEMI
 						| RETURN expression SEMI

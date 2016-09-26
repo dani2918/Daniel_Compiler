@@ -1,6 +1,6 @@
 BIN  = parser
 CC   = g++
-SRCS = $(BIN).y $(BIN).l scanType.h
+SRCS = $(BIN).y $(BIN).l scanType.h globals.h
 OBJS = lex.yy.o $(BIN).tab.o
 LIBS = -lm 
 
