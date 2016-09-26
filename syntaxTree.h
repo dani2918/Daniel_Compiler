@@ -8,6 +8,9 @@ September 20, 2016
 #define SYNTAXTREE_H
 
 
+void printTree();
+
+TreeNode * newTestNode();
 
 
 

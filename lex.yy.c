@@ -598,7 +598,7 @@ int setTokenData(int tokenClass)
 	return tokenClass;
 }
 
-int setTokenData(int tokenClass, char * tokenString)
+int setTokenData(int tokenClass, const char * tokenString)
 {
 	yylval.tokenData = new TokenData;
 	yylval.tokenData->tokenClass = tokenClass;
