@@ -12,8 +12,22 @@ Contains the syntax tree node based on the Louden definitis
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include "scanType.h"
 
-#define MAXCHILDREN 5
+#define MAXCHILDREN 3
+
+// enum TokenType
+// {
+// 	NUMCONST, CHARCONST, ID, BOOLCONST,
+// 	NOT, AND, OR, RECORD, STATIC, INT, BOOL, CHAR, IF, ELSE, WHILE, RETURN, BREAK,
+//  	RAND, DOT,
+// 	ADDASS, SUBASS, MULASS, DIVASS, DEC, INC,
+// 	EQ, NOTEQ, LESSEQ, LT, GRTEQ, GT,
+// 	ASS, MUL, ADD, SUB, DIV, MOD,
+// 	LPAREN, RPAREN, LBRAC, RBRAC, LCUR, RCUR, COMMA, COL, SEMI
+// };
+
+
 
 // Global line number
 extern int lineno;
@@ -38,20 +52,39 @@ enum ExpKind
 	simpleExpression
 };
 
+enum ExpType
+{
+	integer, boolean, character
+};
+
+// Reflects the struct from the assignment 2 notes
 typedef struct treeNode
    { 
 	struct treeNode * child[MAXCHILDREN];
 	struct treeNode * sibling;
 	int lineno;
     NodeKind nodekind;
-    // union { StmtKind stmt; ExpKind exp;} kind;
-    // union 
-    // 	{ 
-    // 		TokenType op;
-    //         int val;
-    //         char * name; 
-    //     } attr;
-     //ExpType type; /* for type checking of exps */
+    union 
+    { 
+    	DeclKind decl; 
+    	StmtKind stmt; 
+    	ExpKind exp; 
+    } kind;
+
+    union 
+    { 
+    	TokenData td;
+    	int value;
+    	unsigned char cvalue;
+    	char * string;
+    	char * name;
+    } attr;
+
+    ExpType type;
+    bool isArray;
+    bool isRecord;
+    bool isStatic;
+
    } TreeNode;
 
 #endif

@@ -56,7 +56,7 @@
      WHILE = 272,
      RETURN = 273,
      BREAK = 274,
-     OPT = 275,
+     RAND = 275,
      DOT = 276,
      ADDASS = 277,
      SUBASS = 278,
@@ -106,7 +106,7 @@
 #define WHILE 272
 #define RETURN 273
 #define BREAK 274
-#define OPT 275
+#define RAND 275
 #define DOT 276
 #define ADDASS 277
 #define SUBASS 278
@@ -142,16 +142,29 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 60 "parser.y"
+#line 62 "parser.y"
 {
 	TokenData *tokenData;
 
-#line 65 "parser.y"
+#line 67 "parser.y"
 
 	TreeNode *treeNode;
+
+#line 72 "parser.y"
+
+	ExpType expType;
+	int number; 
+	TokenData td;
+	TreeNode * t;
+	char * name;
+
+
+#line 82 "parser.y"
+
+	char * c;
 }
 /* Line 1529 of yacc.c.  */
-#line 155 "parser.tab.h"
+#line 168 "parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

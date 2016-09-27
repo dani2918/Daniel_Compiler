@@ -147,7 +147,7 @@ Grammar
 
    95 unaryop: SUB
    96        | MUL
-   97        | OPT
+   97        | RAND
 
    98 factor: immutable
    99       | mutable
@@ -194,7 +194,7 @@ ELSE (271) 49 51 56 58
 WHILE (272) 50 52 57 58
 RETURN (273) 59 60
 BREAK (274) 61
-OPT (275) 97
+RAND (275) 97
 DOT (276) 102
 ADDASS (277) 63
 SUBASS (278) 64
@@ -642,7 +642,7 @@ state 32
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -702,7 +702,7 @@ state 36
     WHILE      shift, and go to state 68
     RETURN     shift, and go to state 69
     BREAK      shift, and go to state 70
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -837,7 +837,7 @@ state 47
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -857,7 +857,7 @@ state 47
 
 state 48
 
-   97 unaryop: OPT .
+   97 unaryop: RAND .
 
     $default  reduce using rule 97 (unaryop)
 
@@ -885,7 +885,7 @@ state 51
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -990,7 +990,7 @@ state 59
     CHARCONST  shift, and go to state 44
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -1089,7 +1089,7 @@ state 69
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -1305,7 +1305,7 @@ state 91
     WHILE      shift, and go to state 68
     RETURN     shift, and go to state 69
     BREAK      shift, and go to state 70
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -1353,7 +1353,7 @@ state 93
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -1401,7 +1401,7 @@ state 96
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -1429,7 +1429,7 @@ state 97
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -1511,7 +1511,7 @@ state 106
     CHARCONST  shift, and go to state 44
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -1535,7 +1535,7 @@ state 107
     CHARCONST  shift, and go to state 44
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -1579,7 +1579,7 @@ state 111
     CHARCONST  shift, and go to state 44
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -1616,7 +1616,7 @@ state 114
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -1663,7 +1663,7 @@ state 117
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -1694,7 +1694,7 @@ state 118
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -1771,7 +1771,7 @@ state 124
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -1801,7 +1801,7 @@ state 125
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -1831,7 +1831,7 @@ state 126
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -1861,7 +1861,7 @@ state 127
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -1891,7 +1891,7 @@ state 128
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -1921,7 +1921,7 @@ state 129
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -1951,7 +1951,7 @@ state 130
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -2135,7 +2135,7 @@ state 148
     WHILE      shift, and go to state 68
     RETURN     shift, and go to state 69
     BREAK      shift, and go to state 70
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -2240,7 +2240,7 @@ state 158
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -2285,7 +2285,7 @@ state 160
     WHILE      shift, and go to state 167
     RETURN     shift, and go to state 69
     BREAK      shift, and go to state 70
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -2331,7 +2331,7 @@ state 161
     WHILE      shift, and go to state 167
     RETURN     shift, and go to state 69
     BREAK      shift, and go to state 70
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -2471,7 +2471,7 @@ state 174
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -2526,7 +2526,7 @@ state 178
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -2559,7 +2559,7 @@ state 179
     WHILE      shift, and go to state 186
     RETURN     shift, and go to state 69
     BREAK      shift, and go to state 70
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -2618,7 +2618,7 @@ state 182
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -2648,7 +2648,7 @@ state 183
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -2717,7 +2717,7 @@ state 188
     WHILE      shift, and go to state 167
     RETURN     shift, and go to state 69
     BREAK      shift, and go to state 70
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -2784,7 +2784,7 @@ state 191
     WHILE      shift, and go to state 167
     RETURN     shift, and go to state 69
     BREAK      shift, and go to state 70
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -2823,7 +2823,7 @@ state 192
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -2852,7 +2852,7 @@ state 193
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -2898,7 +2898,7 @@ state 195
     WHILE      shift, and go to state 167
     RETURN     shift, and go to state 69
     BREAK      shift, and go to state 70
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -2978,7 +2978,7 @@ state 200
     WHILE      shift, and go to state 186
     RETURN     shift, and go to state 69
     BREAK      shift, and go to state 70
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -3027,7 +3027,7 @@ state 202
     WHILE      shift, and go to state 186
     RETURN     shift, and go to state 69
     BREAK      shift, and go to state 70
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
@@ -3069,7 +3069,7 @@ state 203
     WHILE      shift, and go to state 186
     RETURN     shift, and go to state 69
     BREAK      shift, and go to state 70
-    OPT        shift, and go to state 48
+    RAND       shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51

@@ -83,7 +83,7 @@
      WHILE = 272,
      RETURN = 273,
      BREAK = 274,
-     OPT = 275,
+     RAND = 275,
      DOT = 276,
      ADDASS = 277,
      SUBASS = 278,
@@ -133,7 +133,7 @@
 #define WHILE 272
 #define RETURN 273
 #define BREAK 274
-#define OPT 275
+#define RAND 275
 #define DOT 276
 #define ADDASS 277
 #define SUBASS 278
@@ -190,6 +190,8 @@
  //Like the TreeNode from tiny.y
  static TreeNode * savedTree;
 
+ ExpType storedType;
+
 //#define YYERROR_VERBOSE 1
 void yyerror(const char *errMsg)
 {
@@ -228,16 +230,29 @@ void printErrToken(int lineno, char* tokenString)
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 60 "parser.y"
+#line 62 "parser.y"
 {
 	TokenData *tokenData;
 
-#line 65 "parser.y"
+#line 67 "parser.y"
 
 	TreeNode *treeNode;
+
+#line 72 "parser.y"
+
+	ExpType expType;
+	int number; 
+	TokenData td;
+	TreeNode * t;
+	char * name;
+
+
+#line 82 "parser.y"
+
+	char * c;
 }
 /* Line 193 of yacc.c.  */
-#line 241 "parser.tab.c"
+#line 256 "parser.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -250,7 +265,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 254 "parser.tab.c"
+#line 269 "parser.tab.c"
 
 #ifdef short
 # undef short
@@ -581,18 +596,18 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    74,    74,    78,    94,    99,   101,   103,   107,   110,
-     113,   116,   117,   120,   121,   125,   126,   129,   130,   133,
-     134,   137,   138,   139,   142,   143,   146,   147,   150,   151,
-     154,   157,   158,   161,   162,   166,   167,   170,   171,   173,
-     174,   178,   181,   182,   185,   186,   189,   190,   196,   197,
-     200,   201,   204,   205,   206,   209,   210,   211,   212,   213,
-     223,   224,   227,   230,   231,   232,   233,   234,   235,   236,
-     237,   241,   242,   246,   247,   250,   251,   254,   255,   259,
-     260,   261,   262,   263,   264,   267,   268,   271,   272,   275,
-     276,   279,   280,   281,   284,   285,   288,   289,   290,   293,
-     294,   297,   298,   299,   302,   303,   304,   307,   310,   311,
-     315,   316,   319,   320,   321
+       0,    95,    95,    99,   119,   124,   126,   128,   132,   138,
+     145,   148,   174,   180,   186,   193,   198,   204,   205,   208,
+     212,   218,   222,   226,   232,   233,   236,   237,   240,   241,
+     244,   247,   248,   251,   252,   256,   257,   260,   261,   263,
+     264,   268,   271,   272,   275,   276,   279,   280,   286,   287,
+     290,   291,   294,   295,   296,   299,   300,   301,   302,   303,
+     313,   314,   317,   320,   321,   322,   323,   324,   325,   326,
+     327,   331,   332,   336,   337,   340,   341,   344,   345,   349,
+     350,   351,   352,   353,   354,   357,   358,   361,   362,   365,
+     366,   369,   370,   371,   374,   375,   378,   379,   380,   383,
+     384,   387,   388,   389,   392,   393,   394,   397,   400,   401,
+     405,   406,   409,   410,   411
 };
 #endif
 
@@ -603,11 +618,11 @@ static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "NUMCONST", "CHARCONST", "ID",
   "BOOLCONST", "NOT", "AND", "OR", "RECORD", "STATIC", "INT", "BOOL",
-  "CHAR", "IF", "ELSE", "WHILE", "RETURN", "BREAK", "OPT", "DOT", "ADDASS",
-  "SUBASS", "MULASS", "DIVASS", "DEC", "INC", "EQ", "NOTEQ", "LESSEQ",
-  "LT", "GRTEQ", "GT", "ASS", "MUL", "ADD", "SUB", "DIV", "MOD", "LPAREN",
-  "RPAREN", "LBRAC", "RBRAC", "LCUR", "RCUR", "COMMA", "COL", "SEMI",
-  "ERR", "$accept", "program", "declarationList", "declaration",
+  "CHAR", "IF", "ELSE", "WHILE", "RETURN", "BREAK", "RAND", "DOT",
+  "ADDASS", "SUBASS", "MULASS", "DIVASS", "DEC", "INC", "EQ", "NOTEQ",
+  "LESSEQ", "LT", "GRTEQ", "GT", "ASS", "MUL", "ADD", "SUB", "DIV", "MOD",
+  "LPAREN", "RPAREN", "LBRAC", "RBRAC", "LCUR", "RCUR", "COMMA", "COL",
+  "SEMI", "ERR", "$accept", "program", "declarationList", "declaration",
   "recDeclaration", "varDeclaration", "scopedVarDeclaration",
   "varDeclList", "varDeclInitialize", "varDeclId", "scopedTypeSpecifier",
   "typeSpecifier", "returnTypeSpecifier", "funDeclaration", "params",
@@ -1660,16 +1675,17 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 75 "parser.y"
+#line 96 "parser.y"
     {savedTree = (yyvsp[(1) - (1)].treeNode);;}
     break;
 
   case 3:
-#line 79 "parser.y"
+#line 100 "parser.y"
     {
 								TreeNode * t = (yyvsp[(1) - (2)].treeNode);
 								if (t != NULL)
 								{
+									//printf("t is NULL\n");
 									while (t->sibling != NULL)
 									{
 										t = t-> sibling;
@@ -1677,34 +1693,122 @@ yyreduce:
 									t->sibling = (yyvsp[(2) - (2)].treeNode);
 									(yyval.treeNode) = (yyvsp[(1) - (2)].treeNode);
 								}
-								else (yyval.treeNode) = (yyvsp[(2) - (2)].treeNode);
-								
+								else 
+								{
+									//printf("t is not NULL\n");
+									(yyval.treeNode) = (yyvsp[(2) - (2)].treeNode);
+								}
 							;}
     break;
 
   case 4:
-#line 95 "parser.y"
+#line 120 "parser.y"
     { (yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);;}
     break;
 
   case 5:
-#line 100 "parser.y"
+#line 125 "parser.y"
     {(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode); ;}
     break;
 
   case 6:
-#line 102 "parser.y"
+#line 127 "parser.y"
     {(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode); ;}
     break;
 
   case 7:
-#line 104 "parser.y"
+#line 129 "parser.y"
     {(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode); ;}
+    break;
+
+  case 9:
+#line 139 "parser.y"
+    {
+								storedType = (yyvsp[(1) - (3)].expType);
+								(yyval.treeNode) = (yyvsp[(2) - (3)].treeNode);
+ 							;}
+    break;
+
+  case 11:
+#line 149 "parser.y"
+    {
+								TreeNode * t = (yyvsp[(1) - (3)].treeNode);
+								if (t != NULL)
+								{
+									//printf("t is not NULL\n");
+									while (t->sibling != NULL)
+									{
+										t = t-> sibling;
+									}
+									t->sibling = (yyvsp[(3) - (3)].treeNode);
+									
+								}
+								else 
+								{
+									//printf("t is NULL\n");
+									t->sibling = (yyvsp[(3) - (3)].treeNode);
+									
+								}
+								(yyval.treeNode) = (yyvsp[(1) - (3)].treeNode);
+								
+							;}
+    break;
+
+  case 12:
+#line 175 "parser.y"
+    { 
+								(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode); 
+							;}
+    break;
+
+  case 13:
+#line 181 "parser.y"
+    {
+								(yyval.treeNode) = newDeclNode(varDeclaration);
+								(yyval.treeNode)->type = storedType; //printf("type: %d\n", $$->type);
+ 								(yyval.treeNode) -> attr.name = (yyvsp[(1) - (1)].name) ;
+							;}
+    break;
+
+  case 15:
+#line 194 "parser.y"
+    {
+								(yyval.name)  = (yyvsp[(1) - (1)].tokenData) -> tokenString;
+								//printf("%s\n", $1->tokenString);
+							;}
+    break;
+
+  case 19:
+#line 209 "parser.y"
+    {
+								(yyval.expType) = (yyvsp[(1) - (1)].expType);
+							;}
+    break;
+
+  case 21:
+#line 219 "parser.y"
+    {
+								(yyval.expType) = integer;
+							;}
+    break;
+
+  case 22:
+#line 223 "parser.y"
+    {
+								(yyval.expType) = boolean;
+							;}
+    break;
+
+  case 23:
+#line 227 "parser.y"
+    {
+								(yyval.expType) = character;
+							;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1708 "parser.tab.c"
+#line 1812 "parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1918,7 +2022,7 @@ yyreturn:
 }
 
 
-#line 324 "parser.y"
+#line 414 "parser.y"
 
 
 int main(int argc, char *argv[])

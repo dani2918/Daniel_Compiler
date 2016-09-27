@@ -1044,7 +1044,7 @@ YY_RULE_SETUP
 case 31:
 YY_RULE_SETUP
 #line 128 "parser.l"
-{return setTokenData(OPT);}
+{return setTokenData(RAND);}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP

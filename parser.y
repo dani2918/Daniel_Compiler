@@ -20,6 +20,8 @@
  //Like the TreeNode from tiny.y
  static TreeNode * savedTree;
 
+ ExpType storedType;
+
 //#define YYERROR_VERBOSE 1
 void yyerror(const char *errMsg)
 {
@@ -44,7 +46,7 @@ void printErrToken(int lineno, char* tokenString)
 %token <tokenData> ID
 %token <tokenData> BOOLCONST
 %token <tokenData> NOT AND OR RECORD STATIC INT BOOL CHAR IF ELSE WHILE RETURN BREAK
-%token <tokenData> OPT DOT
+%token <tokenData> RAND DOT
 %token <tokenData> ADDASS SUBASS MULASS DIVASS DEC INC
 %token <tokenData> EQ NOTEQ LESSEQ LT GRTEQ GT
 %token <tokenData> ASS MUL ADD SUB DIV MOD
@@ -66,9 +68,28 @@ void printErrToken(int lineno, char* tokenString)
 	TreeNode *treeNode;
 }
 
+%union
+{
+	ExpType expType;
+	int number; 
+	TokenData td;
+	TreeNode * t;
+	char * name;
+
+}
+
+%union
+{
+	char * c;
+}
+
 
 %type <treeNode> declarationList declaration
-%type <treeNode> varDeclaration funDeclaration recDeclaration
+%type <treeNode> varDeclaration funDeclaration recDeclaration varDeclList varDeclInitialize
+%type <expType> returnTypeSpecifier typeSpecifier 
+%type <name> varDeclId
+
+
 
 %%
 program					: declarationList
@@ -80,6 +101,7 @@ declarationList			: declarationList declaration
 								TreeNode * t = $1;
 								if (t != NULL)
 								{
+									//printf("t is NULL\n");
 									while (t->sibling != NULL)
 									{
 										t = t-> sibling;
@@ -87,8 +109,11 @@ declarationList			: declarationList declaration
 									t->sibling = $2;
 									$$ = $1;
 								}
-								else $$ = $2;
-								
+								else 
+								{
+									//printf("t is not NULL\n");
+									$$ = $2;
+								}
 							}
 
 						| declaration 
@@ -105,25 +130,75 @@ declaration 			: varDeclaration
 						;
 
 recDeclaration 			: RECORD ID LCUR localDeclarations RCUR
+						//	{
+						//		$$ = newRecNode()
+						//	}
 						;
 
 varDeclaration			: typeSpecifier varDeclList SEMI 
+							{
+								storedType = $1;
+								$$ = $2;
+ 							}
 						;
 
 scopedVarDeclaration 	: scopedTypeSpecifier varDeclList SEMI
 						;
 
 varDeclList				: varDeclList COMMA varDeclInitialize
+							{
+								TreeNode * t = $1;
+								if (t != NULL)
+								{
+									//printf("t is not NULL\n");
+									while (t->sibling != NULL)
+									{
+										t = t-> sibling;
+									}
+									t->sibling = $3;
+									
+								}
+								else 
+								{
+									//printf("t is NULL\n");
+									t->sibling = $3;
+									
+								}
+								$$ = $1;
+								
+							}							
+
+
+								 
+
 						| varDeclInitialize
+							{ 
+								$$ = $1; 
+							}
 						;
 
 varDeclInitialize 		: varDeclId
+							{
+								$$ = newDeclNode(varDeclaration);
+								$$->type = storedType; //printf("type: %d\n", $$->type);
+ 								$$ -> attr.name = $1 ;
+							}
 						| varDeclId COL simpleExpression
+//							{
+//
+//							}
 						;
 
 
 varDeclId				: ID 
-						| ID LBRAC NUMCONST RBRAC		
+							{
+								$$  = $1 -> tokenString;
+								//printf("%s\n", $1->tokenString);
+							}
+						| ID LBRAC NUMCONST RBRAC
+//							{
+//
+	//						}		
 						;
 
 scopedTypeSpecifier 	: STATIC typeSpecifier
@@ -131,12 +206,27 @@ scopedTypeSpecifier 	: STATIC typeSpecifier
 						;
 
 typeSpecifier 			: returnTypeSpecifier 
+							{
+								$$ = $1;
+							}
 						| RECORD /*MAYBE rectype?*/
+//							{
+//								$$ = $1;
+//							}
 						;
 
 returnTypeSpecifier		: INT 
+							{
+								$$ = integer;
+							}
 						| BOOL
+							{
+								$$ = boolean;
+							}
 						| CHAR
+							{
+								$$ = character;
+							}
 						;
 
 funDeclaration			: typeSpecifier ID LPAREN params RPAREN statement
@@ -167,7 +257,7 @@ statement 				: selectIterStmt
 						| otherStatement
 						;
 
-otherStatement 			: expressionStmt /* TODO: look at grabbing sel/iter as match, unmatched*/
+otherStatement 			: expressionStmt 
 						| compoundStmt
 						/*| iterationStmt */
 						| returnStmt
@@ -287,7 +377,7 @@ unaryExpression			: unaryop unaryExpression
 
 unaryop 				: SUB
 						| MUL
-						| OPT
+						| RAND
 						;
 
 factor					: immutable 

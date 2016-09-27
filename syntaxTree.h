@@ -10,11 +10,13 @@ September 20, 2016
 
 void printTree(TreeNode * t);
 
-TreeNode * newTestNode();
+//TreeNode * newTestNode();
 
-TreeNode * newDeclNode();
+TreeNode * newDeclNode(DeclKind kind);
 
+TreeNode * newStmtNode(StmtKind kind);
 
+TreeNode * newExpNode(ExpKind kind);
 
 
 

@@ -125,7 +125,7 @@ comment		"//".*
 
 
 "*"				{return setTokenData(MUL);}
-"?"				{return setTokenData(OPT);}
+"?"				{return setTokenData(RAND);}
 "."				{return setTokenData(DOT);}
 
 "="				{return setTokenData(ASS);}
