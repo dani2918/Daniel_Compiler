@@ -9,6 +9,7 @@ September 20, 2016
 
 
 void printTree(TreeNode * t);
+void printTree(TreeNode * t, int sibCount, int childCount);
 
 //TreeNode * newTestNode();
 

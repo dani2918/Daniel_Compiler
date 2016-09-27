@@ -85,9 +85,9 @@ void printErrToken(int lineno, char* tokenString)
 
 
 %type <treeNode> declarationList declaration
-%type <treeNode> varDeclaration funDeclaration recDeclaration varDeclList varDeclInitialize
+%type <treeNode> varDeclaration funDeclaration recDeclaration varDeclList varDeclInitialize varDeclId simpleExpression
 %type <expType> returnTypeSpecifier typeSpecifier 
-%type <name> varDeclId
+
 
 
 
@@ -137,7 +137,8 @@ recDeclaration 			: RECORD ID LCUR localDeclarations RCUR
 
 varDeclaration			: typeSpecifier varDeclList SEMI 
 							{
-								storedType = $1;
+
+								//storedType = $1;
 								$$ = $2;
  							}
 						;
@@ -178,27 +179,31 @@ varDeclList				: varDeclList COMMA varDeclInitialize
 						;
 
 varDeclInitialize 		: varDeclId
-							{
-								$$ = newDeclNode(varDeclaration);
-								$$->type = storedType; //printf("type: %d\n", $$->type);
- 								$$ -> attr.name = $1 ;
+							{	
+ 								$$ = $1;
 							}
 						| varDeclId COL simpleExpression
-//							{
-//
-//							}
+							{
+								$$ -> child[0] = $3;
+								$$ = $1;
+							}
 						;
 
 
 varDeclId				: ID 
 							{
-								$$  = $1 -> tokenString;
-								//printf("%s\n", $1->tokenString);
+								$$ = newDeclNode(varDeclaration);
+								$$ -> attr.name = strdup($1 -> tokenString);
+								$$->type = storedType; 
+								$$->isArray = false;
 							}
 						| ID LBRAC NUMCONST RBRAC
-//							{
-//
-	//						}		
+							{
+								$$ = newDeclNode(varDeclaration);
+								$$ -> attr.name = strdup($1 -> tokenString);
+								$$->type = storedType; 
+								$$->isArray = true;
+							}		
 						;
 
 scopedTypeSpecifier 	: STATIC typeSpecifier
@@ -217,15 +222,15 @@ typeSpecifier 			: returnTypeSpecifier
 
 returnTypeSpecifier		: INT 
 							{
-								$$ = integer;
+								storedType = integer;
 							}
 						| BOOL
 							{
-								$$ = boolean;
+								storedType = boolean; 
 							}
 						| CHAR
 							{
-								$$ = character;
+								storedType = character;
 							}
 						;
 

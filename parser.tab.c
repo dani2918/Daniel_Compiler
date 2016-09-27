@@ -597,17 +597,17 @@ static const yytype_int8 yyrhs[] =
 static const yytype_uint16 yyrline[] =
 {
        0,    95,    95,    99,   119,   124,   126,   128,   132,   138,
-     145,   148,   174,   180,   186,   193,   198,   204,   205,   208,
-     212,   218,   222,   226,   232,   233,   236,   237,   240,   241,
-     244,   247,   248,   251,   252,   256,   257,   260,   261,   263,
-     264,   268,   271,   272,   275,   276,   279,   280,   286,   287,
-     290,   291,   294,   295,   296,   299,   300,   301,   302,   303,
-     313,   314,   317,   320,   321,   322,   323,   324,   325,   326,
-     327,   331,   332,   336,   337,   340,   341,   344,   345,   349,
-     350,   351,   352,   353,   354,   357,   358,   361,   362,   365,
-     366,   369,   370,   371,   374,   375,   378,   379,   380,   383,
-     384,   387,   388,   389,   392,   393,   394,   397,   400,   401,
-     405,   406,   409,   410,   411
+     146,   149,   175,   181,   185,   193,   200,   209,   210,   213,
+     217,   223,   227,   231,   237,   238,   241,   242,   245,   246,
+     249,   252,   253,   256,   257,   261,   262,   265,   266,   268,
+     269,   273,   276,   277,   280,   281,   284,   285,   291,   292,
+     295,   296,   299,   300,   301,   304,   305,   306,   307,   308,
+     318,   319,   322,   325,   326,   327,   328,   329,   330,   331,
+     332,   336,   337,   341,   342,   345,   346,   349,   350,   354,
+     355,   356,   357,   358,   359,   362,   363,   366,   367,   370,
+     371,   374,   375,   376,   379,   380,   383,   384,   385,   388,
+     389,   392,   393,   394,   397,   398,   399,   402,   405,   406,
+     410,   411,   414,   415,   416
 };
 #endif
 
@@ -1724,13 +1724,14 @@ yyreduce:
   case 9:
 #line 139 "parser.y"
     {
-								storedType = (yyvsp[(1) - (3)].expType);
+
+								//storedType = $1;
 								(yyval.treeNode) = (yyvsp[(2) - (3)].treeNode);
  							;}
     break;
 
   case 11:
-#line 149 "parser.y"
+#line 150 "parser.y"
     {
 								TreeNode * t = (yyvsp[(1) - (3)].treeNode);
 								if (t != NULL)
@@ -1755,60 +1756,78 @@ yyreduce:
     break;
 
   case 12:
-#line 175 "parser.y"
+#line 176 "parser.y"
     { 
 								(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode); 
 							;}
     break;
 
   case 13:
-#line 181 "parser.y"
+#line 182 "parser.y"
+    {	
+ 								(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);
+							;}
+    break;
+
+  case 14:
+#line 186 "parser.y"
     {
-								(yyval.treeNode) = newDeclNode(varDeclaration);
-								(yyval.treeNode)->type = storedType; //printf("type: %d\n", $$->type);
- 								(yyval.treeNode) -> attr.name = (yyvsp[(1) - (1)].name) ;
+								(yyval.treeNode) -> child[0] = (yyvsp[(3) - (3)].treeNode);
+								(yyval.treeNode) = (yyvsp[(1) - (3)].treeNode);
 							;}
     break;
 
   case 15:
 #line 194 "parser.y"
     {
-								(yyval.name)  = (yyvsp[(1) - (1)].tokenData) -> tokenString;
-								//printf("%s\n", $1->tokenString);
+								(yyval.treeNode) = newDeclNode(varDeclaration);
+								(yyval.treeNode) -> attr.name = strdup((yyvsp[(1) - (1)].tokenData) -> tokenString);
+								(yyval.treeNode)->type = storedType; 
+								(yyval.treeNode)->isArray = false;
+							;}
+    break;
+
+  case 16:
+#line 201 "parser.y"
+    {
+								(yyval.treeNode) = newDeclNode(varDeclaration);
+								(yyval.treeNode) -> attr.name = strdup((yyvsp[(1) - (4)].tokenData) -> tokenString);
+								(yyval.treeNode)->type = storedType; 
+								(yyval.treeNode)->isArray = true;
 							;}
     break;
 
   case 19:
-#line 209 "parser.y"
+#line 214 "parser.y"
     {
 								(yyval.expType) = (yyvsp[(1) - (1)].expType);
 							;}
     break;
 
   case 21:
-#line 219 "parser.y"
+#line 224 "parser.y"
     {
-								(yyval.expType) = integer;
+								storedType = integer;
 							;}
     break;
 
   case 22:
-#line 223 "parser.y"
+#line 228 "parser.y"
     {
-								(yyval.expType) = boolean;
+								storedType = boolean; 
 							;}
     break;
 
   case 23:
-#line 227 "parser.y"
+#line 232 "parser.y"
     {
-								(yyval.expType) = character;
+								storedType = character;
 							;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1812 "parser.tab.c"
+#line 1831 "parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2022,7 +2041,7 @@ yyreturn:
 }
 
 
-#line 414 "parser.y"
+#line 419 "parser.y"
 
 
 int main(int argc, char *argv[])

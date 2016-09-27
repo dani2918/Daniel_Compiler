@@ -12,61 +12,85 @@ September 20, 2016
 #include "globals.h"
 #include "syntaxTree.h"
 
+int sibCount = 0;
+int childCount = 0;
 
 void printTree(TreeNode * t)
 {
-	int sibCount = 0;
-	int childCount = 0;
-	do
-	{
-		//printf("Times through: %d\n", i);
-		switch (t -> nodekind)
-		{
+	printTree(t, 0, 0);
+}
+
+void printTree(TreeNode * t, int sibCount, int childCount)
+{
 	
-			// if we have a declaration
-			case DeclK:
-				//printf("Declaration!\n" );
 
-				//Switch types of declarations
-				switch (t->kind.decl)
-				{
-					case varDeclaration:
-						printf("Var %s ", t->attr.name);
+	const char * arrMsg = "is array ";
+	const char * arrMsgToggle; 
+	TreeNode * orig = t;
 
-							// switch types
-							switch (t->type)
-							{
-								case integer:
-									printf("of type int ");
-									break;
-								case boolean:
-									printf("of type bool ");
-									break;
-								case character:
-									printf("of type char ");
-									break;	
-							}
-
-						break;
-					case funDeclaration:
-						break;
-					case recDeclaration:
-						break;
-				}
-				
-				break;
-			default:
-				break;
-		
-		}
-		printf("[line: %d]\n", t->lineno );
-		t = t -> sibling;
 		if(t != NULL)
 		{
-			printf("Sibling: %d  ", sibCount);
+			//printf("Times through: %d\n", i);
+			switch (t -> nodekind)
+			{
+			// if we have a declaration
+				case DeclK:
+					//printf("Declaration!\n" );
+
+					//Switch types of declarations
+					switch (t->kind.decl)
+					{
+						case varDeclaration:
+							printf("Var %s ", t->attr.name);
+							if(t-> isArray == true)
+									{
+										arrMsgToggle = arrMsg;
+									}
+									else
+									{
+										arrMsgToggle = "";
+									}
+								// switch types
+								switch (t->type)
+								{
+									
+									case integer:
+										printf("%sof type int ", arrMsgToggle);
+										break;
+									case boolean:
+										printf("%sof type bool ", arrMsgToggle);
+										break;
+									case character:
+										printf("%sof type char ", arrMsgToggle);
+										break;	
+								}
+
+							break;
+						case funDeclaration:
+							break;
+						case recDeclaration:
+							break;
+					}
+					
+					break;
+				default:
+					break;
+			}
+
+			printf("[line: %d]\n", t->lineno );
+			if(t -> sibling != NULL)
+			{
+				printf("Sibling: %d  ", sibCount);
+			}
+			
+			printTree(t-> sibling, ++sibCount, childCount);
+
+			if (t-> child[childCount] != NULL)
+			{
+				int newChildCount = childCount++;
+				printTree(t->child[childCount], 0, newChildCount);
+			}
 		}
-		sibCount++;
-	} while (t != NULL);
 	
 }
 
