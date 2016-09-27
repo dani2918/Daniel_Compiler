@@ -4,8 +4,6 @@ Terminals which are not used
 
 
 State 2 conflicts: 1 shift/reduce
-State 74 conflicts: 21 reduce/reduce
-State 170 conflicts: 21 reduce/reduce
 
 
 Grammar
@@ -82,147 +80,149 @@ Grammar
    45 expressionStmt: expression SEMI
    46               | SEMI
 
-   47 selectIterStmt: matched
+   47 selectIterStmt: firstmatched
    48               | unmatched
 
-   49 matched: IF LPAREN simpleExpression RPAREN matched ELSE matched
-   50        | WHILE LPAREN simpleExpression RPAREN matched
-   51        | otherStatement
+   49 firstmatched: IF LPAREN simpleExpression RPAREN matched ELSE matched
+   50             | WHILE LPAREN simpleExpression RPAREN matched
 
-   52 unmatched: IF LPAREN simpleExpression RPAREN matched
-   53          | IF LPAREN simpleExpression RPAREN unmatched
-   54          | IF LPAREN simpleExpression RPAREN ELSE unmatched
-   55          | WHILE LPAREN simpleExpression RPAREN matched
-   56          | WHILE LPAREN simpleExpression RPAREN unmatched
-   57          | WHILE LPAREN simpleExpression RPAREN ELSE unmatched
+   51 matched: IF LPAREN simpleExpression RPAREN matched ELSE matched
+   52        | WHILE LPAREN simpleExpression RPAREN matched
+   53        | otherStatement
 
-   58 returnStmt: RETURN SEMI
-   59           | RETURN expression SEMI
+   54 unmatched: IF LPAREN simpleExpression RPAREN matched
+   55          | IF LPAREN simpleExpression RPAREN unmatched
+   56          | IF LPAREN simpleExpression RPAREN ELSE unmatched
+   57          | WHILE LPAREN simpleExpression RPAREN unmatched
+   58          | WHILE LPAREN simpleExpression RPAREN ELSE unmatched
 
-   60 breakStmt: BREAK SEMI
+   59 returnStmt: RETURN SEMI
+   60           | RETURN expression SEMI
 
-   61 expression: mutable ASS expression
-   62           | mutable ADDASS expression
-   63           | mutable SUBASS expression
-   64           | mutable MULASS expression
-   65           | mutable DIVASS expression
-   66           | mutable INC expression
-   67           | mutable DEC expression
-   68           | simpleExpression
+   61 breakStmt: BREAK SEMI
 
-   69 simpleExpression: simpleExpression OR andExpression
-   70                 | andExpression
+   62 expression: mutable ASS expression
+   63           | mutable ADDASS expression
+   64           | mutable SUBASS expression
+   65           | mutable MULASS expression
+   66           | mutable DIVASS expression
+   67           | mutable INC expression
+   68           | mutable DEC expression
+   69           | simpleExpression
 
-   71 andExpression: andExpression AND unaryRelExpression
-   72              | unaryRelExpression
+   70 simpleExpression: simpleExpression OR andExpression
+   71                 | andExpression
 
-   73 unaryRelExpression: NOT unaryRelExpression
-   74                   | relExpression
+   72 andExpression: andExpression AND unaryRelExpression
+   73              | unaryRelExpression
 
-   75 relExpression: sumExpression relop sumExpression
-   76              | sumExpression
+   74 unaryRelExpression: NOT unaryRelExpression
+   75                   | relExpression
 
-   77 relop: LESSEQ
-   78      | LT
-   79      | GT
-   80      | GRTEQ
-   81      | EQ
-   82      | NOTEQ
+   76 relExpression: sumExpression relop sumExpression
+   77              | sumExpression
 
-   83 sumExpression: sumExpression sumop term
-   84              | term
+   78 relop: LESSEQ
+   79      | LT
+   80      | GT
+   81      | GRTEQ
+   82      | EQ
+   83      | NOTEQ
 
-   85 sumop: ADD
-   86      | SUB
+   84 sumExpression: sumExpression sumop term
+   85              | term
 
-   87 term: term mulop unaryExpression
-   88     | unaryExpression
+   86 sumop: ADD
+   87      | SUB
 
-   89 mulop: MUL
-   90      | DIV
-   91      | MOD
+   88 term: term mulop unaryExpression
+   89     | unaryExpression
 
-   92 unaryExpression: unaryop unaryExpression
-   93                | factor
+   90 mulop: MUL
+   91      | DIV
+   92      | MOD
 
-   94 unaryop: SUB
-   95        | MUL
-   96        | OPT
+   93 unaryExpression: unaryop unaryExpression
+   94                | factor
 
-   97 factor: immutable
-   98       | mutable
+   95 unaryop: SUB
+   96        | MUL
+   97        | OPT
 
-   99 mutable: ID
-  100        | mutable LBRAC expression RBRAC
-  101        | mutable DOT ID
+   98 factor: immutable
+   99       | mutable
 
-  102 immutable: LPAREN expression RPAREN
-  103          | call
-  104          | constant
+  100 mutable: ID
+  101        | mutable LBRAC expression RBRAC
+  102        | mutable DOT ID
 
-  105 call: ID LPAREN args RPAREN
+  103 immutable: LPAREN expression RPAREN
+  104          | call
+  105          | constant
 
-  106 args: argList
-  107     | /* empty */
+  106 call: ID LPAREN args RPAREN
 
-  108 argList: argList COMMA expression
-  109        | expression
+  107 args: argList
+  108     | /* empty */
 
-  110 constant: NUMCONST
-  111         | CHARCONST
-  112         | BOOLCONST
+  109 argList: argList COMMA expression
+  110        | expression
+
+  111 constant: NUMCONST
+  112         | CHARCONST
+  113         | BOOLCONST
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
 error (256)
-NUMCONST (258) 15 110
-CHARCONST (259) 111
-ID (260) 7 14 15 23 24 32 33 99 101 105
-BOOLCONST (261) 112
-NOT (262) 73
-AND (263) 71
-OR (264) 69
+NUMCONST (258) 15 111
+CHARCONST (259) 112
+ID (260) 7 14 15 23 24 32 33 100 102 106
+BOOLCONST (261) 113
+NOT (262) 74
+AND (263) 72
+OR (264) 70
 RECORD (265) 7 19
 STATIC (266) 16
 INT (267) 20
 BOOL (268) 21
 CHAR (269) 22
-IF (270) 49 52 53 54
-ELSE (271) 49 54 57
-WHILE (272) 50 55 56 57
-RETURN (273) 58 59
-BREAK (274) 60
-OPT (275) 96
-DOT (276) 101
-ADDASS (277) 62
-SUBASS (278) 63
-MULASS (279) 64
-DIVASS (280) 65
-DEC (281) 67
-INC (282) 66
-EQ (283) 81
-NOTEQ (284) 82
-LESSEQ (285) 77
-LT (286) 78
-GRTEQ (287) 80
-GT (288) 79
-ASS (289) 61
-MUL (290) 89 95
-ADD (291) 85
-SUB (292) 86 94
-DIV (293) 90
-MOD (294) 91
-LPAREN (295) 23 24 49 50 52 53 54 55 56 57 102 105
-RPAREN (296) 23 24 49 50 52 53 54 55 56 57 102 105
-LBRAC (297) 15 33 100
-RBRAC (298) 15 33 100
+IF (270) 49 51 54 55 56
+ELSE (271) 49 51 56 58
+WHILE (272) 50 52 57 58
+RETURN (273) 59 60
+BREAK (274) 61
+OPT (275) 97
+DOT (276) 102
+ADDASS (277) 63
+SUBASS (278) 64
+MULASS (279) 65
+DIVASS (280) 66
+DEC (281) 68
+INC (282) 67
+EQ (283) 82
+NOTEQ (284) 83
+LESSEQ (285) 78
+LT (286) 79
+GRTEQ (287) 81
+GT (288) 80
+ASS (289) 62
+MUL (290) 90 96
+ADD (291) 86
+SUB (292) 87 95
+DIV (293) 91
+MOD (294) 92
+LPAREN (295) 23 24 49 50 51 52 54 55 56 57 58 103 106
+RPAREN (296) 23 24 49 50 51 52 54 55 56 57 58 103 106
+LBRAC (297) 15 33 101
+RBRAC (298) 15 33 101
 LCUR (299) 7 40
 RCUR (300) 7 40
-COMMA (301) 10 30 108
+COMMA (301) 10 30 109
 COL (302) 13
-SEMI (303) 8 9 27 45 46 58 59 60
+SEMI (303) 8 9 27 45 46 59 60 61
 ERR (304)
 
 
@@ -269,7 +269,7 @@ paramId (68)
 statement (69)
     on left: 34 35, on right: 23 24 43
 otherStatement (70)
-    on left: 36 37 38 39, on right: 35 51
+    on left: 36 37 38 39, on right: 35 53
 compoundStmt (71)
     on left: 40, on right: 37
 localDeclarations (72)
@@ -280,53 +280,55 @@ expressionStmt (74)
     on left: 45 46, on right: 36
 selectIterStmt (75)
     on left: 47 48, on right: 34
-matched (76)
-    on left: 49 50 51, on right: 47 49 50 52 55
-unmatched (77)
-    on left: 52 53 54 55 56 57, on right: 48 53 54 56 57
-returnStmt (78)
-    on left: 58 59, on right: 38
-breakStmt (79)
-    on left: 60, on right: 39
-expression (80)
-    on left: 61 62 63 64 65 66 67 68, on right: 45 59 61 62 63 64 65
-    66 67 100 102 108 109
-simpleExpression (81)
-    on left: 69 70, on right: 13 49 50 52 53 54 55 56 57 68 69
-andExpression (82)
-    on left: 71 72, on right: 69 70 71
-unaryRelExpression (83)
-    on left: 73 74, on right: 71 72 73
-relExpression (84)
-    on left: 75 76, on right: 74
-relop (85)
-    on left: 77 78 79 80 81 82, on right: 75
-sumExpression (86)
-    on left: 83 84, on right: 75 76 83
-sumop (87)
-    on left: 85 86, on right: 83
-term (88)
-    on left: 87 88, on right: 83 84 87
-mulop (89)
-    on left: 89 90 91, on right: 87
-unaryExpression (90)
-    on left: 92 93, on right: 87 88 92
-unaryop (91)
-    on left: 94 95 96, on right: 92
-factor (92)
-    on left: 97 98, on right: 93
-mutable (93)
-    on left: 99 100 101, on right: 61 62 63 64 65 66 67 98 100 101
-immutable (94)
-    on left: 102 103 104, on right: 97
-call (95)
-    on left: 105, on right: 103
-args (96)
-    on left: 106 107, on right: 105
-argList (97)
-    on left: 108 109, on right: 106 108
-constant (98)
-    on left: 110 111 112, on right: 104
+firstmatched (76)
+    on left: 49 50, on right: 47
+matched (77)
+    on left: 51 52 53, on right: 49 50 51 52 54
+unmatched (78)
+    on left: 54 55 56 57 58, on right: 48 55 56 57 58
+returnStmt (79)
+    on left: 59 60, on right: 38
+breakStmt (80)
+    on left: 61, on right: 39
+expression (81)
+    on left: 62 63 64 65 66 67 68 69, on right: 45 60 62 63 64 65 66
+    67 68 101 103 109 110
+simpleExpression (82)
+    on left: 70 71, on right: 13 49 50 51 52 54 55 56 57 58 69 70
+andExpression (83)
+    on left: 72 73, on right: 70 71 72
+unaryRelExpression (84)
+    on left: 74 75, on right: 72 73 74
+relExpression (85)
+    on left: 76 77, on right: 75
+relop (86)
+    on left: 78 79 80 81 82 83, on right: 76
+sumExpression (87)
+    on left: 84 85, on right: 76 77 84
+sumop (88)
+    on left: 86 87, on right: 84
+term (89)
+    on left: 88 89, on right: 84 85 88
+mulop (90)
+    on left: 90 91 92, on right: 88
+unaryExpression (91)
+    on left: 93 94, on right: 88 89 93
+unaryop (92)
+    on left: 95 96 97, on right: 93
+factor (93)
+    on left: 98 99, on right: 94
+mutable (94)
+    on left: 100 101 102, on right: 62 63 64 65 66 67 68 99 101 102
+immutable (95)
+    on left: 103 104 105, on right: 98
+call (96)
+    on left: 106, on right: 104
+args (97)
+    on left: 107 108, on right: 106
+argList (98)
+    on left: 109 110, on right: 107 109
+constant (99)
+    on left: 111 112 113, on right: 105
 
 
 state 0
@@ -712,7 +714,7 @@ state 36
     compoundStmt        go to state 75
     expressionStmt      go to state 76
     selectIterStmt      go to state 77
-    matched             go to state 78
+    firstmatched        go to state 78
     unmatched           go to state 79
     returnStmt          go to state 80
     breakStmt           go to state 81
@@ -797,38 +799,38 @@ state 42
 
 state 43
 
-  110 constant: NUMCONST .
-
-    $default  reduce using rule 110 (constant)
-
-
-state 44
-
-  111 constant: CHARCONST .
+  111 constant: NUMCONST .
 
     $default  reduce using rule 111 (constant)
 
 
-state 45
+state 44
 
-   99 mutable: ID .
-  105 call: ID . LPAREN args RPAREN
-
-    LPAREN  shift, and go to state 93
-
-    $default  reduce using rule 99 (mutable)
-
-
-state 46
-
-  112 constant: BOOLCONST .
+  112 constant: CHARCONST .
 
     $default  reduce using rule 112 (constant)
 
 
+state 45
+
+  100 mutable: ID .
+  106 call: ID . LPAREN args RPAREN
+
+    LPAREN  shift, and go to state 93
+
+    $default  reduce using rule 100 (mutable)
+
+
+state 46
+
+  113 constant: BOOLCONST .
+
+    $default  reduce using rule 113 (constant)
+
+
 state 47
 
-   73 unaryRelExpression: NOT . unaryRelExpression
+   74 unaryRelExpression: NOT . unaryRelExpression
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -855,28 +857,28 @@ state 47
 
 state 48
 
-   96 unaryop: OPT .
+   97 unaryop: OPT .
 
-    $default  reduce using rule 96 (unaryop)
+    $default  reduce using rule 97 (unaryop)
 
 
 state 49
 
-   95 unaryop: MUL .
+   96 unaryop: MUL .
 
-    $default  reduce using rule 95 (unaryop)
+    $default  reduce using rule 96 (unaryop)
 
 
 state 50
 
-   94 unaryop: SUB .
+   95 unaryop: SUB .
 
-    $default  reduce using rule 94 (unaryop)
+    $default  reduce using rule 95 (unaryop)
 
 
 state 51
 
-  102 immutable: LPAREN . expression RPAREN
+  103 immutable: LPAREN . expression RPAREN
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -907,7 +909,7 @@ state 51
 state 52
 
    13 varDeclInitialize: varDeclId COL simpleExpression .
-   69 simpleExpression: simpleExpression . OR andExpression
+   70 simpleExpression: simpleExpression . OR andExpression
 
     OR  shift, and go to state 96
 
@@ -916,33 +918,33 @@ state 52
 
 state 53
 
-   70 simpleExpression: andExpression .
-   71 andExpression: andExpression . AND unaryRelExpression
+   71 simpleExpression: andExpression .
+   72 andExpression: andExpression . AND unaryRelExpression
 
     AND  shift, and go to state 97
 
-    $default  reduce using rule 70 (simpleExpression)
+    $default  reduce using rule 71 (simpleExpression)
 
 
 state 54
 
-   72 andExpression: unaryRelExpression .
+   73 andExpression: unaryRelExpression .
 
-    $default  reduce using rule 72 (andExpression)
+    $default  reduce using rule 73 (andExpression)
 
 
 state 55
 
-   74 unaryRelExpression: relExpression .
+   75 unaryRelExpression: relExpression .
 
-    $default  reduce using rule 74 (unaryRelExpression)
+    $default  reduce using rule 75 (unaryRelExpression)
 
 
 state 56
 
-   75 relExpression: sumExpression . relop sumExpression
-   76              | sumExpression .
-   83 sumExpression: sumExpression . sumop term
+   76 relExpression: sumExpression . relop sumExpression
+   77              | sumExpression .
+   84 sumExpression: sumExpression . sumop term
 
     EQ      shift, and go to state 98
     NOTEQ   shift, and go to state 99
@@ -953,7 +955,7 @@ state 56
     ADD     shift, and go to state 104
     SUB     shift, and go to state 105
 
-    $default  reduce using rule 76 (relExpression)
+    $default  reduce using rule 77 (relExpression)
 
     relop  go to state 106
     sumop  go to state 107
@@ -961,28 +963,28 @@ state 56
 
 state 57
 
-   84 sumExpression: term .
-   87 term: term . mulop unaryExpression
+   85 sumExpression: term .
+   88 term: term . mulop unaryExpression
 
     MUL  shift, and go to state 108
     DIV  shift, and go to state 109
     MOD  shift, and go to state 110
 
-    $default  reduce using rule 84 (sumExpression)
+    $default  reduce using rule 85 (sumExpression)
 
     mulop  go to state 111
 
 
 state 58
 
-   88 term: unaryExpression .
+   89 term: unaryExpression .
 
-    $default  reduce using rule 88 (term)
+    $default  reduce using rule 89 (term)
 
 
 state 59
 
-   92 unaryExpression: unaryop . unaryExpression
+   93 unaryExpression: unaryop . unaryExpression
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -1004,42 +1006,42 @@ state 59
 
 state 60
 
-   93 unaryExpression: factor .
+   94 unaryExpression: factor .
 
-    $default  reduce using rule 93 (unaryExpression)
+    $default  reduce using rule 94 (unaryExpression)
 
 
 state 61
 
-   98 factor: mutable .
-  100 mutable: mutable . LBRAC expression RBRAC
-  101        | mutable . DOT ID
+   99 factor: mutable .
+  101 mutable: mutable . LBRAC expression RBRAC
+  102        | mutable . DOT ID
 
     DOT    shift, and go to state 113
     LBRAC  shift, and go to state 114
 
-    $default  reduce using rule 98 (factor)
+    $default  reduce using rule 99 (factor)
 
 
 state 62
 
-   97 factor: immutable .
+   98 factor: immutable .
 
-    $default  reduce using rule 97 (factor)
+    $default  reduce using rule 98 (factor)
 
 
 state 63
 
-  103 immutable: call .
+  104 immutable: call .
 
-    $default  reduce using rule 103 (immutable)
+    $default  reduce using rule 104 (immutable)
 
 
 state 64
 
-  104 immutable: constant .
+  105 immutable: constant .
 
-    $default  reduce using rule 104 (immutable)
+    $default  reduce using rule 105 (immutable)
 
 
 state 65
@@ -1060,28 +1062,27 @@ state 66
 
 state 67
 
-   49 matched: IF . LPAREN simpleExpression RPAREN matched ELSE matched
-   52 unmatched: IF . LPAREN simpleExpression RPAREN matched
-   53          | IF . LPAREN simpleExpression RPAREN unmatched
-   54          | IF . LPAREN simpleExpression RPAREN ELSE unmatched
+   49 firstmatched: IF . LPAREN simpleExpression RPAREN matched ELSE matched
+   54 unmatched: IF . LPAREN simpleExpression RPAREN matched
+   55          | IF . LPAREN simpleExpression RPAREN unmatched
+   56          | IF . LPAREN simpleExpression RPAREN ELSE unmatched
 
     LPAREN  shift, and go to state 117
 
 
 state 68
 
-   50 matched: WHILE . LPAREN simpleExpression RPAREN matched
-   55 unmatched: WHILE . LPAREN simpleExpression RPAREN matched
-   56          | WHILE . LPAREN simpleExpression RPAREN unmatched
-   57          | WHILE . LPAREN simpleExpression RPAREN ELSE unmatched
+   50 firstmatched: WHILE . LPAREN simpleExpression RPAREN matched
+   57 unmatched: WHILE . LPAREN simpleExpression RPAREN unmatched
+   58          | WHILE . LPAREN simpleExpression RPAREN ELSE unmatched
 
     LPAREN  shift, and go to state 118
 
 
 state 69
 
-   58 returnStmt: RETURN . SEMI
-   59           | RETURN . expression SEMI
+   59 returnStmt: RETURN . SEMI
+   60           | RETURN . expression SEMI
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -1112,7 +1113,7 @@ state 69
 
 state 70
 
-   60 breakStmt: BREAK . SEMI
+   61 breakStmt: BREAK . SEMI
 
     SEMI  shift, and go to state 121
 
@@ -1143,51 +1144,8 @@ state 73
 state 74
 
    35 statement: otherStatement .
-   51 matched: otherStatement .
 
-    $end       reduce using rule 35 (statement)
-    $end       [reduce using rule 51 (matched)]
-    NUMCONST   reduce using rule 35 (statement)
-    NUMCONST   [reduce using rule 51 (matched)]
-    CHARCONST  reduce using rule 35 (statement)
-    CHARCONST  [reduce using rule 51 (matched)]
-    ID         reduce using rule 35 (statement)
-    ID         [reduce using rule 51 (matched)]
-    BOOLCONST  reduce using rule 35 (statement)
-    BOOLCONST  [reduce using rule 51 (matched)]
-    NOT        reduce using rule 35 (statement)
-    NOT        [reduce using rule 51 (matched)]
-    RECORD     reduce using rule 35 (statement)
-    RECORD     [reduce using rule 51 (matched)]
-    INT        reduce using rule 35 (statement)
-    INT        [reduce using rule 51 (matched)]
-    BOOL       reduce using rule 35 (statement)
-    BOOL       [reduce using rule 51 (matched)]
-    CHAR       reduce using rule 35 (statement)
-    CHAR       [reduce using rule 51 (matched)]
-    IF         reduce using rule 35 (statement)
-    IF         [reduce using rule 51 (matched)]
-    WHILE      reduce using rule 35 (statement)
-    WHILE      [reduce using rule 51 (matched)]
-    RETURN     reduce using rule 35 (statement)
-    RETURN     [reduce using rule 51 (matched)]
-    BREAK      reduce using rule 35 (statement)
-    BREAK      [reduce using rule 51 (matched)]
-    OPT        reduce using rule 35 (statement)
-    OPT        [reduce using rule 51 (matched)]
-    MUL        reduce using rule 35 (statement)
-    MUL        [reduce using rule 51 (matched)]
-    SUB        reduce using rule 35 (statement)
-    SUB        [reduce using rule 51 (matched)]
-    LPAREN     reduce using rule 35 (statement)
-    LPAREN     [reduce using rule 51 (matched)]
-    LCUR       reduce using rule 35 (statement)
-    LCUR       [reduce using rule 51 (matched)]
-    RCUR       reduce using rule 35 (statement)
-    RCUR       [reduce using rule 51 (matched)]
-    SEMI       reduce using rule 35 (statement)
-    SEMI       [reduce using rule 51 (matched)]
-    $default   reduce using rule 35 (statement)
+    $default  reduce using rule 35 (statement)
 
 
 state 75
@@ -1213,7 +1171,7 @@ state 77
 
 state 78
 
-   47 selectIterStmt: matched .
+   47 selectIterStmt: firstmatched .
 
     $default  reduce using rule 47 (selectIterStmt)
 
@@ -1248,26 +1206,26 @@ state 82
 
 state 83
 
-   68 expression: simpleExpression .
-   69 simpleExpression: simpleExpression . OR andExpression
+   69 expression: simpleExpression .
+   70 simpleExpression: simpleExpression . OR andExpression
 
     OR  shift, and go to state 96
 
-    $default  reduce using rule 68 (expression)
+    $default  reduce using rule 69 (expression)
 
 
 state 84
 
-   61 expression: mutable . ASS expression
-   62           | mutable . ADDASS expression
-   63           | mutable . SUBASS expression
-   64           | mutable . MULASS expression
-   65           | mutable . DIVASS expression
-   66           | mutable . INC expression
-   67           | mutable . DEC expression
-   98 factor: mutable .
-  100 mutable: mutable . LBRAC expression RBRAC
-  101        | mutable . DOT ID
+   62 expression: mutable . ASS expression
+   63           | mutable . ADDASS expression
+   64           | mutable . SUBASS expression
+   65           | mutable . MULASS expression
+   66           | mutable . DIVASS expression
+   67           | mutable . INC expression
+   68           | mutable . DEC expression
+   99 factor: mutable .
+  101 mutable: mutable . LBRAC expression RBRAC
+  102        | mutable . DOT ID
 
     DOT     shift, and go to state 113
     ADDASS  shift, and go to state 124
@@ -1279,7 +1237,7 @@ state 84
     ASS     shift, and go to state 130
     LBRAC   shift, and go to state 114
 
-    $default  reduce using rule 98 (factor)
+    $default  reduce using rule 99 (factor)
 
 
 state 85
@@ -1359,7 +1317,7 @@ state 91
     compoundStmt        go to state 75
     expressionStmt      go to state 76
     selectIterStmt      go to state 77
-    matched             go to state 78
+    firstmatched        go to state 78
     unmatched           go to state 79
     returnStmt          go to state 80
     breakStmt           go to state 81
@@ -1388,7 +1346,7 @@ state 92
 
 state 93
 
-  105 call: ID LPAREN . args RPAREN
+  106 call: ID LPAREN . args RPAREN
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -1400,7 +1358,7 @@ state 93
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
 
-    $default  reduce using rule 107 (args)
+    $default  reduce using rule 108 (args)
 
     expression          go to state 134
     simpleExpression    go to state 83
@@ -1422,21 +1380,21 @@ state 93
 
 state 94
 
-   73 unaryRelExpression: NOT unaryRelExpression .
+   74 unaryRelExpression: NOT unaryRelExpression .
 
-    $default  reduce using rule 73 (unaryRelExpression)
+    $default  reduce using rule 74 (unaryRelExpression)
 
 
 state 95
 
-  102 immutable: LPAREN expression . RPAREN
+  103 immutable: LPAREN expression . RPAREN
 
     RPAREN  shift, and go to state 137
 
 
 state 96
 
-   69 simpleExpression: simpleExpression OR . andExpression
+   70 simpleExpression: simpleExpression OR . andExpression
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -1464,7 +1422,7 @@ state 96
 
 state 97
 
-   71 andExpression: andExpression AND . unaryRelExpression
+   72 andExpression: andExpression AND . unaryRelExpression
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -1491,63 +1449,63 @@ state 97
 
 state 98
 
-   81 relop: EQ .
-
-    $default  reduce using rule 81 (relop)
-
-
-state 99
-
-   82 relop: NOTEQ .
+   82 relop: EQ .
 
     $default  reduce using rule 82 (relop)
 
 
+state 99
+
+   83 relop: NOTEQ .
+
+    $default  reduce using rule 83 (relop)
+
+
 state 100
 
-   77 relop: LESSEQ .
-
-    $default  reduce using rule 77 (relop)
-
-
-state 101
-
-   78 relop: LT .
+   78 relop: LESSEQ .
 
     $default  reduce using rule 78 (relop)
 
 
-state 102
+state 101
 
-   80 relop: GRTEQ .
-
-    $default  reduce using rule 80 (relop)
-
-
-state 103
-
-   79 relop: GT .
+   79 relop: LT .
 
     $default  reduce using rule 79 (relop)
 
 
+state 102
+
+   81 relop: GRTEQ .
+
+    $default  reduce using rule 81 (relop)
+
+
+state 103
+
+   80 relop: GT .
+
+    $default  reduce using rule 80 (relop)
+
+
 state 104
 
-   85 sumop: ADD .
-
-    $default  reduce using rule 85 (sumop)
-
-
-state 105
-
-   86 sumop: SUB .
+   86 sumop: ADD .
 
     $default  reduce using rule 86 (sumop)
 
 
+state 105
+
+   87 sumop: SUB .
+
+    $default  reduce using rule 87 (sumop)
+
+
 state 106
 
-   75 relExpression: sumExpression relop . sumExpression
+   76 relExpression: sumExpression relop . sumExpression
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -1571,7 +1529,7 @@ state 106
 
 state 107
 
-   83 sumExpression: sumExpression sumop . term
+   84 sumExpression: sumExpression sumop . term
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -1594,28 +1552,28 @@ state 107
 
 state 108
 
-   89 mulop: MUL .
-
-    $default  reduce using rule 89 (mulop)
-
-
-state 109
-
-   90 mulop: DIV .
+   90 mulop: MUL .
 
     $default  reduce using rule 90 (mulop)
 
 
-state 110
+state 109
 
-   91 mulop: MOD .
+   91 mulop: DIV .
 
     $default  reduce using rule 91 (mulop)
 
 
+state 110
+
+   92 mulop: MOD .
+
+    $default  reduce using rule 92 (mulop)
+
+
 state 111
 
-   87 term: term mulop . unaryExpression
+   88 term: term mulop . unaryExpression
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -1637,21 +1595,21 @@ state 111
 
 state 112
 
-   92 unaryExpression: unaryop unaryExpression .
+   93 unaryExpression: unaryop unaryExpression .
 
-    $default  reduce using rule 92 (unaryExpression)
+    $default  reduce using rule 93 (unaryExpression)
 
 
 state 113
 
-  101 mutable: mutable DOT . ID
+  102 mutable: mutable DOT . ID
 
     ID  shift, and go to state 143
 
 
 state 114
 
-  100 mutable: mutable LBRAC . expression RBRAC
+  101 mutable: mutable LBRAC . expression RBRAC
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -1695,10 +1653,10 @@ state 116
 
 state 117
 
-   49 matched: IF LPAREN . simpleExpression RPAREN matched ELSE matched
-   52 unmatched: IF LPAREN . simpleExpression RPAREN matched
-   53          | IF LPAREN . simpleExpression RPAREN unmatched
-   54          | IF LPAREN . simpleExpression RPAREN ELSE unmatched
+   49 firstmatched: IF LPAREN . simpleExpression RPAREN matched ELSE matched
+   54 unmatched: IF LPAREN . simpleExpression RPAREN matched
+   55          | IF LPAREN . simpleExpression RPAREN unmatched
+   56          | IF LPAREN . simpleExpression RPAREN ELSE unmatched
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -1727,10 +1685,9 @@ state 117
 
 state 118
 
-   50 matched: WHILE LPAREN . simpleExpression RPAREN matched
-   55 unmatched: WHILE LPAREN . simpleExpression RPAREN matched
-   56          | WHILE LPAREN . simpleExpression RPAREN unmatched
-   57          | WHILE LPAREN . simpleExpression RPAREN ELSE unmatched
+   50 firstmatched: WHILE LPAREN . simpleExpression RPAREN matched
+   57 unmatched: WHILE LPAREN . simpleExpression RPAREN unmatched
+   58          | WHILE LPAREN . simpleExpression RPAREN ELSE unmatched
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -1759,23 +1716,23 @@ state 118
 
 state 119
 
-   58 returnStmt: RETURN SEMI .
+   59 returnStmt: RETURN SEMI .
 
-    $default  reduce using rule 58 (returnStmt)
+    $default  reduce using rule 59 (returnStmt)
 
 
 state 120
 
-   59 returnStmt: RETURN expression . SEMI
+   60 returnStmt: RETURN expression . SEMI
 
     SEMI  shift, and go to state 147
 
 
 state 121
 
-   60 breakStmt: BREAK SEMI .
+   61 breakStmt: BREAK SEMI .
 
-    $default  reduce using rule 60 (breakStmt)
+    $default  reduce using rule 61 (breakStmt)
 
 
 state 122
@@ -1807,7 +1764,7 @@ state 123
 
 state 124
 
-   62 expression: mutable ADDASS . expression
+   63 expression: mutable ADDASS . expression
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -1837,7 +1794,7 @@ state 124
 
 state 125
 
-   63 expression: mutable SUBASS . expression
+   64 expression: mutable SUBASS . expression
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -1867,7 +1824,7 @@ state 125
 
 state 126
 
-   64 expression: mutable MULASS . expression
+   65 expression: mutable MULASS . expression
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -1897,7 +1854,7 @@ state 126
 
 state 127
 
-   65 expression: mutable DIVASS . expression
+   66 expression: mutable DIVASS . expression
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -1927,7 +1884,7 @@ state 127
 
 state 128
 
-   67 expression: mutable DEC . expression
+   68 expression: mutable DEC . expression
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -1957,7 +1914,7 @@ state 128
 
 state 129
 
-   66 expression: mutable INC . expression
+   67 expression: mutable INC . expression
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -1987,7 +1944,7 @@ state 129
 
 state 130
 
-   61 expression: mutable ASS . expression
+   62 expression: mutable ASS . expression
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -2040,107 +1997,107 @@ state 133
 
 state 134
 
-  109 argList: expression .
+  110 argList: expression .
 
-    $default  reduce using rule 109 (argList)
+    $default  reduce using rule 110 (argList)
 
 
 state 135
 
-  105 call: ID LPAREN args . RPAREN
+  106 call: ID LPAREN args . RPAREN
 
     RPAREN  shift, and go to state 157
 
 
 state 136
 
-  106 args: argList .
-  108 argList: argList . COMMA expression
+  107 args: argList .
+  109 argList: argList . COMMA expression
 
     COMMA  shift, and go to state 158
 
-    $default  reduce using rule 106 (args)
+    $default  reduce using rule 107 (args)
 
 
 state 137
 
-  102 immutable: LPAREN expression RPAREN .
+  103 immutable: LPAREN expression RPAREN .
 
-    $default  reduce using rule 102 (immutable)
+    $default  reduce using rule 103 (immutable)
 
 
 state 138
 
-   69 simpleExpression: simpleExpression OR andExpression .
-   71 andExpression: andExpression . AND unaryRelExpression
+   70 simpleExpression: simpleExpression OR andExpression .
+   72 andExpression: andExpression . AND unaryRelExpression
 
     AND  shift, and go to state 97
 
-    $default  reduce using rule 69 (simpleExpression)
+    $default  reduce using rule 70 (simpleExpression)
 
 
 state 139
 
-   71 andExpression: andExpression AND unaryRelExpression .
+   72 andExpression: andExpression AND unaryRelExpression .
 
-    $default  reduce using rule 71 (andExpression)
+    $default  reduce using rule 72 (andExpression)
 
 
 state 140
 
-   75 relExpression: sumExpression relop sumExpression .
-   83 sumExpression: sumExpression . sumop term
+   76 relExpression: sumExpression relop sumExpression .
+   84 sumExpression: sumExpression . sumop term
 
     ADD  shift, and go to state 104
     SUB  shift, and go to state 105
 
-    $default  reduce using rule 75 (relExpression)
+    $default  reduce using rule 76 (relExpression)
 
     sumop  go to state 107
 
 
 state 141
 
-   83 sumExpression: sumExpression sumop term .
-   87 term: term . mulop unaryExpression
+   84 sumExpression: sumExpression sumop term .
+   88 term: term . mulop unaryExpression
 
     MUL  shift, and go to state 108
     DIV  shift, and go to state 109
     MOD  shift, and go to state 110
 
-    $default  reduce using rule 83 (sumExpression)
+    $default  reduce using rule 84 (sumExpression)
 
     mulop  go to state 111
 
 
 state 142
 
-   87 term: term mulop unaryExpression .
+   88 term: term mulop unaryExpression .
 
-    $default  reduce using rule 87 (term)
+    $default  reduce using rule 88 (term)
 
 
 state 143
 
-  101 mutable: mutable DOT ID .
+  102 mutable: mutable DOT ID .
 
-    $default  reduce using rule 101 (mutable)
+    $default  reduce using rule 102 (mutable)
 
 
 state 144
 
-  100 mutable: mutable LBRAC expression . RBRAC
+  101 mutable: mutable LBRAC expression . RBRAC
 
     RBRAC  shift, and go to state 159
 
 
 state 145
 
-   49 matched: IF LPAREN simpleExpression . RPAREN matched ELSE matched
-   52 unmatched: IF LPAREN simpleExpression . RPAREN matched
-   53          | IF LPAREN simpleExpression . RPAREN unmatched
-   54          | IF LPAREN simpleExpression . RPAREN ELSE unmatched
-   69 simpleExpression: simpleExpression . OR andExpression
+   49 firstmatched: IF LPAREN simpleExpression . RPAREN matched ELSE matched
+   54 unmatched: IF LPAREN simpleExpression . RPAREN matched
+   55          | IF LPAREN simpleExpression . RPAREN unmatched
+   56          | IF LPAREN simpleExpression . RPAREN ELSE unmatched
+   70 simpleExpression: simpleExpression . OR andExpression
 
     OR      shift, and go to state 96
     RPAREN  shift, and go to state 160
@@ -2148,11 +2105,10 @@ state 145
 
 state 146
 
-   50 matched: WHILE LPAREN simpleExpression . RPAREN matched
-   55 unmatched: WHILE LPAREN simpleExpression . RPAREN matched
-   56          | WHILE LPAREN simpleExpression . RPAREN unmatched
-   57          | WHILE LPAREN simpleExpression . RPAREN ELSE unmatched
-   69 simpleExpression: simpleExpression . OR andExpression
+   50 firstmatched: WHILE LPAREN simpleExpression . RPAREN matched
+   57 unmatched: WHILE LPAREN simpleExpression . RPAREN unmatched
+   58          | WHILE LPAREN simpleExpression . RPAREN ELSE unmatched
+   70 simpleExpression: simpleExpression . OR andExpression
 
     OR      shift, and go to state 96
     RPAREN  shift, and go to state 161
@@ -2160,9 +2116,9 @@ state 146
 
 state 147
 
-   59 returnStmt: RETURN expression SEMI .
+   60 returnStmt: RETURN expression SEMI .
 
-    $default  reduce using rule 59 (returnStmt)
+    $default  reduce using rule 60 (returnStmt)
 
 
 state 148
@@ -2192,7 +2148,7 @@ state 148
     compoundStmt        go to state 75
     expressionStmt      go to state 76
     selectIterStmt      go to state 77
-    matched             go to state 78
+    firstmatched        go to state 78
     unmatched           go to state 79
     returnStmt          go to state 80
     breakStmt           go to state 81
@@ -2214,51 +2170,51 @@ state 148
 
 state 149
 
-   62 expression: mutable ADDASS expression .
-
-    $default  reduce using rule 62 (expression)
-
-
-state 150
-
-   63 expression: mutable SUBASS expression .
+   63 expression: mutable ADDASS expression .
 
     $default  reduce using rule 63 (expression)
 
 
-state 151
+state 150
 
-   64 expression: mutable MULASS expression .
+   64 expression: mutable SUBASS expression .
 
     $default  reduce using rule 64 (expression)
 
 
-state 152
+state 151
 
-   65 expression: mutable DIVASS expression .
+   65 expression: mutable MULASS expression .
 
     $default  reduce using rule 65 (expression)
 
 
-state 153
+state 152
 
-   67 expression: mutable DEC expression .
-
-    $default  reduce using rule 67 (expression)
-
-
-state 154
-
-   66 expression: mutable INC expression .
+   66 expression: mutable DIVASS expression .
 
     $default  reduce using rule 66 (expression)
 
 
+state 153
+
+   68 expression: mutable DEC expression .
+
+    $default  reduce using rule 68 (expression)
+
+
+state 154
+
+   67 expression: mutable INC expression .
+
+    $default  reduce using rule 67 (expression)
+
+
 state 155
 
-   61 expression: mutable ASS expression .
+   62 expression: mutable ASS expression .
 
-    $default  reduce using rule 61 (expression)
+    $default  reduce using rule 62 (expression)
 
 
 state 156
@@ -2270,14 +2226,14 @@ state 156
 
 state 157
 
-  105 call: ID LPAREN args RPAREN .
+  106 call: ID LPAREN args RPAREN .
 
-    $default  reduce using rule 105 (call)
+    $default  reduce using rule 106 (call)
 
 
 state 158
 
-  108 argList: argList COMMA . expression
+  109 argList: argList COMMA . expression
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -2307,26 +2263,26 @@ state 158
 
 state 159
 
-  100 mutable: mutable LBRAC expression RBRAC .
+  101 mutable: mutable LBRAC expression RBRAC .
 
-    $default  reduce using rule 100 (mutable)
+    $default  reduce using rule 101 (mutable)
 
 
 state 160
 
-   49 matched: IF LPAREN simpleExpression RPAREN . matched ELSE matched
-   52 unmatched: IF LPAREN simpleExpression RPAREN . matched
-   53          | IF LPAREN simpleExpression RPAREN . unmatched
-   54          | IF LPAREN simpleExpression RPAREN . ELSE unmatched
+   49 firstmatched: IF LPAREN simpleExpression RPAREN . matched ELSE matched
+   54 unmatched: IF LPAREN simpleExpression RPAREN . matched
+   55          | IF LPAREN simpleExpression RPAREN . unmatched
+   56          | IF LPAREN simpleExpression RPAREN . ELSE unmatched
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    IF         shift, and go to state 67
-    ELSE       shift, and go to state 165
-    WHILE      shift, and go to state 68
+    IF         shift, and go to state 165
+    ELSE       shift, and go to state 166
+    WHILE      shift, and go to state 167
     RETURN     shift, and go to state 69
     BREAK      shift, and go to state 70
     OPT        shift, and go to state 48
@@ -2336,11 +2292,11 @@ state 160
     LCUR       shift, and go to state 71
     SEMI       shift, and go to state 72
 
-    otherStatement      go to state 166
+    otherStatement      go to state 168
     compoundStmt        go to state 75
     expressionStmt      go to state 76
-    matched             go to state 167
-    unmatched           go to state 168
+    matched             go to state 169
+    unmatched           go to state 170
     returnStmt          go to state 80
     breakStmt           go to state 81
     expression          go to state 82
@@ -2361,19 +2317,18 @@ state 160
 
 state 161
 
-   50 matched: WHILE LPAREN simpleExpression RPAREN . matched
-   55 unmatched: WHILE LPAREN simpleExpression RPAREN . matched
-   56          | WHILE LPAREN simpleExpression RPAREN . unmatched
-   57          | WHILE LPAREN simpleExpression RPAREN . ELSE unmatched
+   50 firstmatched: WHILE LPAREN simpleExpression RPAREN . matched
+   57 unmatched: WHILE LPAREN simpleExpression RPAREN . unmatched
+   58          | WHILE LPAREN simpleExpression RPAREN . ELSE unmatched
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    IF         shift, and go to state 67
-    ELSE       shift, and go to state 169
-    WHILE      shift, and go to state 68
+    IF         shift, and go to state 165
+    ELSE       shift, and go to state 171
+    WHILE      shift, and go to state 167
     RETURN     shift, and go to state 69
     BREAK      shift, and go to state 70
     OPT        shift, and go to state 48
@@ -2383,11 +2338,11 @@ state 161
     LCUR       shift, and go to state 71
     SEMI       shift, and go to state 72
 
-    otherStatement      go to state 166
+    otherStatement      go to state 168
     compoundStmt        go to state 75
     expressionStmt      go to state 76
-    matched             go to state 170
-    unmatched           go to state 171
+    matched             go to state 172
+    unmatched           go to state 173
     returnStmt          go to state 80
     breakStmt           go to state 81
     expression          go to state 82
@@ -2422,148 +2377,186 @@ state 163
 
 state 164
 
-  108 argList: argList COMMA expression .
+  109 argList: argList COMMA expression .
 
-    $default  reduce using rule 108 (argList)
+    $default  reduce using rule 109 (argList)
 
 
 state 165
 
-   54 unmatched: IF LPAREN simpleExpression RPAREN ELSE . unmatched
+   51 matched: IF . LPAREN simpleExpression RPAREN matched ELSE matched
+   54 unmatched: IF . LPAREN simpleExpression RPAREN matched
+   55          | IF . LPAREN simpleExpression RPAREN unmatched
+   56          | IF . LPAREN simpleExpression RPAREN ELSE unmatched
 
-    IF     shift, and go to state 172
-    WHILE  shift, and go to state 173
-
-    unmatched  go to state 174
+    LPAREN  shift, and go to state 174
 
 
 state 166
 
-   51 matched: otherStatement .
+   56 unmatched: IF LPAREN simpleExpression RPAREN ELSE . unmatched
 
-    $default  reduce using rule 51 (matched)
+    IF     shift, and go to state 175
+    WHILE  shift, and go to state 176
+
+    unmatched  go to state 177
 
 
 state 167
 
-   49 matched: IF LPAREN simpleExpression RPAREN matched . ELSE matched
-   52 unmatched: IF LPAREN simpleExpression RPAREN matched .
-
-    ELSE  shift, and go to state 175
-
-    $default  reduce using rule 52 (unmatched)
-
-
-state 168
-
-   53 unmatched: IF LPAREN simpleExpression RPAREN unmatched .
-
-    $default  reduce using rule 53 (unmatched)
-
-
-state 169
-
-   57 unmatched: WHILE LPAREN simpleExpression RPAREN ELSE . unmatched
-
-    IF     shift, and go to state 172
-    WHILE  shift, and go to state 173
-
-    unmatched  go to state 176
-
-
-state 170
-
-   50 matched: WHILE LPAREN simpleExpression RPAREN matched .
-   55 unmatched: WHILE LPAREN simpleExpression RPAREN matched .
-
-    $end       reduce using rule 50 (matched)
-    $end       [reduce using rule 55 (unmatched)]
-    NUMCONST   reduce using rule 50 (matched)
-    NUMCONST   [reduce using rule 55 (unmatched)]
-    CHARCONST  reduce using rule 50 (matched)
-    CHARCONST  [reduce using rule 55 (unmatched)]
-    ID         reduce using rule 50 (matched)
-    ID         [reduce using rule 55 (unmatched)]
-    BOOLCONST  reduce using rule 50 (matched)
-    BOOLCONST  [reduce using rule 55 (unmatched)]
-    NOT        reduce using rule 50 (matched)
-    NOT        [reduce using rule 55 (unmatched)]
-    RECORD     reduce using rule 50 (matched)
-    RECORD     [reduce using rule 55 (unmatched)]
-    INT        reduce using rule 50 (matched)
-    INT        [reduce using rule 55 (unmatched)]
-    BOOL       reduce using rule 50 (matched)
-    BOOL       [reduce using rule 55 (unmatched)]
-    CHAR       reduce using rule 50 (matched)
-    CHAR       [reduce using rule 55 (unmatched)]
-    IF         reduce using rule 50 (matched)
-    IF         [reduce using rule 55 (unmatched)]
-    WHILE      reduce using rule 50 (matched)
-    WHILE      [reduce using rule 55 (unmatched)]
-    RETURN     reduce using rule 50 (matched)
-    RETURN     [reduce using rule 55 (unmatched)]
-    BREAK      reduce using rule 50 (matched)
-    BREAK      [reduce using rule 55 (unmatched)]
-    OPT        reduce using rule 50 (matched)
-    OPT        [reduce using rule 55 (unmatched)]
-    MUL        reduce using rule 50 (matched)
-    MUL        [reduce using rule 55 (unmatched)]
-    SUB        reduce using rule 50 (matched)
-    SUB        [reduce using rule 55 (unmatched)]
-    LPAREN     reduce using rule 50 (matched)
-    LPAREN     [reduce using rule 55 (unmatched)]
-    LCUR       reduce using rule 50 (matched)
-    LCUR       [reduce using rule 55 (unmatched)]
-    RCUR       reduce using rule 50 (matched)
-    RCUR       [reduce using rule 55 (unmatched)]
-    SEMI       reduce using rule 50 (matched)
-    SEMI       [reduce using rule 55 (unmatched)]
-    $default   reduce using rule 50 (matched)
-
-
-state 171
-
-   56 unmatched: WHILE LPAREN simpleExpression RPAREN unmatched .
-
-    $default  reduce using rule 56 (unmatched)
-
-
-state 172
-
-   52 unmatched: IF . LPAREN simpleExpression RPAREN matched
-   53          | IF . LPAREN simpleExpression RPAREN unmatched
-   54          | IF . LPAREN simpleExpression RPAREN ELSE unmatched
-
-    LPAREN  shift, and go to state 177
-
-
-state 173
-
-   55 unmatched: WHILE . LPAREN simpleExpression RPAREN matched
-   56          | WHILE . LPAREN simpleExpression RPAREN unmatched
-   57          | WHILE . LPAREN simpleExpression RPAREN ELSE unmatched
+   52 matched: WHILE . LPAREN simpleExpression RPAREN matched
+   57 unmatched: WHILE . LPAREN simpleExpression RPAREN unmatched
+   58          | WHILE . LPAREN simpleExpression RPAREN ELSE unmatched
 
     LPAREN  shift, and go to state 178
 
 
-state 174
+state 168
 
-   54 unmatched: IF LPAREN simpleExpression RPAREN ELSE unmatched .
+   53 matched: otherStatement .
+
+    $default  reduce using rule 53 (matched)
+
+
+state 169
+
+   49 firstmatched: IF LPAREN simpleExpression RPAREN matched . ELSE matched
+   54 unmatched: IF LPAREN simpleExpression RPAREN matched .
+
+    ELSE  shift, and go to state 179
 
     $default  reduce using rule 54 (unmatched)
 
 
-state 175
+state 170
 
-   49 matched: IF LPAREN simpleExpression RPAREN matched ELSE . matched
+   55 unmatched: IF LPAREN simpleExpression RPAREN unmatched .
+
+    $default  reduce using rule 55 (unmatched)
+
+
+state 171
+
+   58 unmatched: WHILE LPAREN simpleExpression RPAREN ELSE . unmatched
+
+    IF     shift, and go to state 175
+    WHILE  shift, and go to state 176
+
+    unmatched  go to state 180
+
+
+state 172
+
+   50 firstmatched: WHILE LPAREN simpleExpression RPAREN matched .
+
+    $default  reduce using rule 50 (firstmatched)
+
+
+state 173
+
+   57 unmatched: WHILE LPAREN simpleExpression RPAREN unmatched .
+
+    $default  reduce using rule 57 (unmatched)
+
+
+state 174
+
+   51 matched: IF LPAREN . simpleExpression RPAREN matched ELSE matched
+   54 unmatched: IF LPAREN . simpleExpression RPAREN matched
+   55          | IF LPAREN . simpleExpression RPAREN unmatched
+   56          | IF LPAREN . simpleExpression RPAREN ELSE unmatched
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    IF         shift, and go to state 179
-    WHILE      shift, and go to state 180
+    OPT        shift, and go to state 48
+    MUL        shift, and go to state 49
+    SUB        shift, and go to state 50
+    LPAREN     shift, and go to state 51
+
+    simpleExpression    go to state 181
+    andExpression       go to state 53
+    unaryRelExpression  go to state 54
+    relExpression       go to state 55
+    sumExpression       go to state 56
+    term                go to state 57
+    unaryExpression     go to state 58
+    unaryop             go to state 59
+    factor              go to state 60
+    mutable             go to state 61
+    immutable           go to state 62
+    call                go to state 63
+    constant            go to state 64
+
+
+state 175
+
+   54 unmatched: IF . LPAREN simpleExpression RPAREN matched
+   55          | IF . LPAREN simpleExpression RPAREN unmatched
+   56          | IF . LPAREN simpleExpression RPAREN ELSE unmatched
+
+    LPAREN  shift, and go to state 182
+
+
+state 176
+
+   57 unmatched: WHILE . LPAREN simpleExpression RPAREN unmatched
+   58          | WHILE . LPAREN simpleExpression RPAREN ELSE unmatched
+
+    LPAREN  shift, and go to state 183
+
+
+state 177
+
+   56 unmatched: IF LPAREN simpleExpression RPAREN ELSE unmatched .
+
+    $default  reduce using rule 56 (unmatched)
+
+
+state 178
+
+   52 matched: WHILE LPAREN . simpleExpression RPAREN matched
+   57 unmatched: WHILE LPAREN . simpleExpression RPAREN unmatched
+   58          | WHILE LPAREN . simpleExpression RPAREN ELSE unmatched
+
+    NUMCONST   shift, and go to state 43
+    CHARCONST  shift, and go to state 44
+    ID         shift, and go to state 45
+    BOOLCONST  shift, and go to state 46
+    NOT        shift, and go to state 47
+    OPT        shift, and go to state 48
+    MUL        shift, and go to state 49
+    SUB        shift, and go to state 50
+    LPAREN     shift, and go to state 51
+
+    simpleExpression    go to state 184
+    andExpression       go to state 53
+    unaryRelExpression  go to state 54
+    relExpression       go to state 55
+    sumExpression       go to state 56
+    term                go to state 57
+    unaryExpression     go to state 58
+    unaryop             go to state 59
+    factor              go to state 60
+    mutable             go to state 61
+    immutable           go to state 62
+    call                go to state 63
+    constant            go to state 64
+
+
+state 179
+
+   49 firstmatched: IF LPAREN simpleExpression RPAREN matched ELSE . matched
+
+    NUMCONST   shift, and go to state 43
+    CHARCONST  shift, and go to state 44
+    ID         shift, and go to state 45
+    BOOLCONST  shift, and go to state 46
+    NOT        shift, and go to state 47
+    IF         shift, and go to state 185
+    WHILE      shift, and go to state 186
     RETURN     shift, and go to state 69
     BREAK      shift, and go to state 70
     OPT        shift, and go to state 48
@@ -2573,10 +2566,10 @@ state 175
     LCUR       shift, and go to state 71
     SEMI       shift, and go to state 72
 
-    otherStatement      go to state 166
+    otherStatement      go to state 168
     compoundStmt        go to state 75
     expressionStmt      go to state 76
-    matched             go to state 181
+    matched             go to state 187
     returnStmt          go to state 80
     breakStmt           go to state 81
     expression          go to state 82
@@ -2595,150 +2588,30 @@ state 175
     constant            go to state 64
 
 
-state 176
-
-   57 unmatched: WHILE LPAREN simpleExpression RPAREN ELSE unmatched .
-
-    $default  reduce using rule 57 (unmatched)
-
-
-state 177
-
-   52 unmatched: IF LPAREN . simpleExpression RPAREN matched
-   53          | IF LPAREN . simpleExpression RPAREN unmatched
-   54          | IF LPAREN . simpleExpression RPAREN ELSE unmatched
-
-    NUMCONST   shift, and go to state 43
-    CHARCONST  shift, and go to state 44
-    ID         shift, and go to state 45
-    BOOLCONST  shift, and go to state 46
-    NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
-    MUL        shift, and go to state 49
-    SUB        shift, and go to state 50
-    LPAREN     shift, and go to state 51
-
-    simpleExpression    go to state 182
-    andExpression       go to state 53
-    unaryRelExpression  go to state 54
-    relExpression       go to state 55
-    sumExpression       go to state 56
-    term                go to state 57
-    unaryExpression     go to state 58
-    unaryop             go to state 59
-    factor              go to state 60
-    mutable             go to state 61
-    immutable           go to state 62
-    call                go to state 63
-    constant            go to state 64
-
-
-state 178
-
-   55 unmatched: WHILE LPAREN . simpleExpression RPAREN matched
-   56          | WHILE LPAREN . simpleExpression RPAREN unmatched
-   57          | WHILE LPAREN . simpleExpression RPAREN ELSE unmatched
-
-    NUMCONST   shift, and go to state 43
-    CHARCONST  shift, and go to state 44
-    ID         shift, and go to state 45
-    BOOLCONST  shift, and go to state 46
-    NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
-    MUL        shift, and go to state 49
-    SUB        shift, and go to state 50
-    LPAREN     shift, and go to state 51
-
-    simpleExpression    go to state 183
-    andExpression       go to state 53
-    unaryRelExpression  go to state 54
-    relExpression       go to state 55
-    sumExpression       go to state 56
-    term                go to state 57
-    unaryExpression     go to state 58
-    unaryop             go to state 59
-    factor              go to state 60
-    mutable             go to state 61
-    immutable           go to state 62
-    call                go to state 63
-    constant            go to state 64
-
-
-state 179
-
-   49 matched: IF . LPAREN simpleExpression RPAREN matched ELSE matched
-
-    LPAREN  shift, and go to state 184
-
-
 state 180
 
-   50 matched: WHILE . LPAREN simpleExpression RPAREN matched
+   58 unmatched: WHILE LPAREN simpleExpression RPAREN ELSE unmatched .
 
-    LPAREN  shift, and go to state 185
+    $default  reduce using rule 58 (unmatched)
 
 
 state 181
 
-   49 matched: IF LPAREN simpleExpression RPAREN matched ELSE matched .
+   51 matched: IF LPAREN simpleExpression . RPAREN matched ELSE matched
+   54 unmatched: IF LPAREN simpleExpression . RPAREN matched
+   55          | IF LPAREN simpleExpression . RPAREN unmatched
+   56          | IF LPAREN simpleExpression . RPAREN ELSE unmatched
+   70 simpleExpression: simpleExpression . OR andExpression
 
-    $default  reduce using rule 49 (matched)
+    OR      shift, and go to state 96
+    RPAREN  shift, and go to state 188
 
 
 state 182
 
-   52 unmatched: IF LPAREN simpleExpression . RPAREN matched
-   53          | IF LPAREN simpleExpression . RPAREN unmatched
-   54          | IF LPAREN simpleExpression . RPAREN ELSE unmatched
-   69 simpleExpression: simpleExpression . OR andExpression
-
-    OR      shift, and go to state 96
-    RPAREN  shift, and go to state 186
-
-
-state 183
-
-   55 unmatched: WHILE LPAREN simpleExpression . RPAREN matched
-   56          | WHILE LPAREN simpleExpression . RPAREN unmatched
-   57          | WHILE LPAREN simpleExpression . RPAREN ELSE unmatched
-   69 simpleExpression: simpleExpression . OR andExpression
-
-    OR      shift, and go to state 96
-    RPAREN  shift, and go to state 187
-
-
-state 184
-
-   49 matched: IF LPAREN . simpleExpression RPAREN matched ELSE matched
-
-    NUMCONST   shift, and go to state 43
-    CHARCONST  shift, and go to state 44
-    ID         shift, and go to state 45
-    BOOLCONST  shift, and go to state 46
-    NOT        shift, and go to state 47
-    OPT        shift, and go to state 48
-    MUL        shift, and go to state 49
-    SUB        shift, and go to state 50
-    LPAREN     shift, and go to state 51
-
-    simpleExpression    go to state 188
-    andExpression       go to state 53
-    unaryRelExpression  go to state 54
-    relExpression       go to state 55
-    sumExpression       go to state 56
-    term                go to state 57
-    unaryExpression     go to state 58
-    unaryop             go to state 59
-    factor              go to state 60
-    mutable             go to state 61
-    immutable           go to state 62
-    call                go to state 63
-    constant            go to state 64
-
-
-state 185
-
-   50 matched: WHILE LPAREN . simpleExpression RPAREN matched
+   54 unmatched: IF LPAREN . simpleExpression RPAREN matched
+   55          | IF LPAREN . simpleExpression RPAREN unmatched
+   56          | IF LPAREN . simpleExpression RPAREN ELSE unmatched
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
@@ -2765,38 +2638,22 @@ state 185
     constant            go to state 64
 
 
-state 186
+state 183
 
-   52 unmatched: IF LPAREN simpleExpression RPAREN . matched
-   53          | IF LPAREN simpleExpression RPAREN . unmatched
-   54          | IF LPAREN simpleExpression RPAREN . ELSE unmatched
+   57 unmatched: WHILE LPAREN . simpleExpression RPAREN unmatched
+   58          | WHILE LPAREN . simpleExpression RPAREN ELSE unmatched
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    IF         shift, and go to state 67
-    ELSE       shift, and go to state 165
-    WHILE      shift, and go to state 68
-    RETURN     shift, and go to state 69
-    BREAK      shift, and go to state 70
     OPT        shift, and go to state 48
     MUL        shift, and go to state 49
     SUB        shift, and go to state 50
     LPAREN     shift, and go to state 51
-    LCUR       shift, and go to state 71
-    SEMI       shift, and go to state 72
 
-    otherStatement      go to state 166
-    compoundStmt        go to state 75
-    expressionStmt      go to state 76
-    matched             go to state 190
-    unmatched           go to state 168
-    returnStmt          go to state 80
-    breakStmt           go to state 81
-    expression          go to state 82
-    simpleExpression    go to state 83
+    simpleExpression    go to state 190
     andExpression       go to state 53
     unaryRelExpression  go to state 54
     relExpression       go to state 55
@@ -2805,26 +2662,59 @@ state 186
     unaryExpression     go to state 58
     unaryop             go to state 59
     factor              go to state 60
-    mutable             go to state 84
+    mutable             go to state 61
     immutable           go to state 62
     call                go to state 63
     constant            go to state 64
+
+
+state 184
+
+   52 matched: WHILE LPAREN simpleExpression . RPAREN matched
+   57 unmatched: WHILE LPAREN simpleExpression . RPAREN unmatched
+   58          | WHILE LPAREN simpleExpression . RPAREN ELSE unmatched
+   70 simpleExpression: simpleExpression . OR andExpression
+
+    OR      shift, and go to state 96
+    RPAREN  shift, and go to state 191
+
+
+state 185
+
+   51 matched: IF . LPAREN simpleExpression RPAREN matched ELSE matched
+
+    LPAREN  shift, and go to state 192
+
+
+state 186
+
+   52 matched: WHILE . LPAREN simpleExpression RPAREN matched
+
+    LPAREN  shift, and go to state 193
 
 
 state 187
 
-   55 unmatched: WHILE LPAREN simpleExpression RPAREN . matched
-   56          | WHILE LPAREN simpleExpression RPAREN . unmatched
-   57          | WHILE LPAREN simpleExpression RPAREN . ELSE unmatched
+   49 firstmatched: IF LPAREN simpleExpression RPAREN matched ELSE matched .
+
+    $default  reduce using rule 49 (firstmatched)
+
+
+state 188
+
+   51 matched: IF LPAREN simpleExpression RPAREN . matched ELSE matched
+   54 unmatched: IF LPAREN simpleExpression RPAREN . matched
+   55          | IF LPAREN simpleExpression RPAREN . unmatched
+   56          | IF LPAREN simpleExpression RPAREN . ELSE unmatched
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    IF         shift, and go to state 67
-    ELSE       shift, and go to state 169
-    WHILE      shift, and go to state 68
+    IF         shift, and go to state 165
+    ELSE       shift, and go to state 166
+    WHILE      shift, and go to state 167
     RETURN     shift, and go to state 69
     BREAK      shift, and go to state 70
     OPT        shift, and go to state 48
@@ -2834,11 +2724,11 @@ state 187
     LCUR       shift, and go to state 71
     SEMI       shift, and go to state 72
 
-    otherStatement      go to state 166
+    otherStatement      go to state 168
     compoundStmt        go to state 75
     expressionStmt      go to state 76
-    matched             go to state 191
-    unmatched           go to state 171
+    matched             go to state 194
+    unmatched           go to state 170
     returnStmt          go to state 80
     breakStmt           go to state 81
     expression          go to state 82
@@ -2857,49 +2747,41 @@ state 187
     constant            go to state 64
 
 
-state 188
-
-   49 matched: IF LPAREN simpleExpression . RPAREN matched ELSE matched
-   69 simpleExpression: simpleExpression . OR andExpression
-
-    OR      shift, and go to state 96
-    RPAREN  shift, and go to state 192
-
-
 state 189
 
-   50 matched: WHILE LPAREN simpleExpression . RPAREN matched
-   69 simpleExpression: simpleExpression . OR andExpression
+   54 unmatched: IF LPAREN simpleExpression . RPAREN matched
+   55          | IF LPAREN simpleExpression . RPAREN unmatched
+   56          | IF LPAREN simpleExpression . RPAREN ELSE unmatched
+   70 simpleExpression: simpleExpression . OR andExpression
 
     OR      shift, and go to state 96
-    RPAREN  shift, and go to state 193
+    RPAREN  shift, and go to state 195
 
 
 state 190
 
-   52 unmatched: IF LPAREN simpleExpression RPAREN matched .
+   57 unmatched: WHILE LPAREN simpleExpression . RPAREN unmatched
+   58          | WHILE LPAREN simpleExpression . RPAREN ELSE unmatched
+   70 simpleExpression: simpleExpression . OR andExpression
 
-    $default  reduce using rule 52 (unmatched)
+    OR      shift, and go to state 96
+    RPAREN  shift, and go to state 196
 
 
 state 191
 
-   55 unmatched: WHILE LPAREN simpleExpression RPAREN matched .
-
-    $default  reduce using rule 55 (unmatched)
-
-
-state 192
-
-   49 matched: IF LPAREN simpleExpression RPAREN . matched ELSE matched
+   52 matched: WHILE LPAREN simpleExpression RPAREN . matched
+   57 unmatched: WHILE LPAREN simpleExpression RPAREN . unmatched
+   58          | WHILE LPAREN simpleExpression RPAREN . ELSE unmatched
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    IF         shift, and go to state 179
-    WHILE      shift, and go to state 180
+    IF         shift, and go to state 165
+    ELSE       shift, and go to state 171
+    WHILE      shift, and go to state 167
     RETURN     shift, and go to state 69
     BREAK      shift, and go to state 70
     OPT        shift, and go to state 48
@@ -2909,10 +2791,11 @@ state 192
     LCUR       shift, and go to state 71
     SEMI       shift, and go to state 72
 
-    otherStatement      go to state 166
+    otherStatement      go to state 168
     compoundStmt        go to state 75
     expressionStmt      go to state 76
-    matched             go to state 194
+    matched             go to state 197
+    unmatched           go to state 173
     returnStmt          go to state 80
     breakStmt           go to state 81
     expression          go to state 82
@@ -2926,6 +2809,35 @@ state 192
     unaryop             go to state 59
     factor              go to state 60
     mutable             go to state 84
+    immutable           go to state 62
+    call                go to state 63
+    constant            go to state 64
+
+
+state 192
+
+   51 matched: IF LPAREN . simpleExpression RPAREN matched ELSE matched
+
+    NUMCONST   shift, and go to state 43
+    CHARCONST  shift, and go to state 44
+    ID         shift, and go to state 45
+    BOOLCONST  shift, and go to state 46
+    NOT        shift, and go to state 47
+    OPT        shift, and go to state 48
+    MUL        shift, and go to state 49
+    SUB        shift, and go to state 50
+    LPAREN     shift, and go to state 51
+
+    simpleExpression    go to state 198
+    andExpression       go to state 53
+    unaryRelExpression  go to state 54
+    relExpression       go to state 55
+    sumExpression       go to state 56
+    term                go to state 57
+    unaryExpression     go to state 58
+    unaryop             go to state 59
+    factor              go to state 60
+    mutable             go to state 61
     immutable           go to state 62
     call                go to state 63
     constant            go to state 64
@@ -2933,15 +2845,57 @@ state 192
 
 state 193
 
-   50 matched: WHILE LPAREN simpleExpression RPAREN . matched
+   52 matched: WHILE LPAREN . simpleExpression RPAREN matched
 
     NUMCONST   shift, and go to state 43
     CHARCONST  shift, and go to state 44
     ID         shift, and go to state 45
     BOOLCONST  shift, and go to state 46
     NOT        shift, and go to state 47
-    IF         shift, and go to state 179
-    WHILE      shift, and go to state 180
+    OPT        shift, and go to state 48
+    MUL        shift, and go to state 49
+    SUB        shift, and go to state 50
+    LPAREN     shift, and go to state 51
+
+    simpleExpression    go to state 199
+    andExpression       go to state 53
+    unaryRelExpression  go to state 54
+    relExpression       go to state 55
+    sumExpression       go to state 56
+    term                go to state 57
+    unaryExpression     go to state 58
+    unaryop             go to state 59
+    factor              go to state 60
+    mutable             go to state 61
+    immutable           go to state 62
+    call                go to state 63
+    constant            go to state 64
+
+
+state 194
+
+   51 matched: IF LPAREN simpleExpression RPAREN matched . ELSE matched
+   54 unmatched: IF LPAREN simpleExpression RPAREN matched .
+
+    ELSE  shift, and go to state 200
+
+    $default  reduce using rule 54 (unmatched)
+
+
+state 195
+
+   54 unmatched: IF LPAREN simpleExpression RPAREN . matched
+   55          | IF LPAREN simpleExpression RPAREN . unmatched
+   56          | IF LPAREN simpleExpression RPAREN . ELSE unmatched
+
+    NUMCONST   shift, and go to state 43
+    CHARCONST  shift, and go to state 44
+    ID         shift, and go to state 45
+    BOOLCONST  shift, and go to state 46
+    NOT        shift, and go to state 47
+    IF         shift, and go to state 165
+    ELSE       shift, and go to state 166
+    WHILE      shift, and go to state 167
     RETURN     shift, and go to state 69
     BREAK      shift, and go to state 70
     OPT        shift, and go to state 48
@@ -2951,10 +2905,11 @@ state 193
     LCUR       shift, and go to state 71
     SEMI       shift, and go to state 72
 
-    otherStatement      go to state 166
+    otherStatement      go to state 168
     compoundStmt        go to state 75
     expressionStmt      go to state 76
-    matched             go to state 195
+    matched             go to state 201
+    unmatched           go to state 170
     returnStmt          go to state 80
     breakStmt           go to state 81
     expression          go to state 82
@@ -2973,15 +2928,185 @@ state 193
     constant            go to state 64
 
 
-state 194
+state 196
 
-   49 matched: IF LPAREN simpleExpression RPAREN matched . ELSE matched
+   57 unmatched: WHILE LPAREN simpleExpression RPAREN . unmatched
+   58          | WHILE LPAREN simpleExpression RPAREN . ELSE unmatched
 
-    ELSE  shift, and go to state 175
+    IF     shift, and go to state 175
+    ELSE   shift, and go to state 171
+    WHILE  shift, and go to state 176
+
+    unmatched  go to state 173
 
 
-state 195
+state 197
 
-   50 matched: WHILE LPAREN simpleExpression RPAREN matched .
+   52 matched: WHILE LPAREN simpleExpression RPAREN matched .
 
-    $default  reduce using rule 50 (matched)
+    $default  reduce using rule 52 (matched)
+
+
+state 198
+
+   51 matched: IF LPAREN simpleExpression . RPAREN matched ELSE matched
+   70 simpleExpression: simpleExpression . OR andExpression
+
+    OR      shift, and go to state 96
+    RPAREN  shift, and go to state 202
+
+
+state 199
+
+   52 matched: WHILE LPAREN simpleExpression . RPAREN matched
+   70 simpleExpression: simpleExpression . OR andExpression
+
+    OR      shift, and go to state 96
+    RPAREN  shift, and go to state 203
+
+
+state 200
+
+   51 matched: IF LPAREN simpleExpression RPAREN matched ELSE . matched
+
+    NUMCONST   shift, and go to state 43
+    CHARCONST  shift, and go to state 44
+    ID         shift, and go to state 45
+    BOOLCONST  shift, and go to state 46
+    NOT        shift, and go to state 47
+    IF         shift, and go to state 185
+    WHILE      shift, and go to state 186
+    RETURN     shift, and go to state 69
+    BREAK      shift, and go to state 70
+    OPT        shift, and go to state 48
+    MUL        shift, and go to state 49
+    SUB        shift, and go to state 50
+    LPAREN     shift, and go to state 51
+    LCUR       shift, and go to state 71
+    SEMI       shift, and go to state 72
+
+    otherStatement      go to state 168
+    compoundStmt        go to state 75
+    expressionStmt      go to state 76
+    matched             go to state 204
+    returnStmt          go to state 80
+    breakStmt           go to state 81
+    expression          go to state 82
+    simpleExpression    go to state 83
+    andExpression       go to state 53
+    unaryRelExpression  go to state 54
+    relExpression       go to state 55
+    sumExpression       go to state 56
+    term                go to state 57
+    unaryExpression     go to state 58
+    unaryop             go to state 59
+    factor              go to state 60
+    mutable             go to state 84
+    immutable           go to state 62
+    call                go to state 63
+    constant            go to state 64
+
+
+state 201
+
+   54 unmatched: IF LPAREN simpleExpression RPAREN matched .
+
+    $default  reduce using rule 54 (unmatched)
+
+
+state 202
+
+   51 matched: IF LPAREN simpleExpression RPAREN . matched ELSE matched
+
+    NUMCONST   shift, and go to state 43
+    CHARCONST  shift, and go to state 44
+    ID         shift, and go to state 45
+    BOOLCONST  shift, and go to state 46
+    NOT        shift, and go to state 47
+    IF         shift, and go to state 185
+    WHILE      shift, and go to state 186
+    RETURN     shift, and go to state 69
+    BREAK      shift, and go to state 70
+    OPT        shift, and go to state 48
+    MUL        shift, and go to state 49
+    SUB        shift, and go to state 50
+    LPAREN     shift, and go to state 51
+    LCUR       shift, and go to state 71
+    SEMI       shift, and go to state 72
+
+    otherStatement      go to state 168
+    compoundStmt        go to state 75
+    expressionStmt      go to state 76
+    matched             go to state 205
+    returnStmt          go to state 80
+    breakStmt           go to state 81
+    expression          go to state 82
+    simpleExpression    go to state 83
+    andExpression       go to state 53
+    unaryRelExpression  go to state 54
+    relExpression       go to state 55
+    sumExpression       go to state 56
+    term                go to state 57
+    unaryExpression     go to state 58
+    unaryop             go to state 59
+    factor              go to state 60
+    mutable             go to state 84
+    immutable           go to state 62
+    call                go to state 63
+    constant            go to state 64
+
+
+state 203
+
+   52 matched: WHILE LPAREN simpleExpression RPAREN . matched
+
+    NUMCONST   shift, and go to state 43
+    CHARCONST  shift, and go to state 44
+    ID         shift, and go to state 45
+    BOOLCONST  shift, and go to state 46
+    NOT        shift, and go to state 47
+    IF         shift, and go to state 185
+    WHILE      shift, and go to state 186
+    RETURN     shift, and go to state 69
+    BREAK      shift, and go to state 70
+    OPT        shift, and go to state 48
+    MUL        shift, and go to state 49
+    SUB        shift, and go to state 50
+    LPAREN     shift, and go to state 51
+    LCUR       shift, and go to state 71
+    SEMI       shift, and go to state 72
+
+    otherStatement      go to state 168
+    compoundStmt        go to state 75
+    expressionStmt      go to state 76
+    matched             go to state 197
+    returnStmt          go to state 80
+    breakStmt           go to state 81
+    expression          go to state 82
+    simpleExpression    go to state 83
+    andExpression       go to state 53
+    unaryRelExpression  go to state 54
+    relExpression       go to state 55
+    sumExpression       go to state 56
+    term                go to state 57
+    unaryExpression     go to state 58
+    unaryop             go to state 59
+    factor              go to state 60
+    mutable             go to state 84
+    immutable           go to state 62
+    call                go to state 63
+    constant            go to state 64
+
+
+state 204
+
+   51 matched: IF LPAREN simpleExpression RPAREN matched ELSE matched .
+
+    $default  reduce using rule 51 (matched)
+
+
+state 205
+
+   51 matched: IF LPAREN simpleExpression RPAREN matched . ELSE matched
+
+    ELSE  shift, and go to state 200

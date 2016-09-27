@@ -5,14 +5,20 @@
  #include <unistd.h>
  #include "globals.h"
  #include "scanType.h"
- #include "parser.tab.h"
  #include "syntaxTree.h"
+
+
+ #include "parser.tab.h"
+
 
 
  extern int yylex();
  extern int yyparse();
  extern FILE *yyin;
  extern int lineno;
+
+ //Like the TreeNode from tiny.y
+ static TreeNode * savedTree;
 
 //#define YYERROR_VERBOSE 1
 void yyerror(const char *errMsg)
@@ -46,23 +52,56 @@ void printErrToken(int lineno, char* tokenString)
 %token <tokenData> ERR
 %error-verbose
 
+
+
+
+
 %union
 {
 	TokenData *tokenData;
 }
 
+%union
+{
+	TreeNode *treeNode;
+}
+
+
+%type <treeNode> declarationList declaration
+%type <treeNode> varDeclaration funDeclaration recDeclaration
+
 %%
 program					: declarationList
+							{savedTree = $1;}
 						;
 
 declarationList			: declarationList declaration 
+							{
+								TreeNode * t = $1;
+								if (t != NULL)
+								{
+									while (t->sibling != NULL)
+									{
+										t = t-> sibling;
+									}
+									t->sibling = $2;
+									$$ = $1;
+								}
+								else $$ = $2;
+								
+							}
+
 						| declaration 
+							{ $$ = $1;}
 						;
 
 
-declaration 			: varDeclaration	
-						| funDeclaration
-						| recDeclaration
+declaration 			: varDeclaration
+							{$$ = $1; }	
+						| funDeclaration 
+							{$$ = $1; }
+						| recDeclaration 
+							{$$ = $1; }
 						;
 
 recDeclaration 			: RECORD ID LCUR localDeclarations RCUR
@@ -154,9 +193,13 @@ expressionStmt			: expression SEMI
 
 /* TODO: Fix if/while*/
 
-selectIterStmt 			: matched  
+selectIterStmt 			: firstmatched  
 						| unmatched
 						; 
+
+firstmatched			: IF LPAREN simpleExpression RPAREN matched ELSE matched 
+						| WHILE LPAREN simpleExpression RPAREN matched
+						;
 
 matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched 
 						| WHILE LPAREN simpleExpression RPAREN matched
@@ -166,7 +209,6 @@ matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched
 unmatched				: IF LPAREN simpleExpression RPAREN matched	
 						| IF LPAREN simpleExpression RPAREN unmatched						
 						| IF LPAREN simpleExpression RPAREN ELSE unmatched
-					    | WHILE LPAREN simpleExpression RPAREN matched	
 						| WHILE LPAREN simpleExpression RPAREN unmatched						
 						| WHILE LPAREN simpleExpression RPAREN ELSE unmatched
 						;
@@ -302,9 +344,10 @@ int main(int argc, char *argv[])
 	}
 	FILE *infile = fopen(argv[optCount], "r");
 	yyin = infile;
-
 	yyparse();
 	fclose(yyin);
-//	printf("DONE!");
+
+	printTree(savedTree);
+
 	return 0;
 }

@@ -3,8 +3,10 @@
 #include <string.h>
 #include <ctype.h>	
 #include "scanType.h"
-#include "parser.tab.h"
 #include "globals.h"
+
+#include "parser.tab.h"
+
 
 int lineno = 1;
 

@@ -13,7 +13,7 @@ September 20, 2016
 #include "syntaxTree.h"
 
 
-void printTree()
+void printTree(TreeNode * t)
 {
 	
 }
@@ -22,5 +22,13 @@ TreeNode * newTestNode()
 {
 	TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
 	t -> sibling = NULL;
+	return t;
+}
+
+TreeNode * newDeclNode()
+{
+	TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
+	
+		
 	return t;
 }

@@ -8,9 +8,11 @@ September 20, 2016
 #define SYNTAXTREE_H
 
 
-void printTree();
+void printTree(TreeNode * t);
 
 TreeNode * newTestNode();
+
+TreeNode * newDeclNode();
 
 
 

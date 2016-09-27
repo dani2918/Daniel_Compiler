@@ -9,7 +9,7 @@ $(BIN): $(OBJS)
 	$(CC) $(CCFLAGS) $(OBJS) $(LIBS) -o c-
 
 $(BIN).tab.h $(BIN).tab.c: $(BIN).y
-	bison -v -t -d $(BIN).y 
+	bison -v -t -d  $(BIN).y 
 
 lex.yy.c: $(BIN).l $(BIN).tab.h
 	flex $(BIN).l #-d debug

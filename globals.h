@@ -18,12 +18,32 @@ Contains the syntax tree node based on the Louden definitis
 // Global line number
 extern int lineno;
 
+enum NodeKind
+{
+	DeclK, StmtK, ExpK
+};
+
+enum DeclKind
+{
+	varDeclaration, funDeclaration, recDeclaration
+};
+
+enum StmtKind
+{
+	expressionStmt, compoundStmt, selectionStmt, iterationStmt, returnStmt, breakStmt
+};
+
+enum ExpKind
+{
+	simpleExpression
+};
+
 typedef struct treeNode
    { 
-   	struct treeNode * child[MAXCHILDREN];
-    struct treeNode * sibling;
-  	int lineno;
-   // NodeKind nodekind;
+	struct treeNode * child[MAXCHILDREN];
+	struct treeNode * sibling;
+	int lineno;
+    NodeKind nodekind;
     // union { StmtKind stmt; ExpKind exp;} kind;
     // union 
     // 	{ 
