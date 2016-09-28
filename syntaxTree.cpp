@@ -12,36 +12,128 @@ September 20, 2016
 #include "globals.h"
 #include "syntaxTree.h"
 
-int sibCount = 0;
-int childCount = 0;
+int sibCount;
+int childCount;
+int indent;
+TreeNode * placeholder;
+
+
+int countChildren(TreeNode * t)
+{
+	int numChildren = 0;
+	TreeNode * countChildren;
+	while (countChildren != NULL)
+	{
+		countChildren = t->child[numChildren];
+		numChildren++;
+	}
+	// subtract time we went through and got NULL
+	numChildren--;
+
+	return numChildren;
+}
+
+void printFormat(int sibCount, int childCount, childSib cs)
+{
+		// Print the formatting
+	for (int i = 0; i < indent; i++)
+		{
+			printf("!   ");
+		}
+	switch(cs)
+	{
+		case non:
+			break;
+		case sib:
+			printf("Sibling: %d  ", sibCount-1);
+			break;
+		case chi:
+			printf("Child: %d  ", childCount-1);
+			break;
+	}
+}
 
 void printTree(TreeNode * t)
 {
-	printTree(t, 0, 0);
+	sibCount = 0;
+	childCount = 0;
+	indent = 0;
+
+	printTreeR(t, 0, 0, non);
+
+
 }
 
-void printTree(TreeNode * t, int sibCount, int childCount)
+void printTreeR(TreeNode * t, int sibCount, int childCount, childSib cs)
+{
+
+	
+
+	if (t == NULL)
+		return;
+
+	switch(cs)
+	{
+		case non:
+			break;
+		case sib:
+			sibCount++;
+			break;
+		case chi:
+			childCount++;
+			break;
+	}
+
+
+	printTree(t, sibCount, childCount, cs);
+
+	int numChildren = countChildren(t);
+	// If we have children, increase the indent
+	if (numChildren > 0)
+	{
+		indent++;
+	}
+
+	for (int i = 0; i < numChildren; i++)
+	{
+		printTreeR(t->child[i], 0, childCount, chi);
+		childCount++;
+	}
+	printTreeR(t->sibling, sibCount, childCount, sib);
+
+}
+
+void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 {
 	
+	printFormat(sibCount, childCount, cs);
+
 
 	const char * arrMsg = "is array ";
 	const char * arrMsgToggle; 
-	TreeNode * orig = t;
+
 
 		if(t != NULL)
 		{
-			//printf("Times through: %d\n", i);
 			switch (t -> nodekind)
 			{
 			// if we have a declaration
 				case DeclK:
-					//printf("Declaration!\n" );
-
 					//Switch types of declarations
 					switch (t->kind.decl)
 					{
 						case varDeclaration:
-							printf("Var %s ", t->attr.name);
+
+							//Differentiate between var and param
+							if (t-> isParam == true)
+							{
+								printf("Param %s ", t->attr.name);
+							}
+							else
+							{
+								printf("Var %s ", t->attr.name);
+							}
+
 							if(t-> isArray == true)
 									{
 										arrMsgToggle = arrMsg;
@@ -50,6 +142,7 @@ void printTree(TreeNode * t, int sibCount, int childCount)
 									{
 										arrMsgToggle = "";
 									}
+
 								// switch types
 								switch (t->type)
 								{
@@ -66,40 +159,56 @@ void printTree(TreeNode * t, int sibCount, int childCount)
 								}
 
 							break;
+
 						case funDeclaration:
+							printf("Func %s ", t->attr.name);
+							switch (t->type)
+								{
+									
+									case integer:
+										printf("returns type int ");
+										break;
+									case boolean:
+										printf("returns type bool ");
+										break;
+									case character:
+										printf("returns type char ");
+										break;	
+								}
 							break;
+
 						case recDeclaration:
 							break;
 					}
 					
 					break;
+				
+				case StmtK:
+					switch(t->kind.stmt)
+					{
+						case compoundStmt:
+							printf("Compound ");
+							break;
+						default:
+							break;
+					}
+
+
 				default:
 					break;
 			}
 
 			printf("[line: %d]\n", t->lineno );
-			if(t -> sibling != NULL)
-			{
-				printf("Sibling: %d  ", sibCount);
-			}
 			
-			printTree(t-> sibling, ++sibCount, childCount);
 
-			if (t-> child[childCount] != NULL)
-			{
-				int newChildCount = childCount++;
-				printTree(t->child[childCount], 0, newChildCount);
-			}
+
+
+
+			
 		}
 	
 }
 
-// TreeNode * newTestNode()
-// {
-// 	TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
-// 	t -> sibling = NULL;
-// 	return t;
-// }
 
 TreeNode * newDeclNode(DeclKind kind)
 {
@@ -141,9 +250,11 @@ TreeNode * newStmtNode(StmtKind kind)
 	    	}
 	    t->sibling = NULL;
 	    t->nodekind = StmtK;
-	    t->kind.stmt = kind;
+	    t->kind.stmt = kind; //printf("Kind is %d\n",kind );
 	    t->lineno = lineno;
   	}
+
+
 		
 	return t;
 }

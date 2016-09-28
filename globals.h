@@ -31,6 +31,9 @@ Contains the syntax tree node based on the Louden definitis
 
 // Global line number
 extern int lineno;
+extern int indent;
+extern int sibCount;
+extern int childCount;
 
 enum NodeKind
 {
@@ -84,6 +87,7 @@ typedef struct treeNode
     bool isArray;
     bool isRecord;
     bool isStatic;
+    bool isParam;
 
    } TreeNode;
 

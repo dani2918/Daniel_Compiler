@@ -19,6 +19,7 @@
 
  //Like the TreeNode from tiny.y
  static TreeNode * savedTree;
+ int savedLineNo;
 
  ExpType storedType;
 
@@ -86,6 +87,13 @@ void printErrToken(int lineno, char* tokenString)
 
 %type <treeNode> declarationList declaration
 %type <treeNode> varDeclaration funDeclaration recDeclaration varDeclList varDeclInitialize varDeclId simpleExpression
+	%type <treeNode> params paramList paramTypeList paramIdList paramId
+%type <treeNode> statement otherStatement selectIterStmt expressionStmt compoundStmt returnStmt breakStmt
+	%type <treeNode> localDeclarations scopedVarDeclaration statementList
+%type <treeNode> expression firstmatched matched unmatched
+	%type <treeNode> mutable andExpression unaryRelExpression relExpression sumExpression term unaryExpression
+	%type <treeNode> factor 
+	%type <treeNode> argList args 
 %type <expType> returnTypeSpecifier typeSpecifier 
 
 
@@ -129,6 +137,7 @@ declaration 			: varDeclaration
 							{$$ = $1; }
 						;
 
+// TODO: RECORD
 recDeclaration 			: RECORD ID LCUR localDeclarations RCUR
 						//	{
 						//		$$ = newRecNode()
@@ -137,13 +146,15 @@ recDeclaration 			: RECORD ID LCUR localDeclarations RCUR
 
 varDeclaration			: typeSpecifier varDeclList SEMI 
 							{
-
-								//storedType = $1;
 								$$ = $2;
  							}
 						;
 
+// TOOD: scopedVarDeclaration
 scopedVarDeclaration 	: scopedTypeSpecifier varDeclList SEMI
+							{
+								$$ = $2;
+							}
 						;
 
 varDeclList				: varDeclList COMMA varDeclInitialize
@@ -206,6 +217,7 @@ varDeclId				: ID
 							}		
 						;
 
+//TODO: scopedTypeSpecifier
 scopedTypeSpecifier 	: STATIC typeSpecifier
 						| typeSpecifier
 						;
@@ -214,6 +226,8 @@ typeSpecifier 			: returnTypeSpecifier
 							{
 								$$ = $1;
 							}
+
+							//TODO: RECORD part
 						| RECORD /*MAYBE rectype?*/
 //							{
 //								$$ = $1;
@@ -235,119 +249,524 @@ returnTypeSpecifier		: INT
 						;
 
 funDeclaration			: typeSpecifier ID LPAREN params RPAREN statement
+							{
+								$$ = newDeclNode(funDeclaration);
+								$$ -> lineno = $2 -> lineno;
+								$$ -> attr.name = strdup($2 -> tokenString);
+								$$ -> type = storedType;
+								$$ -> child[0] = $4;
+								$$ -> child[1] = $6; //printf("line 255\n"); printf("lineno: %d\n", $$->child[1]->lineno);
+							}
+
 						| ID LPAREN params RPAREN statement
+							{
+								$$ = newDeclNode(funDeclaration);
+								$$ -> lineno = $2 -> lineno;
+								$$ -> attr.name = strdup($1 -> tokenString);
+								$$ -> child[0] = $3;
+								$$ -> child[1] = $5; 
+							}
 						;
 
 params					: paramList
+							{
+								$$ = $1;
+							}
 						| /* empty */
+							{
+								$$ = NULL;
+							}
 						;
 
 paramList				: paramList SEMI paramTypeList 
+							{
+								TreeNode * t = $1;
+								if (t != NULL)
+								{
+									while (t->sibling != NULL)
+									{
+										t = t-> sibling;
+									}
+									t->sibling = $3;
+									
+								}
+								else 
+								{
+									t->sibling = $3;
+									
+								}
+								$$ = $1;
+							}
+
 						| paramTypeList
+							{ 
+								$$ = $1; 
+							}
 						;
 
+
 paramTypeList			: typeSpecifier paramIdList
+							{
+								$$ = $2;
+							}
 						;
 
 paramIdList				: paramIdList COMMA paramId 
+							{
+								TreeNode * t = $1;
+								if (t != NULL)
+								{
+									while (t->sibling != NULL)
+									{
+										t = t-> sibling;
+									}
+									t->sibling = $3;
+									
+								}
+								else 
+								{
+									t->sibling = $3; 
+									
+								}
+								$$ = $1;
+							}
+							
+
 						| paramId
+							{ 
+								$$ = $1; 
+							}
 						;
 
-paramId 				: ID
+paramId 				: ID 
+							{
+								$$ = newDeclNode(varDeclaration); 
+								$$ -> attr.name = strdup($1 -> tokenString);
+								$$->type = storedType; 
+								$$->isArray = false;
+								$$->isParam = true;
+							}
 						| ID LBRAC RBRAC
+							{
+								$$ = newDeclNode(varDeclaration);
+								$$ -> attr.name = strdup($1 -> tokenString);
+								$$->type = storedType; 
+								$$->isArray = true;
+								$$->isParam = true;
+							}		
 						;
 
 
 statement 				: selectIterStmt
+							{$$ = $1;}
 						| otherStatement
+							{
+								$$ = $1; //printf("line 360\n");
+							}
 						;
 
 otherStatement 			: expressionStmt 
+							{$$ = $1;}
 						| compoundStmt
-						/*| iterationStmt */
+							{$$ = $1;}
 						| returnStmt
+							{$$ = $1;}
 						| breakStmt
+							{$$ = $1;}
 						;
 					
 
 compoundStmt			: LCUR localDeclarations statementList RCUR
+							{
+								$$ = newStmtNode(compoundStmt); //printf("compoundStmt!\n\n");
+								$$ -> lineno = $1 -> lineno;
+								$$ -> child[0] = $2;
+								$$ -> child[1] = $3;
+							}
 						;
 
 localDeclarations		: localDeclarations scopedVarDeclaration
+							{
+								TreeNode * t = $1;
+								if (t != NULL)
+								{
+									while (t->sibling != NULL)
+									{
+										t = t-> sibling;
+									}
+									t->sibling = $2;
+									
+								}
+								else 
+								{
+									$$ = newDeclNode(varDeclaration);
+									$$->sibling = $2; 
+									
+								}
+								$$ = $1;
+							}
+							
 						| /* empty */
+							{
+								$$ = NULL;
+							}
 						;
 
 statementList			: statementList statement
+							{
+								TreeNode * t = $1; //printf("got here\n");
+								if (t != NULL)
+								{	
+									//printf("t not null\n");
+									while (t->sibling != NULL)
+									{
+										t = t-> sibling;
+									}
+									t->sibling = $2;									
+								}
+								else 
+								{
+									$$ = newStmtNode(expressionStmt);
+									//printf("t  null\n");
+									$$->sibling = $2; 
+									//printf("t  null\n");//LOOK FOR FIX HERE!
+								}
+								$$ = $1;
+							}
+
 						| /* empty */
+							{
+								$$ = NULL;
+							}
 						;
 
 expressionStmt			: expression SEMI 
+							{
+								$$ = newStmtNode(expressionStmt);
+								$$ = $1;
+							}
 						| SEMI
 						;
 
 
 /* TODO: Fix if/while*/
 
-selectIterStmt 			: firstmatched  
+selectIterStmt 			: firstmatched 
+							{ $$ = $1;} 
 						| unmatched
+							{ $$ = $1;} 
 						; 
 
 firstmatched			: IF LPAREN simpleExpression RPAREN matched ELSE matched 
+							{
+								$$ = newStmtNode(selectionStmt);
+								$$ -> child[0] = $3; 
+								$$ -> child[1] = $5;
+								$$ -> child[2] = $7;
+							}
 						| WHILE LPAREN simpleExpression RPAREN matched
+							{
+								$$ = newStmtNode(iterationStmt);
+								$$ -> child[0] = $3;
+								$$ -> child[1] = $5;
+							}
 						;
 
 matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched 
+							{
+								$$ = newStmtNode(selectionStmt);
+								$$ -> child[0] = $3; 
+								$$ -> child[1] = $5;
+								$$ -> child[2] = $7;
+							}
 						| WHILE LPAREN simpleExpression RPAREN matched
+							{
+								$$ = newStmtNode(iterationStmt);
+								$$ -> child[0] = $3; 
+								$$ -> child[1] = $5;
+							}
 						| otherStatement
+							{
+								$$ = $1;
+							}
 						;
 
 unmatched				: IF LPAREN simpleExpression RPAREN matched	
-						| IF LPAREN simpleExpression RPAREN unmatched						
+							{
+								$$ = newStmtNode(selectionStmt);
+								$$ -> child[0] = $3;
+								$$ -> child[1] = $5;
+							}
+						| IF LPAREN simpleExpression RPAREN unmatched	
+							{
+								$$ = newStmtNode(selectionStmt);
+								$$ -> child[0] = $3;
+								$$ -> child[1] = $5;
+							}					
 						| IF LPAREN simpleExpression RPAREN ELSE unmatched
-						| WHILE LPAREN simpleExpression RPAREN unmatched						
+							{
+								$$ = newStmtNode(selectionStmt);
+								$$ -> child[0] = $3;
+								$$ -> child[1] = $6;
+							}
+						| WHILE LPAREN simpleExpression RPAREN unmatched	
+							{
+								$$ = newStmtNode(iterationStmt);
+								$$ -> child[0] = $3;
+								$$ -> child[1] = $5;
+							}					
 						| WHILE LPAREN simpleExpression RPAREN ELSE unmatched
+							{
+								$$ = newStmtNode(iterationStmt);
+								$$ -> child[0] = $3;
+								$$ -> child[1] = $6;
+							}		
 						;
 
-
-
-/*iterationStmt			: WHILE LPAREN simpleExpression RPAREN statement
-						;
-
-*/
 
 returnStmt				: RETURN SEMI
+							{
+								$$ = newStmtNode(returnStmt);// printf("line 521\n");
+							}
 						| RETURN expression SEMI
+							{
+								$$ = newStmtNode(returnStmt);
+								$$ -> child[0] = $2
+							}
 						;
 
 breakStmt 				: BREAK SEMI
+							{
+								$$ = newStmtNode(breakStmt);
+							}
 						;
+//_________________________________________________________________________________
+
 
 expression 				: mutable ASS expression 
+							{
+								TreeNode * t = $3;
+								if (t != NULL)
+								{
+									while (t->sibling != NULL)
+									{
+										t = t-> sibling;
+									}
+									t->sibling = $1;
+									
+								}
+								else 
+								{
+									t->sibling = $1; 
+									
+								}
+								$$ = $3;
+							}
 						| mutable ADDASS expression
+							{
+								TreeNode * t = $3;
+								if (t != NULL)
+								{
+									while (t->sibling != NULL)
+									{
+										t = t-> sibling;
+									}
+									t->sibling = $1;
+									
+								}
+								else 
+								{
+									t->sibling = $1; 
+									
+								}
+								$$ = $3;
+							}
 						| mutable SUBASS expression
+							{
+								TreeNode * t = $3;
+								if (t != NULL)
+								{
+									while (t->sibling != NULL)
+									{
+										t = t-> sibling;
+									}
+									t->sibling = $1;
+									
+								}
+								else 
+								{
+									t->sibling = $1; 
+									
+								}
+								$$ = $3;
+							}
 						| mutable MULASS expression
+							{
+								TreeNode * t = $3;
+								if (t != NULL)
+								{
+									while (t->sibling != NULL)
+									{
+										t = t-> sibling;
+									}
+									t->sibling = $1;
+									
+								}
+								else 
+								{
+									t->sibling = $1; 
+									
+								}
+								$$ = $3;
+							}
 						| mutable DIVASS expression
+							{
+								TreeNode * t = $3;
+								if (t != NULL)
+								{
+									while (t->sibling != NULL)
+									{
+										t = t-> sibling;
+									}
+									t->sibling = $1;
+									
+								}
+								else 
+								{
+									t->sibling = $1; 
+									
+								}
+								$$ = $3;
+							}
 						| mutable INC expression
+							{
+								TreeNode * t = $3;
+								if (t != NULL)
+								{
+									while (t->sibling != NULL)
+									{
+										t = t-> sibling;
+									}
+									t->sibling = $1;
+									
+								}
+								else 
+								{
+									t->sibling = $1; 
+									
+								}
+								$$ = $3;
+							}
 						| mutable DEC expression
+							{
+								TreeNode * t = $3;
+								if (t != NULL)
+								{
+									while (t->sibling != NULL)
+									{
+										t = t-> sibling;
+									}
+									t->sibling = $1;
+								}
+								else 
+								{
+									t->sibling = $1; 
+									
+								}
+								$$ = $3;
+							}
 						| simpleExpression 
+							{
+								$$ = $1;
+							}
 						;
 
 
 simpleExpression		: simpleExpression OR andExpression
+							{
+								TreeNode * t = $1;
+								if (t != NULL)
+								{
+									while (t->sibling != NULL)
+									{
+										t = t-> sibling;
+									}
+									t->sibling = $3;
+								}
+								else 
+								{
+									t->sibling = $3; 
+									
+								}
+								$$ = $1;
+							}
 						| andExpression
+							{
+								$$ = $1;
+							}
 						;
 
 	
 andExpression			: andExpression AND unaryRelExpression
+						{
+							TreeNode * t = $1; //printf("got here\n");
+							if (t != NULL)
+							{	
+								//printf("t not null\n");
+								while (t->sibling != NULL)
+								{
+									t = t-> sibling;
+								}
+								t->sibling = $3;									
+							}
+							else 
+							{
+								$$ = newStmtNode(expressionStmt);
+								//printf("t  null\n");
+								$$->sibling = $3; 
+								//printf("t  null\n");//LOOK FOR FIX HERE!
+							}
+							$$ = $1;
+						}
 						| unaryRelExpression
+							{
+								$$ = $1;
+							}
 						;
 
 unaryRelExpression		: NOT unaryRelExpression
+							{
+								$$ = $2;
+							}
 						| relExpression
+							{
+								$$ = $1;
+							}
 						;
 
 relExpression			: sumExpression relop sumExpression
+							{
+								TreeNode * t = $1;
+								if (t != NULL)
+								{
+									while (t->sibling != NULL)
+									{
+										t = t-> sibling;
+									}
+									t->sibling = $3;
+								}
+								else 
+								{
+									t->sibling = $3; 
+									
+								}
+								$$ = $1;
+							}
+
 						| sumExpression
+							{
+								$$ = $1;
+							}
 						;	
 
 
@@ -360,7 +779,27 @@ relop 					: LESSEQ
 						;
 
 sumExpression			: sumExpression sumop term
+							{
+								TreeNode * t = $1;
+								if (t != NULL)
+								{
+									while (t->sibling != NULL)
+									{
+										t = t-> sibling;
+									}
+									t->sibling = $3;
+								}
+								else 
+								{
+									t->sibling = $3; 
+									
+								}
+								$$ = $1;
+							}
 						| term
+							{
+								$$ = $1;
+							}
 						;
 
 sumop 					: ADD
@@ -402,8 +841,14 @@ immutable				: LPAREN expression RPAREN
 call					: ID LPAREN args RPAREN 
 						;
 
-args 					: argList
+args 					: argList	
+							{
+								$$ = $1;
+							}
 						| /* empty */
+							{
+								$$ = NULL;
+							}
 						;
 
 

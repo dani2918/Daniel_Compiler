@@ -1,2 +1,6 @@
-int x, y, z;
-bool a:true;
+int a, b;
+
+int max(int x, y)
+{
+	return x;
+}

@@ -25,5 +25,5 @@ clean:
 	rm -f $(OBJS) $(BIN) syntaxTree.o lex.yy.c $(BIN).tab.h $(BIN).tab.c $(BIN).tar *~ *.output 
 
 tar:
-	tar -cvf $(BIN).tar $(SRCS) globals.h scanType.h makefile 
+	tar -cvf $(BIN).tar $(SRCS) globals.h scanType.h syntaxTree.h makefile 
 
