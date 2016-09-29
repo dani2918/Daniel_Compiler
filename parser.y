@@ -125,7 +125,6 @@ declarationList			: declarationList declaration
 								TreeNode * t = $1;
 								if (t != NULL)
 								{
-									//printf("t is NULL\n");
 									while (t->sibling != NULL)
 									{
 										t = t-> sibling;
@@ -135,7 +134,6 @@ declarationList			: declarationList declaration
 								}
 								else 
 								{
-									//printf("t is not NULL\n");
 									$$ = $2;
 								}
 							}
@@ -153,7 +151,6 @@ declaration 			: varDeclaration
 							{$$ = $1; }
 						;
 
-// TODO: RECORD
 recDeclaration 			: RECORD ID LCUR localDeclarations RCUR
 							{
 								$$ = newDeclNode(recDeclaration);
@@ -187,7 +184,6 @@ varDeclaration			: typeSpecifier varDeclList SEMI
  							}
 						;
 
-// TOOD: scopedVarDeclaration
 scopedVarDeclaration 	: scopedTypeSpecifier varDeclList SEMI
 							{
 								TreeNode * t = $2;
@@ -213,7 +209,6 @@ varDeclList				: varDeclList COMMA varDeclInitialize
 								TreeNode * t = $1;
 								if (t != NULL)
 								{
-									//printf("t is not NULL\n");
 									while (t->sibling != NULL)
 									{
 										t = t-> sibling;
@@ -224,15 +219,10 @@ varDeclList				: varDeclList COMMA varDeclInitialize
 								}
 								else 
 								{
-									//printf("t is NULL\n");
 									$$ = $3;
 									
 								}
-								
-								
 							}							
-
-
 								 
 
 						| varDeclInitialize
@@ -259,7 +249,6 @@ varDeclId				: ID
 								$$ = newDeclNode(varDeclaration);
 								$$ -> attr.name = strdup($1 -> tokenString);
 								$$ -> lineno = $1 -> lineno;
-								//$$->type = storedType; 
 								$$->isArray = false;
 								//$$ -> isStatic = isStatic;
 							}
@@ -267,9 +256,8 @@ varDeclId				: ID
 							{
 								$$ = newDeclNode(varDeclaration);
 								$$ -> attr.name = strdup($1 -> tokenString);
-								//$$->type = storedType; 
 								$$ -> lineno = $1 -> lineno;
-								$$->isArray = true; //printf("Array\n");
+								$$->isArray = true; 
 								//$$ -> isStatic = isStatic;
 							}		
 						;
@@ -293,41 +281,28 @@ typeSpecifier 			: returnTypeSpecifier
 								$$ = $1;
 							}
 
-							//TODO: RECORD part
 						| RECTYPE /*MAYBE rectype?*/
 							{
-								//$$ = newDeclNode(recDeclaration);
-								$$  = record; //printf("type: %d \n", $$ -> type);
+								$$  = record; 
 							}
 						;
 
 returnTypeSpecifier		: INT 
 							{
-								//$$ -> type = integer; printf("type: %d \n", $$ -> type);
-								$$ = integer;	//printf("type: %d \n", $$);
+								$$ = integer;	
 							}
 						| BOOL
 							{
-								//$$ -> type = boolean; printf("type: %d \n", $$ -> type);
-								//storedType = boolean;
-								$$ = boolean; //printf("type: %d \n", $$);
+								$$ = boolean; 
 							}
 						| CHAR
 							{
-								//$$ -> type = character; printf("type: %d \n", $$ -> type);
-								//storedType = character;
-								$$ = character;// printf("type: %d \n", $$);
+								$$ = character;
 							}
 						;
 
 funDeclaration			: typeSpecifier ID LPAREN params RPAREN statement
 							{
-								//printf("we have this one\n");
-								//storedType = $1;
-								//TreeNode * f;
-								//f = newExpTypeNode();
-								//f -> type = $1;
-								//storedType = $1;
 								$$ = newDeclNode(funDeclaration);
 								$$ -> lineno = $2 -> lineno;
 								$$ -> attr.name = strdup($2 -> tokenString);
@@ -349,8 +324,6 @@ funDeclaration			: typeSpecifier ID LPAREN params RPAREN statement
 								$$ -> child[1] = $5; 
 							}
 						;
-
-
 
 
 params					: paramList
@@ -381,7 +354,6 @@ paramList				: paramList SEMI paramTypeList
 									$$ = $3;
 									
 								}
-								
 							}
 
 						| paramTypeList
@@ -441,7 +413,6 @@ paramId 				: ID
 							{
 								$$ = newDeclNode(paramDeclaration); 
 								$$ -> attr.name = strdup($1 -> tokenString);
-								//$$->type = storedType; 
 								$$->isArray = false;
 								$$->isParam = true;
 							}
@@ -449,7 +420,6 @@ paramId 				: ID
 							{
 								$$ = newDeclNode(paramDeclaration);
 								$$ -> attr.name = strdup($1 -> tokenString);
-								//$$->type = storedType; 
 								$$->isArray = true;
 								$$->isParam = true;
 							}		
@@ -460,7 +430,7 @@ statement 				: selectIterStmt
 							{$$ = $1;}
 						| otherStatement
 							{
-								$$ = $1; //printf("line 360\n");
+								$$ = $1; 
 							}
 						;
 
@@ -477,11 +447,11 @@ otherStatement 			: expressionStmt
 
 compoundStmt			: LCUR localDeclarations statementList RCUR
 							{
-								$$ = newStmtNode(compoundStmt); //printf("compoundStmt!\n\n");
+								$$ = newStmtNode(compoundStmt); 
 								$$ -> lineno = $1 -> lineno;
 								$$ -> numChildren = 2;
 								$$ -> child[0] = $2;
-								$$ -> child[1] = $3; //printf("Line 385\n");
+								$$ -> child[1] = $3; 
 							}
 						;
 
@@ -506,8 +476,6 @@ localDeclarations		: localDeclarations scopedVarDeclaration
 							
 						| /* empty */
 							{
-								//$$ = newStmtNode(expressionStmt);
-								//firstTimeThrough = 1;
 								$$ = NULL;
 							}
 						;
@@ -533,9 +501,6 @@ statementList			: statementList statement
 
 						| /* empty */
 							{
-								//printf("got here!\n\n\n");
-							//	$$ = newStmtNode(expressionStmt);
-								//firstTimeThrough = 1;
 								$$ = NULL;
 							}
 						;
@@ -641,7 +606,7 @@ unmatched				: IF LPAREN simpleExpression RPAREN matched
 
 returnStmt				: RETURN SEMI
 							{
-								$$ = newStmtNode(returnStmt); // printf("line 521\n");
+								$$ = newStmtNode(returnStmt); 
 								$$ -> attr.name = $1 -> tokenString;
 								$$ -> lineno = $1 -> lineno;
 
@@ -714,7 +679,6 @@ expression 				: mutable ASS expression
 							{
 								$$ = newExpNode(AssK);
 								$$ -> child[0] = $1;
-								//$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
 								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
@@ -723,11 +687,9 @@ expression 				: mutable ASS expression
 							{
 								$$ = newExpNode(AssK);
 								$$ -> child[0] = $1;
-								//$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
 								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
-								//$$ -> attr.td = $2;
 							}
 						| simpleExpression 
 							{
@@ -743,7 +705,7 @@ simpleExpression		: simpleExpression OR andExpression
 								$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
 								$$ -> attr.name = strdup($2 -> tokenString);
-								//printf("TD string is: %s\n", $$->attr.name);
+
 							}
 						| andExpression
 							{
@@ -851,7 +813,7 @@ mulop					: MUL
 						;						
 
 unaryExpression			: unaryop unaryExpression
-							{	//TODO: FIX THIS
+							{	
 								$$ = newExpNode(OpK);
 								$$ -> child[0] = $2;
 								$$ -> numChildren = 1;
@@ -879,8 +841,6 @@ mutable					: ID
 							{
 								$$ = newExpNode(IdK);
 								$$ -> attr.name = $1 -> tokenString;
-							//	$$->type = storedType; 
-							//	$$->isArray = false;
 							}
 						| mutable LBRAC expression RBRAC 
 							{
@@ -899,7 +859,6 @@ mutable					: ID
 								TreeNode * t;
 								t = newExpNode(IdK);
 								t -> attr.name = strdup($3 -> tokenString);
-								//$$->type = storedType; 
 								t ->isArray = false;
 								$$ -> child[1] = t;
 								$$ -> numChildren = 2;
@@ -907,7 +866,7 @@ mutable					: ID
 						;						
 
 immutable				: LPAREN expression RPAREN
-							{	// MAY BE WRONG
+							{	
 								$$ = $2;
 							} 
 						| call
