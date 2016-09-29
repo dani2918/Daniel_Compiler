@@ -2390,7 +2390,7 @@ yyreduce:
   case 68:
 #line 723 "parser.y"
     {
-								(yyval.treeNode) = newExpNode(OpK);
+								(yyval.treeNode) = newExpNode(AssK);
 								(yyval.treeNode) -> child[0] = (yyvsp[(1) - (2)].treeNode);
 								//$$ -> child[1] = $3;
 								(yyval.treeNode) -> numChildren = 2;
@@ -2571,11 +2571,11 @@ yyreduce:
 
   case 93:
 #line 854 "parser.y"
-    {
+    {	//TODO: FIX THIS
 								(yyval.treeNode) = newExpNode(OpK);
 								(yyval.treeNode) -> child[0] = (yyvsp[(2) - (2)].treeNode);
 								(yyval.treeNode) -> numChildren = 1;
-								(yyval.treeNode) -> attr.td = (yyvsp[(1) - (2)].td);
+								(yyval.treeNode) -> attr.name = (yyvsp[(1) - (2)].td) -> tokenString;
 							;}
     break;
 

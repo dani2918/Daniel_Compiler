@@ -721,7 +721,7 @@ expression 				: mutable ASS expression
 							}
 						| mutable DEC 
 							{
-								$$ = newExpNode(OpK);
+								$$ = newExpNode(AssK);
 								$$ -> child[0] = $1;
 								//$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
@@ -855,7 +855,7 @@ unaryExpression			: unaryop unaryExpression
 								$$ = newExpNode(OpK);
 								$$ -> child[0] = $2;
 								$$ -> numChildren = 1;
-								$$ -> attr.td = $1;
+								$$ -> attr.name = $1 -> tokenString;
 							}
 						| factor
 							{$$ = $1;}
