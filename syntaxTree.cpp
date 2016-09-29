@@ -85,14 +85,14 @@ void printTreeR(TreeNode * t, int sibCount, int childCount, childSib cs)
 
 	printTree(t, sibCount, childCount, cs);
 
-	int numChildren = countChildren(t);
+	//int numChildren = countChildren(t);
 	// If we have children, increase the indent
-	if (numChildren > 0)
+	if (t->numChildren > 0)
 	{
 		indent++;
 	}
 
-	for (int i = 0; i < numChildren; i++)
+	for (int i = 0; i < t->numChildren; i++)
 	{
 		
 		printTreeR(t->child[i], 0, i, chi);
@@ -110,7 +110,7 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 
 	const char * arrMsg = "is array ";
 	const char * arrMsgToggle; 
-
+	char * s; 
 
 		if(t != NULL)
 		{
@@ -124,14 +124,9 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 						case varDeclaration:
 
 							//Differentiate between var and param
-							if (t-> isParam == true)
-							{
-								printf("Param %s ", t->attr.name);
-							}
-							else
-							{
+							
 								printf("Var %s ", t->attr.name);
-							}
+
 
 							if(t-> isArray == true)
 									{
@@ -158,6 +153,8 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 									case record:
 										printf("%sof type record ", arrMsgToggle);
 										break;
+									default:
+										break;
 								}
 
 							break;
@@ -175,6 +172,9 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 									case character:
 										printf("returns type char ");
 										break;	
+									case Void:
+										printf("returns type void ");
+										break;	
 									case record:
 										printf("%sof type record ", arrMsgToggle);
 										break;
@@ -184,6 +184,9 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 						case recDeclaration:
 							printf("Record %s ", t->attr.name);
 							break;
+
+						case paramDeclaration:
+							printf("Param %s ", t->attr.name);
 					}
 					
 					break;
@@ -230,7 +233,10 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 										break;
 									case character:
 										printf("%sof type char ", arrMsgToggle);
-										break;	
+										break;
+									case Void:
+										printf("%sof type void ", arrMsgToggle);
+										break;		
 									case record:
 										printf("%sof type record ", arrMsgToggle);
 										break;
@@ -239,7 +245,32 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 
 						
 						case OpK:
-							printf("Op %s ", t->attr.td -> tokenString);
+							printf("Op: %s ", t-> attr.name);
+							break;
+
+						case constK:
+							printf("Const: ");
+							switch(t -> type)
+							{
+								case boolean:
+									if(t->attr.bvalue == true)
+									{
+										printf("true");
+									}
+									else
+									{
+										printf("false");
+									}
+								case integer:
+									printf("%d", t->attr.value );
+									break;
+								case character:
+									printf("%c", t->attr.cvalue );
+									break;
+								default:
+									break;
+							}
+
 						default:
 							break;
 					}	
@@ -326,6 +357,7 @@ TreeNode * newExpNode(ExpKind kind)
 	    t->nodekind = ExpK;
 	    t->kind.exp = kind;
 	    t->lineno = lineno;
+
 	   // t->type = integer;
   	}
 		

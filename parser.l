@@ -71,8 +71,9 @@ int setTokenData(int tokenClass, const char * tokenString)
 	yylval.tokenData = new TokenData;
 	yylval.tokenData->tokenClass = tokenClass;
 	yylval.tokenData->lineno = lineno;
-	yylval.tokenData->tokenString = strdup(tokenString);
-
+	yylval.tokenData->tokenString = strdup(yytext);
+	//yylval.tokenData->tokenString = strdup(tokenString);
+	//yylval.tokenData->lowerTokenString = ts.c_str();
 	return tokenClass;
 }
 

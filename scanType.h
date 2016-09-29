@@ -6,6 +6,7 @@ struct TokenData
 	int tokenClass;
 	int lineno;
 	char *tokenString;
+	//const char *lowerTokenString;
 	int numVal;
 	char charVal;
 	char *idVal;

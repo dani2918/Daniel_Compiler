@@ -45,7 +45,7 @@ enum NodeKind
 
 enum DeclKind
 {
-	varDeclaration, funDeclaration, recDeclaration
+	varDeclaration, funDeclaration, recDeclaration, paramDeclaration
 };
 
 enum StmtKind
@@ -60,7 +60,7 @@ enum ExpKind
 
 enum ExpType
 {
-	integer, boolean, character, record
+	integer, boolean, character, record, Void
 };
 
 // Reflects the struct from the assignment 2 notes
@@ -92,6 +92,8 @@ typedef struct treeNode
     bool isRecord;
     bool isStatic;
     bool isParam;
+    int numChildren;
+    char * tokenString;
 
    } TreeNode;
 
