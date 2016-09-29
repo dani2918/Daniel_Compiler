@@ -676,7 +676,7 @@ expression 				: mutable ASS expression
 							}
 						| mutable ADDASS expression
 							{
-								$$ = newExpNode(OpK);
+								$$ = newExpNode(AssK);
 								$$ -> child[0] = $1;
 								$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
@@ -685,7 +685,7 @@ expression 				: mutable ASS expression
 							}
 						| mutable SUBASS expression
 							{
-								$$ = newExpNode(OpK);
+								$$ = newExpNode(AssK);
 								$$ -> child[0] = $1;
 								$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
@@ -694,7 +694,7 @@ expression 				: mutable ASS expression
 							}
 						| mutable MULASS expression
 							{
-								$$ = newExpNode(OpK);
+								$$ = newExpNode(AssK);
 								$$ -> child[0] = $1;
 								$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
@@ -703,27 +703,27 @@ expression 				: mutable ASS expression
 							}
 						| mutable DIVASS expression
 							{
-								$$ = newExpNode(OpK);
+								$$ = newExpNode(AssK);
 								$$ -> child[0] = $1;
 								$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
 								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
 							}
-						| mutable INC expression
+						| mutable INC 
 							{
-								$$ = newExpNode(OpK);
+								$$ = newExpNode(AssK);
 								$$ -> child[0] = $1;
-								$$ -> child[1] = $3;
+								//$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
 								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
 							}
-						| mutable DEC expression
+						| mutable DEC 
 							{
 								$$ = newExpNode(OpK);
 								$$ -> child[0] = $1;
-								$$ -> child[1] = $3;
+								//$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
 								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
@@ -851,7 +851,7 @@ mulop					: MUL
 						;						
 
 unaryExpression			: unaryop unaryExpression
-							{
+							{	//TODO: FIX THIS
 								$$ = newExpNode(OpK);
 								$$ -> child[0] = $2;
 								$$ -> numChildren = 1;
