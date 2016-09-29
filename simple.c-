@@ -1,6 +1,9 @@
-int a, b;
+int a;
+bool b[100];
 
 int max(int x, y)
 {
+	int z, zz;
+    char c;
 	return x;
 }

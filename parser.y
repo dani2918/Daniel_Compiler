@@ -22,6 +22,11 @@
  int savedLineNo;
 
  ExpType storedType;
+ bool isStatic = false;
+ TreeNode * nullablePlaceholder;
+
+// To track epsilon productions
+ int firstTimeThrough = 0;
 
 //#define YYERROR_VERBOSE 1
 void yyerror(const char *errMsg)
@@ -73,7 +78,7 @@ void printErrToken(int lineno, char* tokenString)
 {
 	ExpType expType;
 	int number; 
-	TokenData td;
+	TokenData * td;
 	TreeNode * t;
 	char * name;
 
@@ -91,10 +96,11 @@ void printErrToken(int lineno, char* tokenString)
 %type <treeNode> statement otherStatement selectIterStmt expressionStmt compoundStmt returnStmt breakStmt
 	%type <treeNode> localDeclarations scopedVarDeclaration statementList
 %type <treeNode> expression firstmatched matched unmatched
-	%type <treeNode> mutable andExpression unaryRelExpression relExpression sumExpression term unaryExpression
-	%type <treeNode> factor 
-	%type <treeNode> argList args 
-%type <expType> returnTypeSpecifier typeSpecifier 
+	%type <treeNode> andExpression unaryRelExpression relExpression sumExpression term unaryExpression
+	%type <treeNode> factor immutable mutable
+	%type <treeNode> argList args call constant
+%type <expType> returnTypeSpecifier typeSpecifier scopedTypeSpecifier
+%type <td> relop sumop mulop unaryop
 
 
 
@@ -146,6 +152,7 @@ recDeclaration 			: RECORD ID LCUR localDeclarations RCUR
 
 varDeclaration			: typeSpecifier varDeclList SEMI 
 							{
+								storedType = $1; 
 								$$ = $2;
  							}
 						;
@@ -153,6 +160,7 @@ varDeclaration			: typeSpecifier varDeclList SEMI
 // TOOD: scopedVarDeclaration
 scopedVarDeclaration 	: scopedTypeSpecifier varDeclList SEMI
 							{
+								storedType = $1;
 								$$ = $2;
 							}
 						;
@@ -203,23 +211,30 @@ varDeclInitialize 		: varDeclId
 
 varDeclId				: ID 
 							{
-								$$ = newDeclNode(varDeclaration);
+								$$ = newExpNode(IdK);
 								$$ -> attr.name = strdup($1 -> tokenString);
 								$$->type = storedType; 
 								$$->isArray = false;
+								$$ -> isStatic = isStatic;
 							}
 						| ID LBRAC NUMCONST RBRAC
 							{
-								$$ = newDeclNode(varDeclaration);
+								$$ = newExpNode(IdK);
 								$$ -> attr.name = strdup($1 -> tokenString);
 								$$->type = storedType; 
-								$$->isArray = true;
+								$$->isArray = true; //printf("Array\n");
+								$$ -> isStatic = isStatic;
 							}		
 						;
 
-//TODO: scopedTypeSpecifier
+
 scopedTypeSpecifier 	: STATIC typeSpecifier
+							{
+								isStatic = true; 
+								$$ = $2;
+							}
 						| typeSpecifier
+							{ $$ = $1;}
 						;
 
 typeSpecifier 			: returnTypeSpecifier 
@@ -250,10 +265,12 @@ returnTypeSpecifier		: INT
 
 funDeclaration			: typeSpecifier ID LPAREN params RPAREN statement
 							{
+								printf("we have this one\n");
+								storedType = $1;
 								$$ = newDeclNode(funDeclaration);
 								$$ -> lineno = $2 -> lineno;
 								$$ -> attr.name = strdup($2 -> tokenString);
-								$$ -> type = storedType;
+								$$ -> type = storedType; printf("storedType is: %d\n", storedType);
 								$$ -> child[0] = $4;
 								$$ -> child[1] = $6; //printf("line 255\n"); printf("lineno: %d\n", $$->child[1]->lineno);
 							}
@@ -307,6 +324,7 @@ paramList				: paramList SEMI paramTypeList
 
 paramTypeList			: typeSpecifier paramIdList
 							{
+								storedType = $1;
 								$$ = $2;
 							}
 						;
@@ -381,75 +399,65 @@ compoundStmt			: LCUR localDeclarations statementList RCUR
 								$$ = newStmtNode(compoundStmt); //printf("compoundStmt!\n\n");
 								$$ -> lineno = $1 -> lineno;
 								$$ -> child[0] = $2;
-								$$ -> child[1] = $3;
+								$$ -> child[1] = $3; //printf("Line 385\n");
 							}
 						;
 
 localDeclarations		: localDeclarations scopedVarDeclaration
 							{
-								TreeNode * t = $1;
-								if (t != NULL)
+								if (firstTimeThrough == 1)
 								{
-									while (t->sibling != NULL)
-									{
-										t = t-> sibling;
-									}
-									t->sibling = $2;
-									
+									$$  = $2;
+									firstTimeThrough = 0;
 								}
-								else 
+								else
 								{
-									$$ = newDeclNode(varDeclaration);
-									$$->sibling = $2; 
-									
+									$$ = $1;
 								}
-								$$ = $1;
+								
 							}
 							
 						| /* empty */
 							{
-								$$ = NULL;
+								//$$ = newStmtNode(expressionStmt);
+								firstTimeThrough = 1;
+								//$$ = NULL;
 							}
 						;
 
 statementList			: statementList statement
 							{
-								TreeNode * t = $1; //printf("got here\n");
-								if (t != NULL)
-								{	
-									//printf("t not null\n");
-									while (t->sibling != NULL)
-									{
-										t = t-> sibling;
-									}
-									t->sibling = $2;									
-								}
-								else 
+								if (firstTimeThrough == 1)
 								{
-									$$ = newStmtNode(expressionStmt);
-									//printf("t  null\n");
-									$$->sibling = $2; 
-									//printf("t  null\n");//LOOK FOR FIX HERE!
+									$$  = $2;
+									firstTimeThrough = 0;
 								}
-								$$ = $1;
+								else
+								{
+									$$ = $1;
+								}
+							
 							}
 
 						| /* empty */
 							{
-								$$ = NULL;
+								//printf("got here!\n\n\n");
+							//	$$ = newStmtNode(expressionStmt);
+								firstTimeThrough = 1;
+								//$$ = NULL;
 							}
 						;
 
 expressionStmt			: expression SEMI 
 							{
-								$$ = newStmtNode(expressionStmt);
+								//$$ = newStmtNode(expressionStmt);
 								$$ = $1;
 							}
+
 						| SEMI
 						;
 
 
-/* TODO: Fix if/while*/
 
 selectIterStmt 			: firstmatched 
 							{ $$ = $1;} 
@@ -526,12 +534,13 @@ unmatched				: IF LPAREN simpleExpression RPAREN matched
 
 returnStmt				: RETURN SEMI
 							{
-								$$ = newStmtNode(returnStmt);// printf("line 521\n");
+								$$ = newStmtNode(returnStmt); // printf("line 521\n");
+
 							}
 						| RETURN expression SEMI
 							{
 								$$ = newStmtNode(returnStmt);
-								$$ -> child[0] = $2
+								$$ -> child[0] = $2;
 							}
 						;
 
@@ -545,135 +554,52 @@ breakStmt 				: BREAK SEMI
 
 expression 				: mutable ASS expression 
 							{
-								TreeNode * t = $3;
-								if (t != NULL)
-								{
-									while (t->sibling != NULL)
-									{
-										t = t-> sibling;
-									}
-									t->sibling = $1;
-									
-								}
-								else 
-								{
-									t->sibling = $1; 
-									
-								}
-								$$ = $3;
+								$$ = newExpNode(OpK);
+								$$ -> child[0] = $1;
+								$$ -> child[1] = $3;
+								$$ -> attr.td = $2;
 							}
 						| mutable ADDASS expression
 							{
-								TreeNode * t = $3;
-								if (t != NULL)
-								{
-									while (t->sibling != NULL)
-									{
-										t = t-> sibling;
-									}
-									t->sibling = $1;
-									
-								}
-								else 
-								{
-									t->sibling = $1; 
-									
-								}
-								$$ = $3;
+								$$ = newExpNode(OpK);
+								$$ -> child[0] = $1;
+								$$ -> child[1] = $3;
+								$$ -> attr.td = $2;
 							}
 						| mutable SUBASS expression
 							{
-								TreeNode * t = $3;
-								if (t != NULL)
-								{
-									while (t->sibling != NULL)
-									{
-										t = t-> sibling;
-									}
-									t->sibling = $1;
-									
-								}
-								else 
-								{
-									t->sibling = $1; 
-									
-								}
-								$$ = $3;
+								$$ = newExpNode(OpK);
+								$$ -> child[0] = $1;
+								$$ -> child[1] = $3;
+								$$ -> attr.td = $2;
 							}
 						| mutable MULASS expression
 							{
-								TreeNode * t = $3;
-								if (t != NULL)
-								{
-									while (t->sibling != NULL)
-									{
-										t = t-> sibling;
-									}
-									t->sibling = $1;
-									
-								}
-								else 
-								{
-									t->sibling = $1; 
-									
-								}
-								$$ = $3;
+								$$ = newExpNode(OpK);
+								$$ -> child[0] = $1;
+								$$ -> child[1] = $3;
+								$$ -> attr.td = $2;
 							}
 						| mutable DIVASS expression
 							{
-								TreeNode * t = $3;
-								if (t != NULL)
-								{
-									while (t->sibling != NULL)
-									{
-										t = t-> sibling;
-									}
-									t->sibling = $1;
-									
-								}
-								else 
-								{
-									t->sibling = $1; 
-									
-								}
-								$$ = $3;
+								$$ = newExpNode(OpK);
+								$$ -> child[0] = $1;
+								$$ -> child[1] = $3;
+								$$ -> attr.td = $2;
 							}
 						| mutable INC expression
 							{
-								TreeNode * t = $3;
-								if (t != NULL)
-								{
-									while (t->sibling != NULL)
-									{
-										t = t-> sibling;
-									}
-									t->sibling = $1;
-									
-								}
-								else 
-								{
-									t->sibling = $1; 
-									
-								}
-								$$ = $3;
+								$$ = newExpNode(OpK);
+								$$ -> child[0] = $1;
+								$$ -> child[1] = $3;
+								$$ -> attr.td = $2;
 							}
 						| mutable DEC expression
 							{
-								TreeNode * t = $3;
-								if (t != NULL)
-								{
-									while (t->sibling != NULL)
-									{
-										t = t-> sibling;
-									}
-									t->sibling = $1;
-								}
-								else 
-								{
-									t->sibling = $1; 
-									
-								}
-								$$ = $3;
+								$$ = newExpNode(OpK);
+								$$ -> child[0] = $1;
+								$$ -> child[1] = $3;
+								$$ -> attr.td = $2;
 							}
 						| simpleExpression 
 							{
@@ -684,21 +610,10 @@ expression 				: mutable ASS expression
 
 simpleExpression		: simpleExpression OR andExpression
 							{
-								TreeNode * t = $1;
-								if (t != NULL)
-								{
-									while (t->sibling != NULL)
-									{
-										t = t-> sibling;
-									}
-									t->sibling = $3;
-								}
-								else 
-								{
-									t->sibling = $3; 
-									
-								}
-								$$ = $1;
+								$$ = newExpNode(factorK);
+								$$ -> child[0] = $1;
+								$$ -> child[1] = $3;
+								$$ -> attr.td = $2;
 							}
 						| andExpression
 							{
@@ -709,24 +624,10 @@ simpleExpression		: simpleExpression OR andExpression
 	
 andExpression			: andExpression AND unaryRelExpression
 						{
-							TreeNode * t = $1; //printf("got here\n");
-							if (t != NULL)
-							{	
-								//printf("t not null\n");
-								while (t->sibling != NULL)
-								{
-									t = t-> sibling;
-								}
-								t->sibling = $3;									
-							}
-							else 
-							{
-								$$ = newStmtNode(expressionStmt);
-								//printf("t  null\n");
-								$$->sibling = $3; 
-								//printf("t  null\n");//LOOK FOR FIX HERE!
-							}
-							$$ = $1;
+								$$ = newExpNode(factorK);
+								$$ -> child[0] = $1;
+								$$ -> child[1] = $3;
+								$$ -> attr.td = $2;
 						}
 						| unaryRelExpression
 							{
@@ -746,21 +647,10 @@ unaryRelExpression		: NOT unaryRelExpression
 
 relExpression			: sumExpression relop sumExpression
 							{
-								TreeNode * t = $1;
-								if (t != NULL)
-								{
-									while (t->sibling != NULL)
-									{
-										t = t-> sibling;
-									}
-									t->sibling = $3;
-								}
-								else 
-								{
-									t->sibling = $3; 
-									
-								}
-								$$ = $1;
+								$$ = newExpNode(factorK);
+								$$ -> child[0] = $1;
+								$$ -> child[1] = $3;
+								$$ -> attr.td = $2;
 							}
 
 						| sumExpression
@@ -771,30 +661,25 @@ relExpression			: sumExpression relop sumExpression
 
 
 relop 					: LESSEQ 
+							{$$ = $1;}
 						| LT
+							{$$ = $1;}
 						| GT
+							{$$ = $1;}
 						| GRTEQ
+							{$$ = $1;}
 						| EQ
+							{$$ = $1;}
 						| NOTEQ
+							{$$ = $1;}
 						;
 
 sumExpression			: sumExpression sumop term
 							{
-								TreeNode * t = $1;
-								if (t != NULL)
-								{
-									while (t->sibling != NULL)
-									{
-										t = t-> sibling;
-									}
-									t->sibling = $3;
-								}
-								else 
-								{
-									t->sibling = $3; 
-									
-								}
-								$$ = $1;
+								$$ = newExpNode(factorK);
+								$$ -> child[0] = $1;
+								$$ -> child[1] = $3;
+								$$ -> attr.td = $2;
 							}
 						| term
 							{
@@ -803,42 +688,105 @@ sumExpression			: sumExpression sumop term
 						;
 
 sumop 					: ADD
+							{$$ = $1;}
 						| SUB
+							{$$ = $1;}
 						;
 
 term					: term mulop unaryExpression
+							{
+								$$ = newExpNode(factorK);
+								$$ -> child[0] = $1;
+								$$ -> child[1] = $3;
+								$$ -> attr.td = $2;
+							}
 						| unaryExpression
+							{$$ = $1;}
 						;
 
 mulop					: MUL
+							{$$ = $1;}
 						| DIV
+							{$$ = $1;}
 						| MOD
+							{$$ = $1;}
 						;						
 
 unaryExpression			: unaryop unaryExpression
+							{
+								$$ = newExpNode(factorK);
+								$$ -> child[0] = $2;
+								$$ -> attr.td = $1;
+							}
 						| factor
+							{$$ = $1;}
 						;
 
 unaryop 				: SUB
+							{$$ = $1;}
 						| MUL
+							{$$ = $1;}
 						| RAND
+							{$$ = $1;}
 						;
 
 factor					: immutable 
+							{$$ = $1;}
 						| mutable
+							{$$ = $1;}
 						;
 
 mutable					: ID 
+							{
+								$$ = newExpNode(IdK);
+								$$ -> attr.name = strdup($1 -> tokenString);
+							//	$$->type = storedType; 
+								$$->isArray = false;
+							}
 						| mutable LBRAC expression RBRAC 
+							{
+								$$ = newExpNode(IdK);
+								$$ -> child[0] = $1;
+								$$ -> child[1] = $3;
+							}
 						| mutable DOT ID
+							{
+								$$ = newExpNode(IdK);
+								$$ -> child[0] = $1;
+								
+								TreeNode * t;
+								t = newExpNode(IdK);
+								t -> attr.name = strdup($3 -> tokenString);
+								//$$->type = storedType; 
+								t ->isArray = false;
+								$$ -> child[1] = t;
+							}
 						;						
 
-immutable				: LPAREN expression RPAREN 
+immutable				: LPAREN expression RPAREN
+							{	// MAY BE WRONG
+								$$ = $2;
+							} 
 						| call
+							{
+								$$ = $1;
+							}
 						| constant 
+							{
+								$$ = $1;
+							}
 						; 
 
 call					: ID LPAREN args RPAREN 
+							{
+								$$ = newExpNode(IdK);
+								$$ -> child[0] = $3;
+
+								$$ -> attr.name = strdup($1 -> tokenString);
+								//$$->type = storedType; 
+								$$ ->isArray = false;
+
+							}
 						;
 
 args 					: argList	
@@ -853,12 +801,33 @@ args 					: argList
 
 
 argList					: argList COMMA expression 
+							{
+								$$ = newExpNode(constK);
+								$$ -> child[0] = $1;
+								$$ -> child[1] = $3;
+							}
+
 						| expression
+							{
+								$$ = $1;
+							}
 						;
 
-constant	 			: NUMCONST 	
+constant	 			: NUMCONST 
+							{
+								$$ = newExpNode(constK);
+								$$ ->attr.value = $1->numVal;
+							}	
 						| CHARCONST 
+							{
+								$$ = newExpNode(constK);
+								$$ ->attr.cvalue = $1->charVal;
+							}	
 						| BOOLCONST 
+							{
+								$$ = newExpNode(constK);
+								$$ -> attr.bvalue = $1->bvalue;
+							}
 						;
 
 %%

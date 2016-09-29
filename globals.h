@@ -35,6 +35,7 @@ extern int indent;
 extern int sibCount;
 extern int childCount;
 
+
 enum NodeKind
 {
 	DeclK, StmtK, ExpK
@@ -52,7 +53,7 @@ enum StmtKind
 
 enum ExpKind
 {
-	simpleExpression
+	OpK, factorK, IdK, constK
 };
 
 enum ExpType
@@ -76,11 +77,12 @@ typedef struct treeNode
 
     union 
     { 
-    	TokenData td;
+    	TokenData * td;
     	int value;
     	unsigned char cvalue;
     	char * string;
     	char * name;
+    	bool bvalue;
     } attr;
 
     ExpType type;

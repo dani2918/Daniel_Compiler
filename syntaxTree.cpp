@@ -67,8 +67,6 @@ void printTree(TreeNode * t)
 void printTreeR(TreeNode * t, int sibCount, int childCount, childSib cs)
 {
 
-	
-
 	if (t == NULL)
 		return;
 
@@ -96,7 +94,7 @@ void printTreeR(TreeNode * t, int sibCount, int childCount, childSib cs)
 
 	for (int i = 0; i < numChildren; i++)
 	{
-		printTreeR(t->child[i], 0, childCount, chi);
+		printTreeR(t->child[i], 0, i, chi);
 		childCount++;
 	}
 	printTreeR(t->sibling, sibCount, childCount, sib);
@@ -189,10 +187,49 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 						case compoundStmt:
 							printf("Compound ");
 							break;
+						case returnStmt:
+							printf("Return ");
+							break;
+						case selectionStmt:
+							printf("If ");
+							break;
 						default:
 							break;
 					}
 
+				case ExpK:
+					switch(t->kind.exp)
+					{
+						case IdK:
+							printf("Var %s ", t->attr.name);
+							if(t-> isArray == true)
+									{
+										arrMsgToggle = arrMsg;
+									}
+									else
+									{
+										arrMsgToggle = "";
+									}
+
+								// switch types
+								switch (t->type)
+								{
+									
+									case integer:
+										printf("%sof type int ", arrMsgToggle);
+										break;
+									case boolean:
+										printf("%sof type bool ", arrMsgToggle);
+										break;
+									case character:
+										printf("%sof type char ", arrMsgToggle);
+										break;	
+								}
+							break;
+
+						default:
+							break;
+					}	
 
 				default:
 					break;
@@ -253,8 +290,6 @@ TreeNode * newStmtNode(StmtKind kind)
 	    t->kind.stmt = kind; //printf("Kind is %d\n",kind );
 	    t->lineno = lineno;
   	}
-
-
 		
 	return t;
 }
