@@ -94,6 +94,7 @@ void printTreeR(TreeNode * t, int sibCount, int childCount, childSib cs)
 
 	for (int i = 0; i < numChildren; i++)
 	{
+		
 		printTreeR(t->child[i], 0, i, chi);
 		childCount++;
 	}
@@ -154,6 +155,9 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 									case character:
 										printf("%sof type char ", arrMsgToggle);
 										break;	
+									case record:
+										printf("%sof type record ", arrMsgToggle);
+										break;
 								}
 
 							break;
@@ -162,7 +166,6 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 							printf("Func %s ", t->attr.name);
 							switch (t->type)
 								{
-									
 									case integer:
 										printf("returns type int ");
 										break;
@@ -172,10 +175,14 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 									case character:
 										printf("returns type char ");
 										break;	
+									case record:
+										printf("%sof type record ", arrMsgToggle);
+										break;
 								}
 							break;
 
 						case recDeclaration:
+							printf("Record %s ", t->attr.name);
 							break;
 					}
 					
@@ -224,9 +231,15 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 									case character:
 										printf("%sof type char ", arrMsgToggle);
 										break;	
+									case record:
+										printf("%sof type record ", arrMsgToggle);
+										break;
 								}
 							break;
 
+						
+						case OpK:
+							printf("Op %s ", t->attr.td -> tokenString);
 						default:
 							break;
 					}	
@@ -313,10 +326,32 @@ TreeNode * newExpNode(ExpKind kind)
 	    t->nodekind = ExpK;
 	    t->kind.exp = kind;
 	    t->lineno = lineno;
-	    t->type = integer;
+	   // t->type = integer;
   	}
 		
 	return t;
 }
 
+TreeNode * newExpTypeNode()
+{
+	TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
+	int i;
+
+	// Check from util.c code
+	if (t==NULL)
+    printf("Out of memory error at line %d\n",lineno);
+  	else 
+  	{
+	    for (i=0;i<MAXCHILDREN;i++) 
+	    	{
+	    		t->child[i] = NULL;
+	    	}
+	    t->sibling = NULL;
+	    t->nodekind = ExpK;
+	    t->lineno = lineno;
+	    //t->type = type;
+  	}
+		
+	return t;
+}
 

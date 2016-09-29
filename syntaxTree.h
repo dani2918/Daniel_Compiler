@@ -27,6 +27,7 @@ TreeNode * newStmtNode(StmtKind kind);
 
 TreeNode * newExpNode(ExpKind kind);
 
+TreeNode * newExpTypeNode();
 
 
 

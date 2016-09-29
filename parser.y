@@ -6,6 +6,7 @@
  #include "globals.h"
  #include "scanType.h"
  #include "syntaxTree.h"
+ #include "symbolTable.h"
 
 
  #include "parser.tab.h"
@@ -16,6 +17,9 @@
  extern int yyparse();
  extern FILE *yyin;
  extern int lineno;
+
+ //SymbolTable st;
+ 
 
  //Like the TreeNode from tiny.y
  static TreeNode * savedTree;
@@ -44,12 +48,17 @@ void printErrToken(int lineno, char* tokenString)
 	printf("ERROR(%d): Invalid or misplaced input character: \"%s\"\n", lineno, tokenString);
 }
 
+//SymbolTable passSymTab()
+//{
+//	return st;
+//}
+
  %}
 
 
 %token <tokenData> NUMCONST
 %token <tokenData> CHARCONST
-%token <tokenData> ID
+%token <tokenData> ID RECTYPE
 %token <tokenData> BOOLCONST
 %token <tokenData> NOT AND OR RECORD STATIC INT BOOL CHAR IF ELSE WHILE RETURN BREAK
 %token <tokenData> RAND DOT
@@ -91,7 +100,7 @@ void printErrToken(int lineno, char* tokenString)
 
 
 %type <treeNode> declarationList declaration
-%type <treeNode> varDeclaration funDeclaration recDeclaration varDeclList varDeclInitialize varDeclId simpleExpression
+%type <treeNode> varDeclaration funDeclaration otherFunDeclaration recDeclaration varDeclList varDeclInitialize varDeclId simpleExpression
 	%type <treeNode> params paramList paramTypeList paramIdList paramId
 %type <treeNode> statement otherStatement selectIterStmt expressionStmt compoundStmt returnStmt breakStmt
 	%type <treeNode> localDeclarations scopedVarDeclaration statementList
@@ -145,14 +154,23 @@ declaration 			: varDeclaration
 
 // TODO: RECORD
 recDeclaration 			: RECORD ID LCUR localDeclarations RCUR
-						//	{
-						//		$$ = newRecNode()
-						//	}
+							{
+								$$ = newDeclNode(recDeclaration);
+								$$ -> isRecord = true;
+								$$ -> attr.name = strdup($2 -> tokenString);
+								st.insert($$ -> attr.name, (char *)"RECORD");
+								//st.print(pointerPrintStr); 
+								$$ -> child[0] = $4;
+								
+							}
 						;
 
 varDeclaration			: typeSpecifier varDeclList SEMI 
 							{
-								storedType = $1; 
+								TreeNode * t;
+								t = newExpTypeNode();
+								t -> type = $1;
+								storedType = t -> type;
 								$$ = $2;
  							}
 						;
@@ -160,7 +178,10 @@ varDeclaration			: typeSpecifier varDeclList SEMI
 // TOOD: scopedVarDeclaration
 scopedVarDeclaration 	: scopedTypeSpecifier varDeclList SEMI
 							{
-								storedType = $1;
+								TreeNode * t;
+								t = newExpTypeNode();
+								t -> type = $1;// printf("t type is : %d\n", t -> type);
+								storedType = t -> type;
 								$$ = $2;
 							}
 						;
@@ -243,36 +264,42 @@ typeSpecifier 			: returnTypeSpecifier
 							}
 
 							//TODO: RECORD part
-						| RECORD /*MAYBE rectype?*/
-//							{
-//								$$ = $1;
-//							}
+						| RECTYPE /*MAYBE rectype?*/
+							{
+								//$$ = newDeclNode(recDeclaration);
+								$$  = record; //printf("type: %d \n", $$ -> type);
+							}
 						;
 
 returnTypeSpecifier		: INT 
 							{
-								storedType = integer;
+								//$$ -> type = integer; printf("type: %d \n", $$ -> type);
+								$$ = integer;	//printf("type: %d \n", $$);
 							}
 						| BOOL
 							{
-								storedType = boolean; 
+								//$$ -> type = boolean; printf("type: %d \n", $$ -> type);
+								//storedType = boolean;
+								$$ = boolean; //printf("type: %d \n", $$);
 							}
 						| CHAR
 							{
-								storedType = character;
+								//$$ -> type = character; printf("type: %d \n", $$ -> type);
+								//storedType = character;
+								$$ = character;// printf("type: %d \n", $$);
 							}
 						;
 
-funDeclaration			: typeSpecifier ID LPAREN params RPAREN statement
+funDeclaration			: typeSpecifier otherFunDeclaration
 							{
-								printf("we have this one\n");
-								storedType = $1;
-								$$ = newDeclNode(funDeclaration);
-								$$ -> lineno = $2 -> lineno;
-								$$ -> attr.name = strdup($2 -> tokenString);
-								$$ -> type = storedType; printf("storedType is: %d\n", storedType);
-								$$ -> child[0] = $4;
-								$$ -> child[1] = $6; //printf("line 255\n"); printf("lineno: %d\n", $$->child[1]->lineno);
+								//printf("we have this one\n");
+								//storedType = $1;
+								TreeNode * f;
+								f = newExpTypeNode();
+								f -> type = $1;
+								storedType = f -> type;
+								$$ = $2;
+								
 							}
 
 						| ID LPAREN params RPAREN statement
@@ -284,6 +311,18 @@ funDeclaration			: typeSpecifier ID LPAREN params RPAREN statement
 								$$ -> child[1] = $5; 
 							}
 						;
+
+
+otherFunDeclaration		: ID LPAREN params RPAREN statement
+							{//Used to fix a storedType issue
+								//printf("storedType is: %d\n", storedType);
+								$$ = newDeclNode(funDeclaration);
+								$$ -> lineno = $1 -> lineno;
+								$$ -> attr.name = strdup($1 -> tokenString);
+								$$ -> type = storedType; 
+								$$ -> child[0] = $3;
+								$$ -> child[1] = $5; //printf("line 255\n"); printf("lineno: %d\n", $$->child[1]->lineno);
+							}
 
 params					: paramList
 							{
@@ -324,7 +363,10 @@ paramList				: paramList SEMI paramTypeList
 
 paramTypeList			: typeSpecifier paramIdList
 							{
-								storedType = $1;
+								TreeNode * t;
+								t = newExpTypeNode();
+								t -> type = $1;
+								storedType = t -> type;
 								$$ = $2;
 							}
 						;
@@ -407,13 +449,29 @@ localDeclarations		: localDeclarations scopedVarDeclaration
 							{
 								if (firstTimeThrough == 1)
 								{
-									$$  = $2;
+									$$ = $2;
 									firstTimeThrough = 0;
 								}
 								else
 								{
+									TreeNode * t = $1;
+									if (t != NULL)
+									{
+										while (t->sibling != NULL)
+										{
+											t = t-> sibling;
+										}
+										t->sibling = $2;
+										
+									}
+									else 
+									{
+										t->sibling = $2; 
+										
+									}
 									$$ = $1;
 								}
+
 								
 							}
 							
@@ -421,7 +479,7 @@ localDeclarations		: localDeclarations scopedVarDeclaration
 							{
 								//$$ = newStmtNode(expressionStmt);
 								firstTimeThrough = 1;
-								//$$ = NULL;
+								$$ = NULL;
 							}
 						;
 
@@ -434,6 +492,21 @@ statementList			: statementList statement
 								}
 								else
 								{
+									TreeNode * t = $1;
+									if (t != NULL)
+									{
+										while (t->sibling != NULL)
+										{
+											t = t-> sibling;
+										}
+										t->sibling = $2;
+										
+									}
+									else 
+									{
+										t->sibling = $2; 
+										
+									}
 									$$ = $1;
 								}
 							
@@ -444,17 +517,20 @@ statementList			: statementList statement
 								//printf("got here!\n\n\n");
 							//	$$ = newStmtNode(expressionStmt);
 								firstTimeThrough = 1;
-								//$$ = NULL;
+								$$ = NULL;
 							}
 						;
 
 expressionStmt			: expression SEMI 
 							{
-								//$$ = newStmtNode(expressionStmt);
-								$$ = $1;
+								$$ = newStmtNode(expressionStmt);
+								$$ -> child[0] = $1;
 							}
 
 						| SEMI
+							{
+								$$ = newStmtNode(expressionStmt);
+							}
 						;
 
 
@@ -610,7 +686,7 @@ expression 				: mutable ASS expression
 
 simpleExpression		: simpleExpression OR andExpression
 							{
-								$$ = newExpNode(factorK);
+								$$ = newExpNode(OpK);
 								$$ -> child[0] = $1;
 								$$ -> child[1] = $3;
 								$$ -> attr.td = $2;
@@ -624,7 +700,7 @@ simpleExpression		: simpleExpression OR andExpression
 	
 andExpression			: andExpression AND unaryRelExpression
 						{
-								$$ = newExpNode(factorK);
+								$$ = newExpNode(OpK);
 								$$ -> child[0] = $1;
 								$$ -> child[1] = $3;
 								$$ -> attr.td = $2;
@@ -647,7 +723,7 @@ unaryRelExpression		: NOT unaryRelExpression
 
 relExpression			: sumExpression relop sumExpression
 							{
-								$$ = newExpNode(factorK);
+								$$ = newExpNode(OpK);
 								$$ -> child[0] = $1;
 								$$ -> child[1] = $3;
 								$$ -> attr.td = $2;
@@ -676,7 +752,7 @@ relop 					: LESSEQ
 
 sumExpression			: sumExpression sumop term
 							{
-								$$ = newExpNode(factorK);
+								$$ = newExpNode(OpK);
 								$$ -> child[0] = $1;
 								$$ -> child[1] = $3;
 								$$ -> attr.td = $2;
@@ -695,7 +771,7 @@ sumop 					: ADD
 
 term					: term mulop unaryExpression
 							{
-								$$ = newExpNode(factorK);
+								$$ = newExpNode(OpK);
 								$$ -> child[0] = $1;
 								$$ -> child[1] = $3;
 								$$ -> attr.td = $2;
@@ -714,7 +790,7 @@ mulop					: MUL
 
 unaryExpression			: unaryop unaryExpression
 							{
-								$$ = newExpNode(factorK);
+								$$ = newExpNode(OpK);
 								$$ -> child[0] = $2;
 								$$ -> attr.td = $1;
 							}

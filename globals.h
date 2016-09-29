@@ -13,6 +13,7 @@ Contains the syntax tree node based on the Louden definitis
 #include <ctype.h>
 #include <string.h>
 #include "scanType.h"
+#include "symbolTable.h"
 
 #define MAXCHILDREN 3
 
@@ -34,6 +35,7 @@ extern int lineno;
 extern int indent;
 extern int sibCount;
 extern int childCount;
+extern SymbolTable st;
 
 
 enum NodeKind
@@ -58,7 +60,7 @@ enum ExpKind
 
 enum ExpType
 {
-	integer, boolean, character
+	integer, boolean, character, record
 };
 
 // Reflects the struct from the assignment 2 notes

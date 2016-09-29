@@ -1,9 +1,13 @@
 int a;
-bool b[100];
+char b[100];
+
+record q{int l;}
+
+q blah;
 
 int max(int x, y)
 {
-	int z, zz;
-    char c;
+	char z, zz;
+    bool c;
 	return x;
 }

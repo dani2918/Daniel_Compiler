@@ -1,7 +1,7 @@
 BIN  = parser
 CC   = g++
-SRCS = $(BIN).y $(BIN).l syntaxTree.cpp 
-OBJS = lex.yy.o $(BIN).tab.o syntaxTree.o
+SRCS = $(BIN).y $(BIN).l syntaxTree.cpp symbolTable.cpp
+OBJS = lex.yy.o $(BIN).tab.o syntaxTree.o symbolTable.o
 LIBS = -lm 
 
 
@@ -14,6 +14,9 @@ $(BIN).tab.h $(BIN).tab.c: $(BIN).y
 lex.yy.c: $(BIN).l $(BIN).tab.h
 	flex $(BIN).l #-d debug
 
+symbolTable.o: symbolTable.cpp symbolTable.h
+	$(CC) $(CCFLAGS) -c symbolTable.cpp
+
 syntaxTree.o: syntaxTree.cpp syntaxTree.h globals.h 
 	$(CC) $(CCFLAGS) -c syntaxTree.cpp
 
@@ -25,5 +28,5 @@ clean:
 	rm -f $(OBJS) $(BIN) syntaxTree.o lex.yy.c $(BIN).tab.h $(BIN).tab.c $(BIN).tar *~ *.output 
 
 tar:
-	tar -cvf $(BIN).tar $(SRCS) globals.h scanType.h syntaxTree.h makefile 
+	tar -cvf $(BIN).tar $(SRCS) globals.h scanType.h syntaxTree.h symbolTable.h makefile 
 

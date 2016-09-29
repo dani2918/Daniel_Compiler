@@ -4,11 +4,13 @@
 #include <ctype.h>	
 #include "scanType.h"
 #include "globals.h"
+#include "symbolTable.h"
 
 #include "parser.tab.h"
 
 
 int lineno = 1;
+SymbolTable st;
 
 int setTokenData(int tokenClass)
 {
@@ -20,6 +22,9 @@ int setTokenData(int tokenClass)
 	switch (tokenClass)
 	{
 		case ID:
+			yylval.tokenData->idVal = strdup(yytext);
+			break;
+		case RECTYPE:
 			yylval.tokenData->idVal = strdup(yytext);
 			break;
 		case NUMCONST:
@@ -147,7 +152,19 @@ comment		"//".*
 
 
 {NUMCONST}		{return setTokenData(NUMCONST);}
-{ID}			{return setTokenData(ID);}
+{ID}			{ 
+					if (st.lookup(yytext)!=NULL) 
+					{
+						return setTokenData(RECTYPE);
+
+						printf("rectype!\n");
+					}
+					else
+					{
+						return setTokenData(ID);
+					}}
+
+
 {CHARCONST}		{return setTokenData(CHARCONST);}
 
 {whitespace}	;

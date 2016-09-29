@@ -42,115 +42,117 @@
      NUMCONST = 258,
      CHARCONST = 259,
      ID = 260,
-     BOOLCONST = 261,
-     NOT = 262,
-     AND = 263,
-     OR = 264,
-     RECORD = 265,
-     STATIC = 266,
-     INT = 267,
-     BOOL = 268,
-     CHAR = 269,
-     IF = 270,
-     ELSE = 271,
-     WHILE = 272,
-     RETURN = 273,
-     BREAK = 274,
-     RAND = 275,
-     DOT = 276,
-     ADDASS = 277,
-     SUBASS = 278,
-     MULASS = 279,
-     DIVASS = 280,
-     DEC = 281,
-     INC = 282,
-     EQ = 283,
-     NOTEQ = 284,
-     LESSEQ = 285,
-     LT = 286,
-     GRTEQ = 287,
-     GT = 288,
-     ASS = 289,
-     MUL = 290,
-     ADD = 291,
-     SUB = 292,
-     DIV = 293,
-     MOD = 294,
-     LPAREN = 295,
-     RPAREN = 296,
-     LBRAC = 297,
-     RBRAC = 298,
-     LCUR = 299,
-     RCUR = 300,
-     COMMA = 301,
-     COL = 302,
-     SEMI = 303,
-     ERR = 304
+     RECTYPE = 261,
+     BOOLCONST = 262,
+     NOT = 263,
+     AND = 264,
+     OR = 265,
+     RECORD = 266,
+     STATIC = 267,
+     INT = 268,
+     BOOL = 269,
+     CHAR = 270,
+     IF = 271,
+     ELSE = 272,
+     WHILE = 273,
+     RETURN = 274,
+     BREAK = 275,
+     RAND = 276,
+     DOT = 277,
+     ADDASS = 278,
+     SUBASS = 279,
+     MULASS = 280,
+     DIVASS = 281,
+     DEC = 282,
+     INC = 283,
+     EQ = 284,
+     NOTEQ = 285,
+     LESSEQ = 286,
+     LT = 287,
+     GRTEQ = 288,
+     GT = 289,
+     ASS = 290,
+     MUL = 291,
+     ADD = 292,
+     SUB = 293,
+     DIV = 294,
+     MOD = 295,
+     LPAREN = 296,
+     RPAREN = 297,
+     LBRAC = 298,
+     RBRAC = 299,
+     LCUR = 300,
+     RCUR = 301,
+     COMMA = 302,
+     COL = 303,
+     SEMI = 304,
+     ERR = 305
    };
 #endif
 /* Tokens.  */
 #define NUMCONST 258
 #define CHARCONST 259
 #define ID 260
-#define BOOLCONST 261
-#define NOT 262
-#define AND 263
-#define OR 264
-#define RECORD 265
-#define STATIC 266
-#define INT 267
-#define BOOL 268
-#define CHAR 269
-#define IF 270
-#define ELSE 271
-#define WHILE 272
-#define RETURN 273
-#define BREAK 274
-#define RAND 275
-#define DOT 276
-#define ADDASS 277
-#define SUBASS 278
-#define MULASS 279
-#define DIVASS 280
-#define DEC 281
-#define INC 282
-#define EQ 283
-#define NOTEQ 284
-#define LESSEQ 285
-#define LT 286
-#define GRTEQ 287
-#define GT 288
-#define ASS 289
-#define MUL 290
-#define ADD 291
-#define SUB 292
-#define DIV 293
-#define MOD 294
-#define LPAREN 295
-#define RPAREN 296
-#define LBRAC 297
-#define RBRAC 298
-#define LCUR 299
-#define RCUR 300
-#define COMMA 301
-#define COL 302
-#define SEMI 303
-#define ERR 304
+#define RECTYPE 261
+#define BOOLCONST 262
+#define NOT 263
+#define AND 264
+#define OR 265
+#define RECORD 266
+#define STATIC 267
+#define INT 268
+#define BOOL 269
+#define CHAR 270
+#define IF 271
+#define ELSE 272
+#define WHILE 273
+#define RETURN 274
+#define BREAK 275
+#define RAND 276
+#define DOT 277
+#define ADDASS 278
+#define SUBASS 279
+#define MULASS 280
+#define DIVASS 281
+#define DEC 282
+#define INC 283
+#define EQ 284
+#define NOTEQ 285
+#define LESSEQ 286
+#define LT 287
+#define GRTEQ 288
+#define GT 289
+#define ASS 290
+#define MUL 291
+#define ADD 292
+#define SUB 293
+#define DIV 294
+#define MOD 295
+#define LPAREN 296
+#define RPAREN 297
+#define LBRAC 298
+#define RBRAC 299
+#define LCUR 300
+#define RCUR 301
+#define COMMA 302
+#define COL 303
+#define SEMI 304
+#define ERR 305
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 68 "parser.y"
+#line 77 "parser.y"
 {
 	TokenData *tokenData;
 
-#line 73 "parser.y"
+#line 82 "parser.y"
 
 	TreeNode *treeNode;
 
-#line 78 "parser.y"
+#line 87 "parser.y"
 
 	ExpType expType;
 	int number; 
@@ -159,12 +161,12 @@ typedef union YYSTYPE
 	char * name;
 
 
-#line 88 "parser.y"
+#line 97 "parser.y"
 
 	char * c;
 }
 /* Line 1529 of yacc.c.  */
-#line 168 "parser.tab.h"
+#line 170 "parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
