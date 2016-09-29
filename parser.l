@@ -18,6 +18,7 @@ int setTokenData(int tokenClass)
 	yylval.tokenData->tokenClass = tokenClass;
 	yylval.tokenData->lineno = lineno;
 	yylval.tokenData->tokenString = strdup(yytext);
+	//printf("yytext: %s\n", yytext);
 
 	switch (tokenClass)
 	{

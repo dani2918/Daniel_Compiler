@@ -566,6 +566,7 @@ firstmatched			: IF LPAREN simpleExpression RPAREN matched ELSE matched
 								$$ -> child[0] = $3; 
 								$$ -> child[1] = $5;
 								$$ -> child[2] = $7;
+								$$ -> lineno = $1 -> lineno;
 							}
 						| WHILE LPAREN simpleExpression RPAREN matched
 							{
@@ -573,6 +574,7 @@ firstmatched			: IF LPAREN simpleExpression RPAREN matched ELSE matched
 								$$ -> numChildren = 2;
 								$$ -> child[0] = $3;
 								$$ -> child[1] = $5;
+								$$ -> lineno = $1 -> lineno;
 							}
 						;
 
@@ -583,6 +585,7 @@ matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched
 								$$ -> child[1] = $5;
 								$$ -> child[2] = $7;
 								$$ -> numChildren = 3;
+								$$ -> lineno = $1 -> lineno;
 							}
 						| WHILE LPAREN simpleExpression RPAREN matched
 							{
@@ -590,6 +593,7 @@ matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched
 								$$ -> numChildren = 2;
 								$$ -> child[0] = $3; 
 								$$ -> child[1] = $5;
+								$$ -> lineno = $1 -> lineno;
 							}
 						| otherStatement
 							{
@@ -603,6 +607,7 @@ unmatched				: IF LPAREN simpleExpression RPAREN matched
 								$$ -> numChildren = 2;
 								$$ -> child[0] = $3;
 								$$ -> child[1] = $5;
+								$$ -> lineno = $1 -> lineno;
 							}
 						| IF LPAREN simpleExpression RPAREN unmatched	
 							{
@@ -610,6 +615,7 @@ unmatched				: IF LPAREN simpleExpression RPAREN matched
 								$$ -> numChildren = 2;
 								$$ -> child[0] = $3;
 								$$ -> child[1] = $5;
+								$$ -> lineno = $1 -> lineno;
 							}					
 						| IF LPAREN simpleExpression RPAREN matched ELSE unmatched
 							{
@@ -618,6 +624,7 @@ unmatched				: IF LPAREN simpleExpression RPAREN matched
 								$$ -> child[2] = $5;
 								$$ -> child[2] = $7;
 								$$ -> numChildren = 3;
+								$$ -> lineno = $1 -> lineno;
 
 							}
 						| WHILE LPAREN simpleExpression RPAREN unmatched	
@@ -626,6 +633,7 @@ unmatched				: IF LPAREN simpleExpression RPAREN matched
 								$$ -> child[0] = $3;
 								$$ -> child[1] = $5;
 								$$ -> numChildren = 2;
+								$$ -> lineno = $1 -> lineno;
 							}					
 	
 						;
@@ -659,11 +667,11 @@ breakStmt 				: BREAK SEMI
 
 expression 				: mutable ASS expression 
 							{
-								$$ = newExpNode(OpK);
+								$$ = newExpNode(AssK);
 								$$ -> child[0] = $1;
 								$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
-								$$ -> attr.name = $2 -> tokenString;
+								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
 							}
 						| mutable ADDASS expression
@@ -672,7 +680,7 @@ expression 				: mutable ASS expression
 								$$ -> child[0] = $1;
 								$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
-								$$ -> attr.name = $2 -> tokenString;
+								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
 							}
 						| mutable SUBASS expression
@@ -681,7 +689,7 @@ expression 				: mutable ASS expression
 								$$ -> child[0] = $1;
 								$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
-								$$ -> attr.name = $2 -> tokenString;
+								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
 							}
 						| mutable MULASS expression
@@ -690,7 +698,7 @@ expression 				: mutable ASS expression
 								$$ -> child[0] = $1;
 								$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
-								$$ -> attr.name = $2 -> tokenString;
+								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
 							}
 						| mutable DIVASS expression
@@ -699,7 +707,7 @@ expression 				: mutable ASS expression
 								$$ -> child[0] = $1;
 								$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
-								$$ -> attr.name = $2 -> tokenString;
+								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
 							}
 						| mutable INC expression
@@ -708,7 +716,7 @@ expression 				: mutable ASS expression
 								$$ -> child[0] = $1;
 								$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
-								$$ -> attr.name = $2 -> tokenString;
+								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
 							}
 						| mutable DEC expression
@@ -717,7 +725,7 @@ expression 				: mutable ASS expression
 								$$ -> child[0] = $1;
 								$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
-								$$ -> attr.name = $2 -> tokenString;
+								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
 								//$$ -> attr.td = $2;
 							}
@@ -734,7 +742,7 @@ simpleExpression		: simpleExpression OR andExpression
 								$$ -> child[0] = $1;
 								$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
-								$$ -> attr.name = $2 -> tokenString;
+								$$ -> attr.name = strdup($2 -> tokenString);
 								//printf("TD string is: %s\n", $$->attr.name);
 							}
 						| andExpression
@@ -750,7 +758,7 @@ andExpression			: andExpression AND unaryRelExpression
 								$$ -> child[0] = $1;
 								$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
-								$$ -> attr.name = $2 -> tokenString;
+								$$ -> attr.name = strdup($2 -> tokenString);
 						}
 						| unaryRelExpression
 							{
@@ -762,7 +770,8 @@ unaryRelExpression		: NOT unaryRelExpression
 							{
 								$$ = newExpNode(OpK);
 								$$ -> child[0] = $2;
-								$$ -> attr.name = $1 -> tokenString;
+								$$ -> numChildren = 1;
+								$$ -> attr.name = strdup($1 -> tokenString);
 							}
 						| relExpression
 							{
@@ -776,7 +785,7 @@ relExpression			: sumExpression relop sumExpression
 								$$ -> child[0] = $1;
 								$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
-								$$ -> attr.name = $2 -> tokenString;
+								$$ -> attr.name = strdup($2 -> tokenString);
 							}
 
 						| sumExpression
@@ -871,20 +880,21 @@ mutable					: ID
 								$$ = newExpNode(IdK);
 								$$ -> attr.name = $1 -> tokenString;
 							//	$$->type = storedType; 
-								$$->isArray = false;
+							//	$$->isArray = false;
 							}
 						| mutable LBRAC expression RBRAC 
 							{
-								$$ = newExpNode(IdK);
+								$$ = newExpNode(OpK);
 								$$ -> child[0] = $1;
 								$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
+								$$ -> attr.name = strdup($2 -> tokenString);
 							}
 						| mutable DOT ID
 							{
-								$$ = newExpNode(IdK);
+								$$ = newExpNode(OpK);
+								$$ -> attr.name = $2 -> tokenString;
 								$$ -> child[0] = $1;
-								
 								
 								TreeNode * t;
 								t = newExpNode(IdK);
@@ -912,11 +922,10 @@ immutable				: LPAREN expression RPAREN
 
 call					: ID LPAREN args RPAREN 
 							{
-								$$ = newExpNode(IdK);
+								$$ = newExpNode(CallK);
 								$$ -> child[0] = $3;
 								$$ -> numChildren = 1;
 								$$ -> attr.name = strdup($1 -> tokenString);
-								//$$->type = storedType; 
 								$$ ->isArray = false;
 
 							}
@@ -1004,6 +1013,9 @@ int main(int argc, char *argv[])
 	fclose(yyin);
 
 	printTree(savedTree);
+
+	printf("Number of warnings: %d\n", 0);
+	printf("Number of errors: %d\n", 0);
 
 	return 0;
 }

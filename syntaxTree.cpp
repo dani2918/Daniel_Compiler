@@ -98,6 +98,12 @@ void printTreeR(TreeNode * t, int sibCount, int childCount, childSib cs)
 		printTreeR(t->child[i], 0, i, chi);
 		childCount++;
 	}
+
+	// if we've printed children, unindent
+	if(t->numChildren >0)
+	{
+		indent --;
+	}
 	printTreeR(t->sibling, sibCount, childCount, sib);
 
 }
@@ -183,10 +189,38 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 
 						case recDeclaration:
 							printf("Record %s ", t->attr.name);
+
 							break;
 
 						case paramDeclaration:
 							printf("Param %s ", t->attr.name);
+							if(t-> isArray == true)
+									{
+										arrMsgToggle = arrMsg;
+									}
+									else
+									{
+										arrMsgToggle = "";
+									}
+							switch (t->type)
+								{
+									
+									case integer:
+										printf("%sof type int ", arrMsgToggle);
+										break;
+									case boolean:
+										printf("%sof type bool ", arrMsgToggle);
+										break;
+									case character:
+										printf("%sof type char ", arrMsgToggle);
+										break;	
+									case record:
+										printf("%sof type record ", arrMsgToggle);
+										break;
+									default:
+										break;
+								}
+
 					}
 					
 					break;
@@ -203,49 +237,60 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 						case selectionStmt:
 							printf("If ");
 							break;
+						case iterationStmt:
+							printf("While ");
+							break;
+						case breakStmt:
+							printf("Break ");
+							break;
 						default:
 							break;
 					}
+					break;
 
 				case ExpK:
 					switch(t->kind.exp)
 					{
 						case IdK:
-							printf("Var %s ", t->attr.name);
+							printf("Id: %s ", t->attr.name);
 							if(t-> isArray == true)
-									{
-										arrMsgToggle = arrMsg;
-									}
-									else
-									{
-										arrMsgToggle = "";
-									}
-
-								// switch types
-								switch (t->type)
 								{
-									
-									case integer:
-										printf("%sof type int ", arrMsgToggle);
-										break;
-									case boolean:
-										printf("%sof type bool ", arrMsgToggle);
-										break;
-									case character:
-										printf("%sof type char ", arrMsgToggle);
-										break;
-									case Void:
-										printf("%sof type void ", arrMsgToggle);
-										break;		
-									case record:
-										printf("%sof type record ", arrMsgToggle);
-										break;
+									arrMsgToggle = arrMsg;
+								}
+								else
+								{
+									arrMsgToggle = "";
 								}
 							break;
+								// switch types
+								// switch (t->type)
+								// {
+									
+								// 	case integer:
+								// 		printf("%sof type int ", arrMsgToggle);
+								// 		break;
+								// 	case boolean:
+								// 		printf("%sof type bool ", arrMsgToggle);
+								// 		break;
+								// 	case character:
+								// 		printf("%sof type char ", arrMsgToggle);
+								// 		break;
+								// 	case Void:
+								// 		printf("%sof type void ", arrMsgToggle);
+								// 		break;		
+								// 	case record:
+								// 		printf("%sof type record ", arrMsgToggle);
+								// 		break;
+								// }
+							
 
 						
 						case OpK:
 							printf("Op: %s ", t-> attr.name);
+							break;
+
+						case AssK:
+							printf("Assign: %s ", t-> attr.name);
 							break;
 
 						case constK:
@@ -255,21 +300,28 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 								case boolean:
 									if(t->attr.bvalue == true)
 									{
-										printf("true");
+										printf("true ");
 									}
 									else
 									{
-										printf("false");
+										printf("false ");
 									}
+									break;
 								case integer:
-									printf("%d", t->attr.value );
+									//printf("INTEGER\n");
+									printf("%d ", t->attr.value );
 									break;
 								case character:
-									printf("%c", t->attr.cvalue );
+									printf("'%c' ", t->attr.cvalue );
 									break;
 								default:
 									break;
 							}
+							break;
+
+						case CallK:
+							printf("Call: %s ", t-> attr.name);
+							break;
 
 						default:
 							break;

@@ -55,7 +55,7 @@ enum StmtKind
 
 enum ExpKind
 {
-	OpK, factorK, IdK, constK
+	OpK, factorK, IdK, constK, AssK, CallK
 };
 
 enum ExpType
