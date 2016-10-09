@@ -179,7 +179,8 @@
  #include "scanType.h"
  #include "syntaxTree.h"
  #include "symbolTable.h"
-
+ #include "printtree.h"
+ 
 
  #include "parser.tab.h"
 
@@ -247,15 +248,15 @@ void printErrToken(int lineno, char* tokenString)
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 77 "parser.y"
+#line 78 "parser.y"
 {
 	TokenData *tokenData;
 
-#line 82 "parser.y"
+#line 83 "parser.y"
 
 	TreeNode *treeNode;
 
-#line 87 "parser.y"
+#line 88 "parser.y"
 
 	ExpType expType;
 	int number; 
@@ -264,12 +265,12 @@ typedef union YYSTYPE
 	char * name;
 
 
-#line 97 "parser.y"
+#line 98 "parser.y"
 
 	char * c;
 }
 /* Line 193 of yacc.c.  */
-#line 273 "parser.tab.c"
+#line 274 "parser.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -282,7 +283,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 286 "parser.tab.c"
+#line 287 "parser.tab.c"
 
 #ifdef short
 # undef short
@@ -612,18 +613,18 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   119,   119,   123,   141,   146,   148,   150,   154,   168,
-     187,   207,   228,   234,   238,   247,   255,   266,   272,   279,
-     284,   290,   294,   298,   304,   316,   329,   334,   339,   359,
-     366,   385,   406,   412,   419,   429,   431,   437,   439,   441,
-     443,   448,   458,   478,   483,   503,   508,   513,   521,   523,
-     527,   536,   546,   555,   563,   569,   577,   585,   595,   607,
-     614,   624,   633,   642,   651,   660,   669,   678,   686,   694,
-     701,   710,   717,   725,   731,   738,   744,   753,   760,   762,
-     764,   766,   768,   770,   774,   782,   788,   790,   794,   803,
-     807,   809,   811,   815,   822,   826,   828,   830,   834,   836,
-     840,   845,   853,   868,   872,   876,   882,   893,   898,   904,
-     922,   928,   934,   940
+       0,   120,   120,   124,   142,   147,   149,   151,   155,   169,
+     188,   208,   229,   235,   239,   248,   256,   267,   273,   280,
+     285,   291,   295,   299,   305,   317,   330,   335,   340,   360,
+     367,   386,   407,   413,   420,   430,   432,   438,   440,   442,
+     444,   449,   459,   479,   484,   504,   509,   514,   522,   524,
+     528,   537,   547,   556,   564,   570,   578,   586,   596,   608,
+     615,   625,   634,   643,   652,   661,   670,   679,   687,   695,
+     702,   711,   718,   726,   732,   739,   745,   754,   761,   763,
+     765,   767,   769,   771,   775,   783,   789,   791,   795,   804,
+     808,   810,   812,   816,   823,   827,   829,   831,   835,   837,
+     841,   846,   854,   869,   873,   877,   883,   894,   899,   905,
+     923,   929,   935,   941
 };
 #endif
 
@@ -1678,12 +1679,12 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 120 "parser.y"
+#line 121 "parser.y"
     {savedTree = (yyvsp[(1) - (1)].treeNode);;}
     break;
 
   case 3:
-#line 124 "parser.y"
+#line 125 "parser.y"
     {
 								TreeNode * t = (yyvsp[(1) - (2)].treeNode);
 								if (t != NULL)
@@ -1703,27 +1704,27 @@ yyreduce:
     break;
 
   case 4:
-#line 142 "parser.y"
+#line 143 "parser.y"
     { (yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);;}
     break;
 
   case 5:
-#line 147 "parser.y"
+#line 148 "parser.y"
     {(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode); ;}
     break;
 
   case 6:
-#line 149 "parser.y"
+#line 150 "parser.y"
     {(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode); ;}
     break;
 
   case 7:
-#line 151 "parser.y"
+#line 152 "parser.y"
     {(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode); ;}
     break;
 
   case 8:
-#line 155 "parser.y"
+#line 156 "parser.y"
     {
 								(yyval.treeNode) = newDeclNode(recDeclaration);
 								(yyval.treeNode) -> isRecord = true;
@@ -1738,7 +1739,7 @@ yyreduce:
     break;
 
   case 9:
-#line 169 "parser.y"
+#line 170 "parser.y"
     {
 								TreeNode * t = (yyvsp[(2) - (3)].treeNode);
 								if (t != NULL)
@@ -1758,7 +1759,7 @@ yyreduce:
     break;
 
   case 10:
-#line 188 "parser.y"
+#line 189 "parser.y"
     {
 								TreeNode * t = (yyvsp[(2) - (3)].treeNode);
 								if (t != NULL)
@@ -1779,7 +1780,7 @@ yyreduce:
     break;
 
   case 11:
-#line 208 "parser.y"
+#line 209 "parser.y"
     {
 								TreeNode * t = (yyvsp[(1) - (3)].treeNode);
 								if (t != NULL)
@@ -1801,21 +1802,21 @@ yyreduce:
     break;
 
   case 12:
-#line 229 "parser.y"
+#line 230 "parser.y"
     { 
 								(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode); 
 							;}
     break;
 
   case 13:
-#line 235 "parser.y"
+#line 236 "parser.y"
     {	
  								(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);
 							;}
     break;
 
   case 14:
-#line 239 "parser.y"
+#line 240 "parser.y"
     {
 								(yyval.treeNode) -> child[0] = (yyvsp[(3) - (3)].treeNode);
 								(yyval.treeNode) -> numChildren = 1;
@@ -1824,7 +1825,7 @@ yyreduce:
     break;
 
   case 15:
-#line 248 "parser.y"
+#line 249 "parser.y"
     {
 								(yyval.treeNode) = newDeclNode(varDeclaration);
 								(yyval.treeNode) -> attr.name = strdup((yyvsp[(1) - (1)].tokenData) -> tokenString);
@@ -1835,7 +1836,7 @@ yyreduce:
     break;
 
   case 16:
-#line 256 "parser.y"
+#line 257 "parser.y"
     {
 								(yyval.treeNode) = newDeclNode(varDeclaration);
 								(yyval.treeNode) -> attr.name = strdup((yyvsp[(1) - (4)].tokenData) -> tokenString);
@@ -1846,7 +1847,7 @@ yyreduce:
     break;
 
   case 17:
-#line 267 "parser.y"
+#line 268 "parser.y"
     {
 								(yyval.treeNode) = newDeclNode(varDeclaration);
 								(yyval.treeNode) -> isStatic = true;
@@ -1855,7 +1856,7 @@ yyreduce:
     break;
 
   case 18:
-#line 273 "parser.y"
+#line 274 "parser.y"
     { 
 								(yyval.treeNode) = newDeclNode(varDeclaration);
 								(yyval.treeNode) -> type = (yyvsp[(1) - (1)].expType);
@@ -1863,42 +1864,42 @@ yyreduce:
     break;
 
   case 19:
-#line 280 "parser.y"
+#line 281 "parser.y"
     {
 								(yyval.expType) = (yyvsp[(1) - (1)].expType);
 							;}
     break;
 
   case 20:
-#line 285 "parser.y"
+#line 286 "parser.y"
     {
 								(yyval.expType)  = record; 
 							;}
     break;
 
   case 21:
-#line 291 "parser.y"
+#line 292 "parser.y"
     {
 								(yyval.expType) = integer;	
 							;}
     break;
 
   case 22:
-#line 295 "parser.y"
+#line 296 "parser.y"
     {
 								(yyval.expType) = boolean; 
 							;}
     break;
 
   case 23:
-#line 299 "parser.y"
+#line 300 "parser.y"
     {
 								(yyval.expType) = character;
 							;}
     break;
 
   case 24:
-#line 305 "parser.y"
+#line 306 "parser.y"
     {
 								(yyval.treeNode) = newDeclNode(funDeclaration);
 								(yyval.treeNode) -> lineno = (yyvsp[(2) - (6)].tokenData) -> lineno;
@@ -1912,7 +1913,7 @@ yyreduce:
     break;
 
   case 25:
-#line 317 "parser.y"
+#line 318 "parser.y"
     {
 								(yyval.treeNode) = newDeclNode(funDeclaration);
 								(yyval.treeNode) -> type = Void;
@@ -1925,21 +1926,21 @@ yyreduce:
     break;
 
   case 26:
-#line 330 "parser.y"
+#line 331 "parser.y"
     {
 								(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);
 							;}
     break;
 
   case 27:
-#line 334 "parser.y"
+#line 335 "parser.y"
     {
 								(yyval.treeNode) = NULL;
 							;}
     break;
 
   case 28:
-#line 340 "parser.y"
+#line 341 "parser.y"
     {
 								TreeNode * t = (yyvsp[(1) - (3)].treeNode);
 								if (t != NULL)
@@ -1961,14 +1962,14 @@ yyreduce:
     break;
 
   case 29:
-#line 360 "parser.y"
+#line 361 "parser.y"
     { 
 								(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode); 
 							;}
     break;
 
   case 30:
-#line 367 "parser.y"
+#line 368 "parser.y"
     {
 								TreeNode * t = (yyvsp[(2) - (2)].treeNode);
 								if (t != NULL)
@@ -1988,7 +1989,7 @@ yyreduce:
     break;
 
   case 31:
-#line 386 "parser.y"
+#line 387 "parser.y"
     {
 								TreeNode * t = (yyvsp[(1) - (3)].treeNode);
 								if (t != NULL)
@@ -2010,14 +2011,14 @@ yyreduce:
     break;
 
   case 32:
-#line 407 "parser.y"
+#line 408 "parser.y"
     { 
 								(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode); 
 							;}
     break;
 
   case 33:
-#line 413 "parser.y"
+#line 414 "parser.y"
     {
 								(yyval.treeNode) = newDeclNode(paramDeclaration); 
 								(yyval.treeNode) -> attr.name = strdup((yyvsp[(1) - (1)].tokenData) -> tokenString);
@@ -2027,7 +2028,7 @@ yyreduce:
     break;
 
   case 34:
-#line 420 "parser.y"
+#line 421 "parser.y"
     {
 								(yyval.treeNode) = newDeclNode(paramDeclaration);
 								(yyval.treeNode) -> attr.name = strdup((yyvsp[(1) - (3)].tokenData) -> tokenString);
@@ -2037,39 +2038,39 @@ yyreduce:
     break;
 
   case 35:
-#line 430 "parser.y"
+#line 431 "parser.y"
     {(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);;}
     break;
 
   case 36:
-#line 432 "parser.y"
+#line 433 "parser.y"
     {
 								(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode); 
 							;}
     break;
 
   case 37:
-#line 438 "parser.y"
+#line 439 "parser.y"
     {(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);;}
     break;
 
   case 38:
-#line 440 "parser.y"
+#line 441 "parser.y"
     {(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);;}
     break;
 
   case 39:
-#line 442 "parser.y"
+#line 443 "parser.y"
     {(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);;}
     break;
 
   case 40:
-#line 444 "parser.y"
+#line 445 "parser.y"
     {(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);;}
     break;
 
   case 41:
-#line 449 "parser.y"
+#line 450 "parser.y"
     {
 								(yyval.treeNode) = newStmtNode(compoundStmt); 
 								(yyval.treeNode) -> lineno = (yyvsp[(1) - (4)].tokenData) -> lineno;
@@ -2080,7 +2081,7 @@ yyreduce:
     break;
 
   case 42:
-#line 459 "parser.y"
+#line 460 "parser.y"
     {
 								TreeNode * t = (yyvsp[(1) - (2)].treeNode);
 								if (t != NULL)
@@ -2101,14 +2102,14 @@ yyreduce:
     break;
 
   case 43:
-#line 478 "parser.y"
+#line 479 "parser.y"
     {
 								(yyval.treeNode) = NULL;
 							;}
     break;
 
   case 44:
-#line 484 "parser.y"
+#line 485 "parser.y"
     {
 								TreeNode * t = (yyvsp[(1) - (2)].treeNode);
 								if (t != NULL)
@@ -2129,38 +2130,38 @@ yyreduce:
     break;
 
   case 45:
-#line 503 "parser.y"
+#line 504 "parser.y"
     {
 								(yyval.treeNode) = NULL;
 							;}
     break;
 
   case 46:
-#line 509 "parser.y"
+#line 510 "parser.y"
     {
 								(yyval.treeNode) = (yyvsp[(1) - (2)].treeNode);
 							;}
     break;
 
   case 47:
-#line 514 "parser.y"
+#line 515 "parser.y"
     {
 								(yyval.treeNode) = NULL;
 							;}
     break;
 
   case 48:
-#line 522 "parser.y"
+#line 523 "parser.y"
     { (yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);;}
     break;
 
   case 49:
-#line 524 "parser.y"
+#line 525 "parser.y"
     { (yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);;}
     break;
 
   case 50:
-#line 528 "parser.y"
+#line 529 "parser.y"
     {
 								(yyval.treeNode) = newStmtNode(selectionStmt);
 								(yyval.treeNode) -> numChildren = 3;
@@ -2172,7 +2173,7 @@ yyreduce:
     break;
 
   case 51:
-#line 537 "parser.y"
+#line 538 "parser.y"
     {
 								(yyval.treeNode) = newStmtNode(iterationStmt);
 								(yyval.treeNode) -> numChildren = 2;
@@ -2183,7 +2184,7 @@ yyreduce:
     break;
 
   case 52:
-#line 547 "parser.y"
+#line 548 "parser.y"
     {
 								(yyval.treeNode) = newStmtNode(selectionStmt);
 								(yyval.treeNode) -> child[0] = (yyvsp[(3) - (7)].treeNode); 
@@ -2195,7 +2196,7 @@ yyreduce:
     break;
 
   case 53:
-#line 556 "parser.y"
+#line 557 "parser.y"
     {
 								(yyval.treeNode) = newStmtNode(iterationStmt);
 								(yyval.treeNode) -> numChildren = 2;
@@ -2206,14 +2207,14 @@ yyreduce:
     break;
 
   case 54:
-#line 564 "parser.y"
+#line 565 "parser.y"
     {
 								(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);
 							;}
     break;
 
   case 55:
-#line 570 "parser.y"
+#line 571 "parser.y"
     {
 								(yyval.treeNode) = newStmtNode(selectionStmt);
 								(yyval.treeNode) -> numChildren = 2;
@@ -2224,7 +2225,7 @@ yyreduce:
     break;
 
   case 56:
-#line 578 "parser.y"
+#line 579 "parser.y"
     {
 								(yyval.treeNode) = newStmtNode(selectionStmt);
 								(yyval.treeNode) -> numChildren = 2;
@@ -2235,7 +2236,7 @@ yyreduce:
     break;
 
   case 57:
-#line 586 "parser.y"
+#line 587 "parser.y"
     {
 								(yyval.treeNode) = newStmtNode(selectionStmt);
 								(yyval.treeNode) -> child[0] = (yyvsp[(3) - (7)].treeNode);
@@ -2248,7 +2249,7 @@ yyreduce:
     break;
 
   case 58:
-#line 596 "parser.y"
+#line 597 "parser.y"
     {
 								(yyval.treeNode) = newStmtNode(iterationStmt);
 								(yyval.treeNode) -> child[0] = (yyvsp[(3) - (5)].treeNode);
@@ -2259,7 +2260,7 @@ yyreduce:
     break;
 
   case 59:
-#line 608 "parser.y"
+#line 609 "parser.y"
     {
 								(yyval.treeNode) = newStmtNode(returnStmt); 
 								(yyval.treeNode) -> attr.name = (yyvsp[(1) - (2)].tokenData) -> tokenString;
@@ -2269,7 +2270,7 @@ yyreduce:
     break;
 
   case 60:
-#line 615 "parser.y"
+#line 616 "parser.y"
     {
 								(yyval.treeNode) = newStmtNode(returnStmt);
 								(yyval.treeNode) -> attr.name = (yyvsp[(1) - (3)].tokenData) -> tokenString;
@@ -2280,7 +2281,7 @@ yyreduce:
     break;
 
   case 61:
-#line 625 "parser.y"
+#line 626 "parser.y"
     {
 								(yyval.treeNode) = newStmtNode(breakStmt);
 								(yyval.treeNode) -> attr.name = (yyvsp[(1) - (2)].tokenData) -> tokenString;
@@ -2288,7 +2289,7 @@ yyreduce:
     break;
 
   case 62:
-#line 634 "parser.y"
+#line 635 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(AssK);
 								(yyval.treeNode) -> child[0] = (yyvsp[(1) - (3)].treeNode);
@@ -2300,7 +2301,7 @@ yyreduce:
     break;
 
   case 63:
-#line 643 "parser.y"
+#line 644 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(AssK);
 								(yyval.treeNode) -> child[0] = (yyvsp[(1) - (3)].treeNode);
@@ -2312,7 +2313,7 @@ yyreduce:
     break;
 
   case 64:
-#line 652 "parser.y"
+#line 653 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(AssK);
 								(yyval.treeNode) -> child[0] = (yyvsp[(1) - (3)].treeNode);
@@ -2324,7 +2325,7 @@ yyreduce:
     break;
 
   case 65:
-#line 661 "parser.y"
+#line 662 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(AssK);
 								(yyval.treeNode) -> child[0] = (yyvsp[(1) - (3)].treeNode);
@@ -2336,7 +2337,7 @@ yyreduce:
     break;
 
   case 66:
-#line 670 "parser.y"
+#line 671 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(AssK);
 								(yyval.treeNode) -> child[0] = (yyvsp[(1) - (3)].treeNode);
@@ -2348,7 +2349,7 @@ yyreduce:
     break;
 
   case 67:
-#line 679 "parser.y"
+#line 680 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(AssK);
 								(yyval.treeNode) -> child[0] = (yyvsp[(1) - (2)].treeNode);
@@ -2359,7 +2360,7 @@ yyreduce:
     break;
 
   case 68:
-#line 687 "parser.y"
+#line 688 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(AssK);
 								(yyval.treeNode) -> child[0] = (yyvsp[(1) - (2)].treeNode);
@@ -2370,14 +2371,14 @@ yyreduce:
     break;
 
   case 69:
-#line 695 "parser.y"
+#line 696 "parser.y"
     {
 								(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);
 							;}
     break;
 
   case 70:
-#line 702 "parser.y"
+#line 703 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(OpK);
 								(yyval.treeNode) -> child[0] = (yyvsp[(1) - (3)].treeNode);
@@ -2389,14 +2390,14 @@ yyreduce:
     break;
 
   case 71:
-#line 711 "parser.y"
+#line 712 "parser.y"
     {
 								(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);
 							;}
     break;
 
   case 72:
-#line 718 "parser.y"
+#line 719 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(OpK);
 								(yyval.treeNode) -> child[0] = (yyvsp[(1) - (3)].treeNode);
@@ -2407,14 +2408,14 @@ yyreduce:
     break;
 
   case 73:
-#line 726 "parser.y"
+#line 727 "parser.y"
     {
 								(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);
 							;}
     break;
 
   case 74:
-#line 732 "parser.y"
+#line 733 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(OpK);
 								(yyval.treeNode) -> child[0] = (yyvsp[(2) - (2)].treeNode);
@@ -2424,14 +2425,14 @@ yyreduce:
     break;
 
   case 75:
-#line 739 "parser.y"
+#line 740 "parser.y"
     {
 								(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);
 							;}
     break;
 
   case 76:
-#line 745 "parser.y"
+#line 746 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(OpK);
 								(yyval.treeNode) -> child[0] = (yyvsp[(1) - (3)].treeNode);
@@ -2442,44 +2443,44 @@ yyreduce:
     break;
 
   case 77:
-#line 754 "parser.y"
+#line 755 "parser.y"
     {
 								(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);
 							;}
     break;
 
   case 78:
-#line 761 "parser.y"
+#line 762 "parser.y"
     {(yyval.td) = (yyvsp[(1) - (1)].tokenData);;}
     break;
 
   case 79:
-#line 763 "parser.y"
+#line 764 "parser.y"
     {(yyval.td) = (yyvsp[(1) - (1)].tokenData);;}
     break;
 
   case 80:
-#line 765 "parser.y"
+#line 766 "parser.y"
     {(yyval.td) = (yyvsp[(1) - (1)].tokenData);;}
     break;
 
   case 81:
-#line 767 "parser.y"
+#line 768 "parser.y"
     {(yyval.td) = (yyvsp[(1) - (1)].tokenData);;}
     break;
 
   case 82:
-#line 769 "parser.y"
+#line 770 "parser.y"
     {(yyval.td) = (yyvsp[(1) - (1)].tokenData);;}
     break;
 
   case 83:
-#line 771 "parser.y"
+#line 772 "parser.y"
     {(yyval.td) = (yyvsp[(1) - (1)].tokenData);;}
     break;
 
   case 84:
-#line 775 "parser.y"
+#line 776 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(OpK);
 								(yyval.treeNode) -> child[0] = (yyvsp[(1) - (3)].treeNode);
@@ -2490,24 +2491,24 @@ yyreduce:
     break;
 
   case 85:
-#line 783 "parser.y"
+#line 784 "parser.y"
     {
 								(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);
 							;}
     break;
 
   case 86:
-#line 789 "parser.y"
+#line 790 "parser.y"
     {(yyval.td) = (yyvsp[(1) - (1)].tokenData);;}
     break;
 
   case 87:
-#line 791 "parser.y"
+#line 792 "parser.y"
     {(yyval.td) = (yyvsp[(1) - (1)].tokenData);;}
     break;
 
   case 88:
-#line 795 "parser.y"
+#line 796 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(OpK);
 								(yyval.treeNode) -> child[0] = (yyvsp[(1) - (3)].treeNode);
@@ -2519,27 +2520,27 @@ yyreduce:
     break;
 
   case 89:
-#line 804 "parser.y"
+#line 805 "parser.y"
     {(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);;}
     break;
 
   case 90:
-#line 808 "parser.y"
+#line 809 "parser.y"
     {(yyval.td) = (yyvsp[(1) - (1)].tokenData);;}
     break;
 
   case 91:
-#line 810 "parser.y"
+#line 811 "parser.y"
     {(yyval.td) = (yyvsp[(1) - (1)].tokenData);;}
     break;
 
   case 92:
-#line 812 "parser.y"
+#line 813 "parser.y"
     {(yyval.td) = (yyvsp[(1) - (1)].tokenData);;}
     break;
 
   case 93:
-#line 816 "parser.y"
+#line 817 "parser.y"
     {	
 								(yyval.treeNode) = newExpNode(OpK);
 								(yyval.treeNode) -> child[0] = (yyvsp[(2) - (2)].treeNode);
@@ -2549,37 +2550,37 @@ yyreduce:
     break;
 
   case 94:
-#line 823 "parser.y"
+#line 824 "parser.y"
     {(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);;}
     break;
 
   case 95:
-#line 827 "parser.y"
+#line 828 "parser.y"
     {(yyval.td) = (yyvsp[(1) - (1)].tokenData);;}
     break;
 
   case 96:
-#line 829 "parser.y"
+#line 830 "parser.y"
     {(yyval.td) = (yyvsp[(1) - (1)].tokenData);;}
     break;
 
   case 97:
-#line 831 "parser.y"
+#line 832 "parser.y"
     {(yyval.td) = (yyvsp[(1) - (1)].tokenData);;}
     break;
 
   case 98:
-#line 835 "parser.y"
+#line 836 "parser.y"
     {(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);;}
     break;
 
   case 99:
-#line 837 "parser.y"
+#line 838 "parser.y"
     {(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);;}
     break;
 
   case 100:
-#line 841 "parser.y"
+#line 842 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(IdK);
 								(yyval.treeNode) -> attr.name = (yyvsp[(1) - (1)].tokenData) -> tokenString;
@@ -2587,7 +2588,7 @@ yyreduce:
     break;
 
   case 101:
-#line 846 "parser.y"
+#line 847 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(OpK);
 								(yyval.treeNode) -> child[0] = (yyvsp[(1) - (4)].treeNode);
@@ -2598,7 +2599,7 @@ yyreduce:
     break;
 
   case 102:
-#line 854 "parser.y"
+#line 855 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(OpK);
 								(yyval.treeNode) -> attr.name = (yyvsp[(2) - (3)].tokenData) -> tokenString;
@@ -2614,28 +2615,28 @@ yyreduce:
     break;
 
   case 103:
-#line 869 "parser.y"
+#line 870 "parser.y"
     {	
 								(yyval.treeNode) = (yyvsp[(2) - (3)].treeNode);
 							;}
     break;
 
   case 104:
-#line 873 "parser.y"
+#line 874 "parser.y"
     {
 								(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);
 							;}
     break;
 
   case 105:
-#line 877 "parser.y"
+#line 878 "parser.y"
     {
 								(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);
 							;}
     break;
 
   case 106:
-#line 883 "parser.y"
+#line 884 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(CallK);
 								(yyval.treeNode) -> child[0] = (yyvsp[(3) - (4)].treeNode);
@@ -2647,21 +2648,21 @@ yyreduce:
     break;
 
   case 107:
-#line 894 "parser.y"
+#line 895 "parser.y"
     {
 								(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);
 							;}
     break;
 
   case 108:
-#line 898 "parser.y"
+#line 899 "parser.y"
     {
 								(yyval.treeNode) = NULL;
 							;}
     break;
 
   case 109:
-#line 905 "parser.y"
+#line 906 "parser.y"
     {
 								TreeNode *t = (yyvsp[(1) - (3)].treeNode);
 								if (t != NULL)
@@ -2681,14 +2682,14 @@ yyreduce:
     break;
 
   case 110:
-#line 923 "parser.y"
+#line 924 "parser.y"
     {
 								(yyval.treeNode) = (yyvsp[(1) - (1)].treeNode);
 							;}
     break;
 
   case 111:
-#line 929 "parser.y"
+#line 930 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(constK);
 								(yyval.treeNode) ->attr.value = (yyvsp[(1) - (1)].tokenData)->numVal;
@@ -2697,7 +2698,7 @@ yyreduce:
     break;
 
   case 112:
-#line 935 "parser.y"
+#line 936 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(constK);
 								(yyval.treeNode) ->attr.cvalue = (yyvsp[(1) - (1)].tokenData)->charVal;
@@ -2706,7 +2707,7 @@ yyreduce:
     break;
 
   case 113:
-#line 941 "parser.y"
+#line 942 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(constK);
 								(yyval.treeNode) -> attr.bvalue = (yyvsp[(1) - (1)].tokenData)->bvalue;
@@ -2716,7 +2717,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 2720 "parser.tab.c"
+#line 2721 "parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2930,7 +2931,7 @@ yyreturn:
 }
 
 
-#line 948 "parser.y"
+#line 949 "parser.y"
 
 
 int main(int argc, char *argv[])
@@ -2938,16 +2939,21 @@ int main(int argc, char *argv[])
 
 	extern int yydebug;
 	int optCount = 1;
+	int printingTree = 0;
+
 
 	// for options
 	int opt; 
 
-	while ((opt = getopt(argc, argv, "d::")) != -1)
+	while ((opt = getopt(argc, argv, "dp::")) != -1)
 	{
 		switch (opt)
 		{
 			case 'd':
 				yydebug = 1;
+				break;
+			case 'p':
+				printingTree = 1;
 				break;
 		}
 		optCount++;
@@ -2957,7 +2963,10 @@ int main(int argc, char *argv[])
 	yyparse();
 	fclose(yyin);
 
-	printTree(savedTree);
+	if (printingTree == 1)
+	{
+		printTree(savedTree);
+	}
 
 	printf("Number of warnings: %d\n", 0);
 	printf("Number of errors: %d\n", 0);

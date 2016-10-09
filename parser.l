@@ -5,6 +5,7 @@
 #include "scanType.h"
 #include "globals.h"
 #include "symbolTable.h"
+#include "printtree.h"
 
 #include "parser.tab.h"
 

@@ -7,7 +7,8 @@
  #include "scanType.h"
  #include "syntaxTree.h"
  #include "symbolTable.h"
-
+ #include "printtree.h"
+ 
 
  #include "parser.tab.h"
 
@@ -952,16 +953,21 @@ int main(int argc, char *argv[])
 
 	extern int yydebug;
 	int optCount = 1;
+	int printingTree = 0;
+
 
 	// for options
 	int opt; 
 
-	while ((opt = getopt(argc, argv, "d::")) != -1)
+	while ((opt = getopt(argc, argv, "dp::")) != -1)
 	{
 		switch (opt)
 		{
 			case 'd':
 				yydebug = 1;
+				break;
+			case 'p':
+				printingTree = 1;
 				break;
 		}
 		optCount++;
@@ -971,7 +977,10 @@ int main(int argc, char *argv[])
 	yyparse();
 	fclose(yyin);
 
-	printTree(savedTree);
+	if (printingTree == 1)
+	{
+		printTree(savedTree);
+	}
 
 	printf("Number of warnings: %d\n", 0);
 	printf("Number of errors: %d\n", 0);

@@ -17,18 +17,6 @@ Contains the syntax tree node based on the Louden definitis
 
 #define MAXCHILDREN 3
 
-// enum TokenType
-// {
-// 	NUMCONST, CHARCONST, ID, BOOLCONST,
-// 	NOT, AND, OR, RECORD, STATIC, INT, BOOL, CHAR, IF, ELSE, WHILE, RETURN, BREAK,
-//  	RAND, DOT,
-// 	ADDASS, SUBASS, MULASS, DIVASS, DEC, INC,
-// 	EQ, NOTEQ, LESSEQ, LT, GRTEQ, GT,
-// 	ASS, MUL, ADD, SUB, DIV, MOD,
-// 	LPAREN, RPAREN, LBRAC, RBRAC, LCUR, RCUR, COMMA, COL, SEMI
-// };
-
-
 
 // Global line number
 extern int lineno;
