@@ -24,6 +24,8 @@ extern int indent;
 extern int sibCount;
 extern int childCount;
 extern SymbolTable st;
+extern int numErrors;
+extern int numWarnings;
 
 enum childSib
 {

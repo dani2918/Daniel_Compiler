@@ -17,7 +17,7 @@
 SymbolTable symTab;
 int enteredFunc = 0;
 bool funcFlag = false;
-bool alreadySeenFunc = false;
+bool leaveFlag;
 
 SymbolTable getSymTab()
 {
@@ -60,56 +60,21 @@ SymbolTable getSymTab()
 // 	}
 // }
 
-void scopeAndType(TreeNode * t)
-{
-	sibCount = 0;
-	childCount = 0;
-	indent = 0;
 
-	scopeAndTypeR(t, 0, 0, non);
-
-
-}
-
-void scopeAndTypeR(TreeNode * t, int sibCount, int childCount, childSib cs)
+void scopeAndTypeR(TreeNode * t)
 {
 
 	if (t == NULL)
 		return;
 
-	switch(cs)
-	{
-		case non:
-			break;
-		case sib:
-			sibCount++;
-			break;
-		case chi:
-			childCount++;
-			break;
-	}
+	scopeAndType(t);
 
-	scopeAndType(t, sibCount, childCount, cs);
-
-	for (int i = 0; i < t->numChildren; i++)
-	{
-		
-		scopeAndTypeR(t->child[i], 0, i, chi);
-		if (funcFlag && i == 1)
-		{
-			enteredFunc = 1;
-		}
-		childCount++;
-
-	}
-
-
-
-	scopeAndTypeR(t->sibling, sibCount, childCount, sib);
+	//Unlinke in printtree.cpp, we'll process children in the function below
+	scopeAndTypeR(t->sibling);
 
 }
 
-void scopeAndType(TreeNode * t, int sibCount, int childCount, childSib cs)
+void scopeAndType(TreeNode * t)
 {
 	bool alreadyInTable = true;
 	char * s; 
@@ -172,13 +137,19 @@ void scopeAndType(TreeNode * t, int sibCount, int childCount, childSib cs)
 						case funDeclaration:
 							printf("Func enter %s \n", t->attr.name);
 							symTab.enter(t->attr.name);
-
-							//enteredFunc = 3;
 							funcFlag = true;
-							alreadySeenFunc = false;
-							//printf("entering funDeclaration\n");
+							for (int i = 0; i < 3; i++)
+							{
+								if (t->child[i] != NULL)
+									{
+										scopeAndTypeR(t->child[i]);
+									}
 
-							//symTab.leave();
+							}
+							symTab.print(pointerPrintStr);
+							printf("Leaving\n");
+							symTab.leave();
+							
 
 							// Print return type
 							switch (t->type)
@@ -208,7 +179,9 @@ void scopeAndType(TreeNode * t, int sibCount, int childCount, childSib cs)
 							break;
 
 						case paramDeclaration:
-							// printf("Param %s ", t->attr.name);
+							//printf("Param %s ", t->attr.name);
+
+							//alreadyInTable = symTab.insert(t->attr.name, (TreeNode *) t);
 							if(t-> isArray == true)
 									{
 										// arrMsgToggle = arrMsg;
@@ -249,12 +222,36 @@ void scopeAndType(TreeNode * t, int sibCount, int childCount, childSib cs)
 					switch(t->kind.stmt)
 					{
 						case compoundStmt:
-							if (!funcFlag && !alreadySeenFunc)
+							if (!funcFlag)
 							{	
-								alreadySeenFunc = true;
 								symTab.enter("Compound Statement");
+								for (int i = 0; i < 3; i++)
+								{
+									if (t->child[i] != NULL)
+										{
+											scopeAndTypeR(t->child[i]);
+										}
+								}
+								symTab.print(pointerPrintStr);
+								printf("Leaving compound\n");
+								symTab.leave();
 							}
-							//printf("Compound \n");
+							else
+							{
+								funcFlag = false;
+								for (int i = 0; i < 3; i++)
+								{
+									if (t->child[i] != NULL)
+										{
+											scopeAndTypeR(t->child[i]);
+										}
+								}
+								symTab.print(pointerPrintStr);
+							}
+
+							
+
+								
 							break;
 						case returnStmt:
 							//printf("Return ");
@@ -342,11 +339,5 @@ void scopeAndType(TreeNode * t, int sibCount, int childCount, childSib cs)
 		}
 
 		printf("we're at %s\n", t->attr.name );
-		if (enteredFunc == 1)
-		{
-			printf("\nwe entred leave\n");
-			enteredFunc = 0;
-			symTab.leave();
-		}
 
 	}

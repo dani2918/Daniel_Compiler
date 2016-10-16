@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>	
-#include "scanType.h"
 #include "globals.h"
+#include "scanType.h"
 #include "symbolTable.h"
 #include "printtree.h"
 

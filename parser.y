@@ -18,6 +18,9 @@
  extern int yyparse();
  extern FILE *yyin;
  extern int lineno;
+ extern SymbolTable symTab;
+ int numErrors;
+ int numWarnings;
 
  SymbolTable finalSymTab;
  
@@ -973,9 +976,9 @@ int main(int argc, char *argv[])
 	extern int yydebug;
 	int optCount = 1;
 	int printingTree = 0;
+	numWarnings = 0;
+	numErrors = 0;
 
-	int numErrors = 0;
-	int numWarnings = 0;
 	bool capP;
 
 
@@ -1005,9 +1008,10 @@ int main(int argc, char *argv[])
 	yyparse();
 	fclose(yyin);
 
-	scopeAndType(savedTree);
-	finalSymTab = getSymTab();
-	finalSymTab.print(pointerPrintStr);
+	scopeAndTypeR(savedTree);
+	symTab.print(pointerPrintStr);
+	//finalSymTab = getSymTab();
+	//finalSymTab.print(pointerPrintStr);
 
 
 	if (printingTree == 1) //1)

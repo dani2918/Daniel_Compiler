@@ -1,5 +1,6 @@
-#include "symbolTable.h"
 #include "globals.h"   
+#include "symbolTable.h"
+
 // // // // // // // // // // // // // // // // // // // // 
 //
 // Some sample void * printing routines.   User shoud supply their own.
