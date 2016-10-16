@@ -13,7 +13,6 @@
  #include "parser.tab.h"
 
 
-
  extern int yylex();
  extern int yyparse();
  extern FILE *yyin;
@@ -40,6 +39,7 @@
 void yyerror(const char *errMsg)
 {
  	printf("ERROR(%d): %s\n", lineno, errMsg);
+
 }
 
 void printToken(int lineno, char* tokenString)
@@ -149,10 +149,14 @@ declaration 			: varDeclaration
 							{$$ = $1; }
 						| recDeclaration 
 							{$$ = $1; }
+						| error
+							{$$ = NULL;}
 						;
 
 recDeclaration 			: RECORD ID LCUR localDeclarations RCUR
 							{
+							
+
 								$$ = newDeclNode(recDeclaration);
 								$$ -> isRecord = true;
 								$$ -> lineno = $1 -> lineno;
@@ -167,6 +171,8 @@ recDeclaration 			: RECORD ID LCUR localDeclarations RCUR
 
 varDeclaration			: typeSpecifier varDeclList SEMI 
 							{
+								yyerrok;
+
 								TreeNode * t = $2;
 								if (t != NULL)
 								{
@@ -911,6 +917,8 @@ call					: ID LPAREN args RPAREN
 								$$ ->isArray = false;
 
 							}
+						|	error LPAREN args RPAREN 
+							{yyerrok; $$ = NULL;}
 						;
 
 args 					: argList	

@@ -41,7 +41,9 @@ int bat(int y)
     ant(y);
     ant(g);
     ant(z);
-    ant(v);
+    p;
+    q+r;
+    ant(s, t);
     u=cow(v);
     abraxsis;
     a;

@@ -41,20 +41,22 @@
  41     ant(y);
  42     ant(g);
  43     ant(z);
- 44     ant(v);
- 45     u=cow(v);
- 46     abraxsis;
- 47     a;
- 48     z;
- 49     g;
- 50 }
- 51 
- 52 int g;
+ 44     p;
+ 45     q+r;
+ 46     ant(s, t);
+ 47     u=cow(v);
+ 48     abraxsis;
+ 49     a;
+ 50     z;
+ 51     g;
+ 52 }
  53 
- 54 int g()
- 55 {
- 56     return x;
- 57 }
- 58  
- 59 g();
- 60 ant();
+ 54 int g;
+ 55 
+ 56 int g()
+ 57 {
+ 58     return x;
+ 59 }
+ 60  
+ 61 g();
+ 62 ant();
