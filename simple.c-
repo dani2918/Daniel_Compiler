@@ -1,13 +1,14 @@
 int a;
 char b[100];
 
-record q{int l;}
+int max(int x, y) return x;
+// {
+// 	int sf;
+// 	int test;
+// 	return x;
+// 	// {
+// 	// 	int sdfsa;
+// 	// }
+// }
 
-q blah;
-
-int max(int x, y)
-{
-	char z, zz;
-    bool c;
-	return x;
-}
+int lastone;

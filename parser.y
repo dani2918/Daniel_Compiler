@@ -451,7 +451,8 @@ compoundStmt			: LCUR localDeclarations statementList RCUR
 								$$ -> child[1] = $3; 
 
 								//TODO: Remove this, enter new scope for compoundStmt
-								$$ -> attr.name = $1 -> tokenString;
+								$$ -> attr.name = $1 -> tokenString; 
+								$$ -> type = Void;
 							}
 						;
 
@@ -533,6 +534,7 @@ firstmatched			: IF LPAREN simpleExpression RPAREN matched ELSE matched
 								$$ -> child[1] = $5;
 								$$ -> child[2] = $7;
 								$$ -> lineno = $1 -> lineno;
+								$$ -> type = Void;
 							}
 						| WHILE LPAREN simpleExpression RPAREN matched
 							{
@@ -542,6 +544,7 @@ firstmatched			: IF LPAREN simpleExpression RPAREN matched ELSE matched
 								$$ -> child[0] = $3;
 								$$ -> child[1] = $5;
 								$$ -> lineno = $1 -> lineno;
+								$$ -> type = Void;
 							}
 						;
 
@@ -554,6 +557,7 @@ matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched
 								$$ -> child[2] = $7;
 								$$ -> numChildren = 3;
 								$$ -> lineno = $1 -> lineno;
+								$$ -> type = Void;
 							}
 						| WHILE LPAREN simpleExpression RPAREN matched
 							{
@@ -563,6 +567,7 @@ matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched
 								$$ -> child[0] = $3; 
 								$$ -> child[1] = $5;
 								$$ -> lineno = $1 -> lineno;
+								$$ -> type = Void;
 							}
 						| otherStatement
 							{
@@ -578,6 +583,7 @@ unmatched				: IF LPAREN simpleExpression RPAREN matched
 								$$ -> child[0] = $3;
 								$$ -> child[1] = $5;
 								$$ -> lineno = $1 -> lineno;
+								$$ -> type = Void;
 							}
 						| IF LPAREN simpleExpression RPAREN unmatched	
 							{
@@ -587,6 +593,7 @@ unmatched				: IF LPAREN simpleExpression RPAREN matched
 								$$ -> child[0] = $3;
 								$$ -> child[1] = $5;
 								$$ -> lineno = $1 -> lineno;
+								$$ -> type = Void;
 							}					
 						| IF LPAREN simpleExpression RPAREN matched ELSE unmatched
 							{
@@ -597,6 +604,7 @@ unmatched				: IF LPAREN simpleExpression RPAREN matched
 								$$ -> child[2] = $7;
 								$$ -> numChildren = 3;
 								$$ -> lineno = $1 -> lineno;
+								$$ -> type = Void;
 
 							}
 						| WHILE LPAREN simpleExpression RPAREN unmatched	
@@ -607,6 +615,7 @@ unmatched				: IF LPAREN simpleExpression RPAREN matched
 								$$ -> child[1] = $5;
 								$$ -> numChildren = 2;
 								$$ -> lineno = $1 -> lineno;
+								$$ -> type = Void;
 							}					
 	
 						;
@@ -617,6 +626,7 @@ returnStmt				: RETURN SEMI
 								$$ = newStmtNode(returnStmt); 
 								$$ -> attr.name = $1 -> tokenString;
 								$$ -> lineno = $1 -> lineno;
+								$$ -> type = Void;
 
 							}
 						| RETURN expression SEMI
@@ -626,6 +636,7 @@ returnStmt				: RETURN SEMI
 								$$ -> lineno = $1 -> lineno;
 								$$ -> child[0] = $2;
 								$$ -> numChildren = 1;
+								$$ -> type = Void;
 							}
 						;
 
@@ -633,6 +644,7 @@ breakStmt 				: BREAK SEMI
 							{
 								$$ = newStmtNode(breakStmt);
 								$$ -> attr.name = $1 -> tokenString;
+								$$ -> type = Void;
 							}
 						;
 //_________________________________________________________________________________
@@ -964,6 +976,7 @@ int main(int argc, char *argv[])
 
 	int numErrors = 0;
 	int numWarnings = 0;
+	bool capP;
 
 
 	// for options
@@ -978,8 +991,11 @@ int main(int argc, char *argv[])
 				break;
 			case 'p':
 				printingTree = 1;
+				capP = false;
 				break;
 			case 'P':
+				printingTree = 1;
+				capP = true;
 				break;
 		}
 		optCount++;
@@ -996,7 +1012,7 @@ int main(int argc, char *argv[])
 
 	if (printingTree == 1) //1)
 	{
-		printTree(savedTree);
+		printTree(savedTree, capP);
 	}
 
 	printf("Number of warnings: %d\n", numWarnings);

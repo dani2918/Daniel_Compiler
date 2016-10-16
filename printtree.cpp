@@ -15,6 +15,7 @@
 int sibCount;
 int childCount;
 int indent;
+bool capP = false;
 
 
 
@@ -53,11 +54,16 @@ void printFormat(int sibCount, int childCount, childSib cs)
 	}
 }
 
-void printTree(TreeNode * t)
+void printTree(TreeNode * t, bool cp)
 {
 	sibCount = 0;
 	childCount = 0;
 	indent = 0;
+
+	if (cp)
+	{
+		capP = true;
+	}
 
 	printTreeR(t, 0, 0, non);
 
@@ -307,6 +313,31 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 
 				default:
 					break;
+			}
+
+			if (capP)
+			{
+				switch (t -> type)
+				{
+					case Void:
+						printf("[type void] ");
+						break;
+					case integer:
+						printf("[type int] ");
+						break;
+					case boolean:
+						printf("[type bool] ");
+						break;
+					case character:
+						printf("[type char] ");
+						break;
+					case record:
+						printf("[type record] ");
+						break;
+					default:	
+						printf("[type void] ");
+						break;
+				}
 			}
 			//print line number stored from scantype at time of making new node
 			printf("[line: %d]\n", t->lineno );
