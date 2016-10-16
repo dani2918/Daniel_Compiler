@@ -2995,7 +2995,7 @@ int main(int argc, char *argv[])
 	fclose(yyin);
 
 	scopeAndTypeR(savedTree);
-	symTab.print(pointerPrintStr);
+	//symTab.print(pointerPrintStr);
 	//finalSymTab = getSymTab();
 	//finalSymTab.print(pointerPrintStr);
 

@@ -19,47 +19,13 @@ int enteredFunc = 0;
 bool funcFlag = false;
 bool leaveFlag;
 
+// for when we need to lookup, get pointers from symTab
+TreeNode * originalDecl;
+
 SymbolTable getSymTab()
 {
 	return symTab;
 }
-
-// // TODO: May have to remove? Do we want NULL children?
-// int countChildren(TreeNode * t)
-// {
-// 	int numChildren = 0;
-// 	TreeNode * countChildren;
-// 	while (countChildren != NULL)
-// 	{
-// 		countChildren = t->child[numChildren];
-// 		numChildren++;
-// 	}
-// 	// subtract time we went through and got NULL
-// 	numChildren--;
-
-// 	return numChildren;
-// }
-
-// void printFormat(int sibCount, int childCount, childSib cs)
-// {
-// 		// Print the formatting
-// 	for (int i = 0; i < indent; i++)
-// 		{
-// 			printf("!   ");
-// 		}
-// 	switch(cs)
-// 	{
-// 		case non:
-// 			break;
-// 		case sib:
-// 			printf("Sibling: %d  ", sibCount-1);
-// 			break;
-// 		case chi:
-// 			printf("Child: %d  ", childCount-1);
-// 			break;
-// 	}
-// }
-
 
 void scopeAndTypeR(TreeNode * t)
 {
@@ -85,13 +51,8 @@ void scopeAndType(TreeNode * t)
 			{
 			// if we have a declaration
 				case DeclK:
-				printf("inserting: %s \n", t->attr.name );
+				//printf("inserting: %s \n", t->attr.name );
 				alreadyInTable = symTab.insert(t->attr.name, (TreeNode *) t);
-				// if(alreadyInTable == true)
-				// {
-				// 	//Error something
-				// 	break; //may only break out of if?
-				// }
 
 					//Switch types of declarations
 
@@ -135,7 +96,7 @@ void scopeAndType(TreeNode * t)
 							break;
 
 						case funDeclaration:
-							printf("Func enter %s \n", t->attr.name);
+						//	printf("Func enter %s \n", t->attr.name);
 							symTab.enter(t->attr.name);
 							funcFlag = true;
 							for (int i = 0; i < 3; i++)
@@ -146,8 +107,8 @@ void scopeAndType(TreeNode * t)
 									}
 
 							}
-							symTab.print(pointerPrintStr);
-							printf("Leaving\n");
+							//symTab.print(pointerPrintStr);
+							//printf("Leaving\n");
 							symTab.leave();
 							
 
@@ -232,8 +193,8 @@ void scopeAndType(TreeNode * t)
 											scopeAndTypeR(t->child[i]);
 										}
 								}
-								symTab.print(pointerPrintStr);
-								printf("Leaving compound\n");
+								//symTab.print(pointerPrintStr);
+								//printf("Leaving compound\n");
 								symTab.leave();
 							}
 							else
@@ -246,7 +207,7 @@ void scopeAndType(TreeNode * t)
 											scopeAndTypeR(t->child[i]);
 										}
 								}
-								symTab.print(pointerPrintStr);
+								//symTab.print(pointerPrintStr);
 							}
 
 							
@@ -320,7 +281,8 @@ void scopeAndType(TreeNode * t)
 							break;
 
 						case CallK:
-							// printf("Call: %s ", t-> attr.name);
+							// lookup, see if it is function
+							// if not, throw error 0
 							break;
 
 						default:
@@ -333,11 +295,29 @@ void scopeAndType(TreeNode * t)
 			//print line number stored from scantype at time of making new node
 			if(alreadyInTable == false) 
 			{
-				printf("%s already in symtab\n", t->attr.name);
+				originalDecl = (TreeNode *)symTab.lookup(t->attr.name);
+				printError(10, t->lineno, t->attr.name, originalDecl->lineno);
 			}
 			
 		}
 
-		printf("we're at %s\n", t->attr.name );
+		//printf("we're at %s\n", t->attr.name );
 
+	}
+
+
+	void printError(int errno, int errorLine, char * symbol, int redefline)
+	{
+		numErrors++;
+		switch (errno)
+		{
+			case 0:
+				printf("ERROR(%d): '%s' is a simple variable and cannot be called.\n", errorLine, symbol);
+				break;
+			case 10:
+				printf("ERROR(%d): Symbol '%s' is already defined at line %d.\n", errorLine, symbol, redefline);
+				break;
+			default:
+				break;
+		}
 	}

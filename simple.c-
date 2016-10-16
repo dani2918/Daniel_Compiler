@@ -4,11 +4,10 @@ char b[100];
 int max(int x, y) //return x;
 {
 	int sf;
+	int x;
 	int test;
 	return x;
-	{
-		int sdfsa;
-	}
 }
 
+int b;
 int lastone;
