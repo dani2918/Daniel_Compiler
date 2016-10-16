@@ -8,7 +8,7 @@
  #include "syntaxTree.h"
  #include "symbolTable.h"
  #include "printtree.h"
- 
+ #include "semantic.h"
 
  #include "parser.tab.h"
 
@@ -19,7 +19,7 @@
  extern FILE *yyin;
  extern int lineno;
 
- //SymbolTable st;
+ SymbolTable finalSymTab;
  
 
  //Like the TreeNode from tiny.y
@@ -49,10 +49,6 @@ void printErrToken(int lineno, char* tokenString)
 	printf("ERROR(%d): Invalid or misplaced input character: \"%s\"\n", lineno, tokenString);
 }
 
-//SymbolTable passSymTab()
-//{
-//	return st;
-//}
 
  %}
 
@@ -453,6 +449,9 @@ compoundStmt			: LCUR localDeclarations statementList RCUR
 								$$ -> numChildren = 2;
 								$$ -> child[0] = $2;
 								$$ -> child[1] = $3; 
+
+								//TODO: Remove this, enter new scope for compoundStmt
+								$$ -> attr.name = $1 -> tokenString;
 							}
 						;
 
@@ -528,6 +527,7 @@ selectIterStmt 			: firstmatched
 firstmatched			: IF LPAREN simpleExpression RPAREN matched ELSE matched 
 							{
 								$$ = newStmtNode(selectionStmt);
+								$$ -> attr.name = $1 -> tokenString;
 								$$ -> numChildren = 3;
 								$$ -> child[0] = $3; 
 								$$ -> child[1] = $5;
@@ -537,6 +537,7 @@ firstmatched			: IF LPAREN simpleExpression RPAREN matched ELSE matched
 						| WHILE LPAREN simpleExpression RPAREN matched
 							{
 								$$ = newStmtNode(iterationStmt);
+								$$ -> attr.name = $1 -> tokenString;
 								$$ -> numChildren = 2;
 								$$ -> child[0] = $3;
 								$$ -> child[1] = $5;
@@ -547,6 +548,7 @@ firstmatched			: IF LPAREN simpleExpression RPAREN matched ELSE matched
 matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched 
 							{
 								$$ = newStmtNode(selectionStmt);
+								$$ -> attr.name = $1 -> tokenString;
 								$$ -> child[0] = $3; 
 								$$ -> child[1] = $5;
 								$$ -> child[2] = $7;
@@ -556,6 +558,7 @@ matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched
 						| WHILE LPAREN simpleExpression RPAREN matched
 							{
 								$$ = newStmtNode(iterationStmt);
+								$$ -> attr.name = $1 -> tokenString;
 								$$ -> numChildren = 2;
 								$$ -> child[0] = $3; 
 								$$ -> child[1] = $5;
@@ -570,6 +573,7 @@ matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched
 unmatched				: IF LPAREN simpleExpression RPAREN matched	
 							{
 								$$ = newStmtNode(selectionStmt);
+								$$ -> attr.name = $1 -> tokenString;
 								$$ -> numChildren = 2;
 								$$ -> child[0] = $3;
 								$$ -> child[1] = $5;
@@ -578,6 +582,7 @@ unmatched				: IF LPAREN simpleExpression RPAREN matched
 						| IF LPAREN simpleExpression RPAREN unmatched	
 							{
 								$$ = newStmtNode(selectionStmt);
+								$$ -> attr.name = $1 -> tokenString;
 								$$ -> numChildren = 2;
 								$$ -> child[0] = $3;
 								$$ -> child[1] = $5;
@@ -586,6 +591,7 @@ unmatched				: IF LPAREN simpleExpression RPAREN matched
 						| IF LPAREN simpleExpression RPAREN matched ELSE unmatched
 							{
 								$$ = newStmtNode(selectionStmt);
+								$$ -> attr.name = $1 -> tokenString;
 								$$ -> child[0] = $3;
 								$$ -> child[2] = $5;
 								$$ -> child[2] = $7;
@@ -596,6 +602,7 @@ unmatched				: IF LPAREN simpleExpression RPAREN matched
 						| WHILE LPAREN simpleExpression RPAREN unmatched	
 							{
 								$$ = newStmtNode(iterationStmt);
+								$$ -> attr.name = $1 -> tokenString;
 								$$ -> child[0] = $3;
 								$$ -> child[1] = $5;
 								$$ -> numChildren = 2;
@@ -955,11 +962,14 @@ int main(int argc, char *argv[])
 	int optCount = 1;
 	int printingTree = 0;
 
+	int numErrors = 0;
+	int numWarnings = 0;
+
 
 	// for options
 	int opt; 
 
-	while ((opt = getopt(argc, argv, "dp::")) != -1)
+	while ((opt = getopt(argc, argv, "dpP::")) != -1)
 	{
 		switch (opt)
 		{
@@ -969,6 +979,8 @@ int main(int argc, char *argv[])
 			case 'p':
 				printingTree = 1;
 				break;
+			case 'P':
+				break;
 		}
 		optCount++;
 	}
@@ -977,13 +989,18 @@ int main(int argc, char *argv[])
 	yyparse();
 	fclose(yyin);
 
-	if (printingTree == 1)
+	scopeAndType(savedTree);
+	finalSymTab = getSymTab();
+	finalSymTab.print(pointerPrintStr);
+
+
+	if (printingTree == 1) //1)
 	{
 		printTree(savedTree);
 	}
 
-	printf("Number of warnings: %d\n", 0);
-	printf("Number of errors: %d\n", 0);
+	printf("Number of warnings: %d\n", numWarnings);
+	printf("Number of errors: %d\n", numErrors);
 
 	return 0;
 }

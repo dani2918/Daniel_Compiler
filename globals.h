@@ -25,6 +25,10 @@ extern int sibCount;
 extern int childCount;
 extern SymbolTable st;
 
+enum childSib
+{
+    non, chi, sib
+};
 
 enum NodeKind
 {

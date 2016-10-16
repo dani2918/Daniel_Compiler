@@ -1142,7 +1142,7 @@ YY_RULE_SETUP
 					{
 						return setTokenData(RECTYPE);
 
-						printf("rectype!\n");
+						//printf("rectype!\n");
 					}
 					else
 					{
