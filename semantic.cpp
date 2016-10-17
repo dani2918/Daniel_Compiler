@@ -264,8 +264,12 @@ void scopeAndType(TreeNode * t)
 								t -> isStatic = originalDecl -> isStatic;
 							}
 
-							// issue error if trying to use function as variable
-							if (originalDecl -> kind.decl == funDeclaration)
+
+							// TODO: ERROR IS HERE!!
+
+
+							//issue error if trying to use function as variable
+							if (originalDecl != NULL && originalDecl -> kind.decl == funDeclaration)
 							{
 								printError(9, t->lineno, t->attr.name, 0, na, na);
 							}
