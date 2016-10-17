@@ -1007,15 +1007,19 @@ int main(int argc, char *argv[])
 		}
 		optCount++;
 	}
-	FILE *infile = fopen(argv[optCount], "r");
-	if (infile == NULL)
+	
+
+	if(optCount < argc)
 	{
-		printError(-1, 0, argv[optCount], 0, na, na);
-		exit(-1);
+		FILE *infile = fopen(argv[optCount], "r");
+		if (infile == NULL)
+		{
+			printError(-1, 0, argv[optCount], 0, na, na);
+			exit(-1);
+		}
+		yyin = infile;
 	}
-
-
-	yyin = infile;
+	
 	yyparse();
 	fclose(yyin);
 
