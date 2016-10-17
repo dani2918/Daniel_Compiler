@@ -1,7 +1,7 @@
 BIN  = parser
 CC   = g++
-SRCS = $(BIN).y $(BIN).l syntaxTree.cpp symbolTable.cpp printtree.cpp semantic.cpp
-OBJS = lex.yy.o $(BIN).tab.o syntaxTree.o symbolTable.o printtree.o semantic.o
+SRCS = $(BIN).y $(BIN).l syntaxTree.cpp symbolTable.cpp printtree.cpp semantic.cpp 
+OBJS = lex.yy.o $(BIN).tab.o syntaxTree.o symbolTable.o printtree.o semantic.o 
 LIBS = -lm 
 
 
@@ -26,6 +26,7 @@ printtree.o: printtree.cpp printtree.h globals.h
 semantic.o: semantic.cpp semantic.h globals.h
 	$(CC) $(CCFLAGS) -c semantic.cpp
 
+
 all: 
 	touch $(SRCS)
 	make
@@ -34,5 +35,5 @@ clean:
 	rm -f $(OBJS) $(BIN) syntaxTree.o lex.yy.c $(BIN).tab.h $(BIN).tab.c $(BIN).tar *~ *.output 
 
 tar:
-	tar -cvf $(BIN).tar $(SRCS) globals.h scanType.h syntaxTree.h symbolTable.h printtree.h semantic.h makefile 
+	tar -cvf $(BIN).tar $(SRCS) globals.h scanType.h syntaxTree.h symbolTable.h printtree.h semantic.h  makefile 
 

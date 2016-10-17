@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <map>
 #include "globals.h"
 #include "syntaxTree.h"
 #include "semantic.h"
@@ -37,7 +38,7 @@ void scopeAndTypeR(TreeNode * t)
 
 	scopeAndType(t);
 
-	//Unlinke in printtree.cpp, we'll process children in the function below
+	//Unlinke in printtree.cpp, I'll process children in the function below
 	scopeAndTypeR(t->sibling);
 
 }
@@ -53,7 +54,7 @@ void scopeAndType(TreeNode * t)
 			{
 			// if we have a declaration
 				case DeclK:
-				//printf("inserting: %s \n", t->attr.name );
+				//printf("\ninserting: %s \n\n", t->attr.name );
 				alreadyInTable = symTab.insert(t->attr.name, (TreeNode *) t);
 
 					//Switch types of declarations
@@ -109,10 +110,7 @@ void scopeAndType(TreeNode * t)
 									}
 
 							}
-							//symTab.print(pointerPrintStr);
-							//printf("Leaving\n");
 							symTab.leave();
-							
 
 							// Print return type
 							switch (t->type)
@@ -211,19 +209,25 @@ void scopeAndType(TreeNode * t)
 								}
 								//symTab.print(pointerPrintStr);
 							}
-
-							
-
-								
+			
 							break;
 						case returnStmt:
-							//printf("Return ");
+							if (t->child[0] != NULL)
+							{
+								scopeAndTypeR(t->child[0]);
+							}
 							break;
 						case selectionStmt:
-							//printf("If ");
+							if (t->child[0] != NULL)
+							{
+								scopeAndTypeR(t->child[0]);
+							}
 							break;
 						case iterationStmt:
-							//printf("While ");
+							if (t->child[0] != NULL)
+							{
+								scopeAndTypeR(t->child[0]);
+							}
 							break;
 						case breakStmt:
 							// printf("Break ");
@@ -246,24 +250,42 @@ void scopeAndType(TreeNode * t)
 					switch(t->kind.exp)
 					{
 						case IdK:
+							//printf("IdK string: %s\n", t->attr.name );
 							originalDecl = (TreeNode *)symTab.lookup(t->attr.name);
 							if (originalDecl == NULL)
 							{
-								printError(11, t->lineno, t->attr.name, 0);
+								printError(11, t->lineno, t->attr.name, 0, na, na);
 							}
-							if(t-> isArray == true)
+							else
+							{
+								//resetting information to appropriate values
+								t-> type = originalDecl -> type;
+								t -> isArray = originalDecl -> isArray;
+								t -> isStatic = originalDecl -> isStatic;
+							}
+
+							// issue error if trying to use function as variable
+							if (originalDecl -> kind.decl == funDeclaration)
+							{
+								printError(9, t->lineno, t->attr.name, 0, na, na);
+							}
+
+							if(t->child[0] != NULL)
+							{
+								scopeAndTypeR(t->child[0]);
+
+								// the id has children, but is not an array
+								if(t->isArray == false)
 								{
-									// arrMsgToggle = arrMsg;
+									printError(6, t->lineno, t->attr.name, 0, na, na);
 								}
-								else
-								{
-									// arrMsgToggle = "";
-								}
+							}
+					
 							break;
 
 						//process these two together?
-						case OpK:
 						case AssK:
+						case OpK:
 
 							for(int i = 0; i < 3; i++) 
 							{
@@ -282,41 +304,25 @@ void scopeAndType(TreeNode * t)
 								isArrayRHS = rhs -> isArray;
 								isBinaryOp = true;
 							}
-							//printf("got here\n");
-							// lookup, see if it is function
-							// if (lhs != NULL)
-							// {
-							// 	originalDecl = (TreeNode *)symTab.lookup(lhs->attr.name);
-							// 	printf("lhs->attrname is: %s\n", lhs->attr.name);
-							// }
 							
-							//printf("got here2\n");
-							// if not, throw error 0
 							if (originalDecl == NULL)
 							{
-								//printf("t->attr.name is: %s\n", t->attr.name);
-							//printf("t->lineno is: %d\n", t->lineno);
-
-								// if (isBinaryOp)
-								// {
-								// 	printError(11, t->lineno, t->attr.name, 0);
-								// }
-								// else
-								// {
-								// 	printError(11, t->lineno, t->attr.name, 0);
-								// }
-								//printf("got here3\n");
+								
 							}
 
 							break;
 
 						
-							
+						//case AssK:
 							// printf("Assign: %s ", t-> attr.name);
-						//	break;
+							//break;
 
 						case constK:
 							// printf("Const: ");
+							for(int i = 0; i < 3; i++) 
+							{
+								scopeAndTypeR(t->child[i]);
+							}
 							switch(t -> type)
 							{
 								case boolean:
@@ -345,14 +351,27 @@ void scopeAndType(TreeNode * t)
 							{
 								scopeAndTypeR(t->child[i]);
 							}
-							// lookup, see if it is function
+							// lookup, see if it exists
 							originalDecl = (TreeNode *)symTab.lookup(t->attr.name);
-							// if not, throw error 0
-							if (originalDecl == NULL || originalDecl -> kind.decl != funDeclaration)
+							// if not, throw non exist error
+							if (originalDecl == NULL)
 							{
-								printError(0, t->lineno, t->attr.name, 0);
+								printError(11, t->lineno, t->attr.name, 0, na, na);
+							} 
+							//if not a function, throw that error
+							else 
+							{
+								t-> type = originalDecl -> type;
+								t -> isArray = originalDecl -> isArray;
+								t -> isStatic = originalDecl -> isStatic;
+									
+								if(originalDecl -> kind.decl != funDeclaration)
+								{
+									printError(0, t->lineno, t->attr.name, 0, na, na);
+								}
 							}
 							
+
 							break;
 
 						default:
@@ -362,11 +381,11 @@ void scopeAndType(TreeNode * t)
 				default:
 					break;
 			}
-			//print line number stored from scantype at time of making new node
+
 			if(alreadyInTable == false) 
 			{
 				originalDecl = (TreeNode *)symTab.lookup(t->attr.name);
-				printError(10, t->lineno, t->attr.name, originalDecl->lineno);
+				printError(10, t->lineno, t->attr.name, originalDecl->lineno, na, na);
 			}
 			
 		}
@@ -376,11 +395,67 @@ void scopeAndType(TreeNode * t)
 	}
 
 
-	void printError(int errno, int errorLine, char * symbol, int redefline)
+	void printError(int errno, int errorLine, char * symbol, int redefline, ExpType right, ExpType wrong)
 	{
+		char * wrongType;
+		char * rightType;
 		numErrors++;
+		if (wrong != na && right != na)
+		{
+			switch (wrong)
+			{
+				case integer:
+					wrongType =strdup("int");
+					break;
+				case boolean:
+					wrongType =strdup("bool");
+					break;
+				case character: 
+					wrongType =strdup("char");
+					break;
+				case record: 
+					wrongType =strdup("rec");
+					break;
+				case Void:
+					wrongType =strdup("void");
+					break;
+				case undefined:
+					break;
+				default:
+					break;
+			}
+			switch (right)
+			{
+				case integer:
+					rightType =strdup("int");
+					break;
+				case boolean:
+					rightType =strdup("bool");
+					break;
+				case character: 
+					rightType =strdup("char");
+					break;
+				case record: 
+					rightType =strdup("rec");
+					break;
+				case Void:
+					rightType =strdup("void");
+					break;
+				case undefined:
+					break;
+				default:
+					break;
+			}
+		}
+
 		switch (errno)
 		{
+			case -2:
+				printf("ERROR(LINKER): Procedure main is not defined.\n");
+				break;
+			case -1:
+				printf("ERROR(ARGLIST): source file \"%s\" could not be opened.\n", symbol);
+				exit(-1);
 			case 0:
 				printf("ERROR(%d): '%s' is a simple variable and cannot be called.\n", errorLine, symbol);
 				break;
@@ -391,18 +466,25 @@ void scopeAndType(TreeNode * t)
 				printf("ERROR(%d): '%s' requires operands of %s but rhs is of %s.\n", errorLine, symbol, "", "");
 				break;
 			case 3:
+				printf("ERROR(%d): '%s' requires operands of the same type but lhs is %s and rhs is %s.\n", errorLine, symbol, rightType, wrongType);
 				break;
 			case 4:
+				printf("ERROR(%d): Array '%s' should be indexed by type int but got %s.\n", errorLine, symbol, rightType);
 				break;
 			case 5:
+				printf("ERROR(%d): Array index is the unindexed array '%s'.\n", errorLine, "UNSURE???");
 				break;
 			case 6:
+				printf("ERROR(%d): Cannot index nonarray '%s'.\n", errorLine, symbol);
 				break;
 			case 7:
+				printf("ERROR(%d): Cannot index nonarray.\n", errorLine);
 				break;
 			case 8:
+				printf("ERROR(%d): Cannot return an array.\n", errorLine);
 				break;
 			case 9:
+				printf("ERROR(%d): Cannot use function '%s' as a variable.\n", errorLine, symbol);
 				break;
 			case 10:
 				printf("ERROR(%d): Symbol '%s' is already defined at line %d.\n", errorLine, symbol, redefline);
@@ -411,11 +493,14 @@ void scopeAndType(TreeNode * t)
 				printf("ERROR(%d): Symbol '%s' is not defined.\n", errorLine, symbol);
 				break;
 			case 12:
+				printf("ERROR(%d): The operation '%s' does not work with arrays.\n", errorLine, symbol);
 				break;
 			case 13:
 				break;
 			case 14:
+				printf("ERROR(%d): Unary '%s' requires an operand of type %s but was given %s.\n", errorLine, symbol, rightType, wrongType);
 				break;
+			
 			default:	
 				printf("ERROR(%d): Undefined error\n", errorLine);
 				break;
