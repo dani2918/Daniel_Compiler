@@ -1,10 +1,11 @@
 int a;
+z;
 char b[100];
 int max(int x, y) //return x;
 {
 	int sf;
+	z;
 	return x;
 }
 
-a = 5;
 int lastone;

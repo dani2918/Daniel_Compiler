@@ -189,9 +189,6 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 									case record:
 										printf("%sof type record ", arrMsgToggle);
 										break;
-									default:
-										break;
-
 								}
 							break;
 
