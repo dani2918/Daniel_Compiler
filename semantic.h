@@ -11,7 +11,7 @@ int countChildren(TreeNode * t);
 void scopeAndTypeR(TreeNode * t);
 void scopeAndType(TreeNode * t);
 
-void printError(int errno, int errorLine, char * symbol, int redefline);
+void printError(int errno, int errorLine, char * symbol, int redefline, ExpType right, ExpType wrong);
 
 SymbolTable getSymTab(int errno, int errorLine, char * symbol, int redefline);
 

@@ -54,7 +54,7 @@ enum ExpKind
 
 enum ExpType
 {
-	integer, boolean, character, record, Void, undefined
+	integer, boolean, character, record, Void, undefined, na
 };
 
 // Reflects the struct from the assignment 2 notes

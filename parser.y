@@ -149,8 +149,6 @@ declaration 			: varDeclaration
 							{$$ = $1; }
 						| recDeclaration 
 							{$$ = $1; }
-						| error
-							{$$ = NULL;}
 						;
 
 recDeclaration 			: RECORD ID LCUR localDeclarations RCUR
@@ -171,7 +169,7 @@ recDeclaration 			: RECORD ID LCUR localDeclarations RCUR
 
 varDeclaration			: typeSpecifier varDeclList SEMI 
 							{
-								yyerrok;
+								//yyerrok;
 
 								TreeNode * t = $2;
 								if (t != NULL)
@@ -917,8 +915,6 @@ call					: ID LPAREN args RPAREN
 								$$ ->isArray = false;
 
 							}
-						|	error LPAREN args RPAREN 
-							{yyerrok; $$ = NULL;}
 						;
 
 args 					: argList	
@@ -1012,11 +1008,24 @@ int main(int argc, char *argv[])
 		optCount++;
 	}
 	FILE *infile = fopen(argv[optCount], "r");
+	if (infile == NULL)
+	{
+		printError(-1, 0, argv[optCount], 0, na, na);
+		exit(-1);
+	}
+
+
 	yyin = infile;
 	yyparse();
 	fclose(yyin);
 
 	scopeAndTypeR(savedTree);
+
+
+	if(symTab.lookup("main") == NULL)
+	{
+		printError(-2, 0, NULL, 0, na, na);
+	}
 	//symTab.print(pointerPrintStr);
 	//finalSymTab = getSymTab();
 	//finalSymTab.print(pointerPrintStr);
