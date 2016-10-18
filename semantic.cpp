@@ -36,10 +36,11 @@ void scopeAndTypeR(TreeNode * t)
 
 	if (t == NULL)
 		return;
-
+	//Unlinke in printtree.cpp, I'll process children in the function below
 	scopeAndType(t);
 
-	//Unlinke in printtree.cpp, I'll process children in the function below
+	
+	//If we initialize a var to iteself with a colon, throw an error, give node type undefined
 	scopeAndTypeR(t->sibling);
 
 }
@@ -63,13 +64,26 @@ void scopeAndType(TreeNode * t)
 					printError(10, t->lineno, t->attr.name, originalDecl->lineno, na, na);
 				}
 
-					//Switch types of declarations
+				
+				//Switch types of declarations
 
 					switch (t->kind.decl)
 					{
 
 						case varDeclaration:
 
+						// If we have x:x attempted init, throw an error
+						if (t-> child[0] != NULL && t->child[0] -> kind.exp == IdK)
+						{
+							if (strcmp(t->attr.name, t->child[0]->attr.name) == 0)
+							{
+								printError(11, t->lineno, t->attr.name, 0, na, na);
+								t->type = undefined;
+							}
+
+						}
+						
+							//checkSelfInit(t, t->child[0], found);
 						// if(alreadyInTable == false) 
 						// {
 						// 	//printf("trying to reset!\n");
@@ -121,9 +135,9 @@ void scopeAndType(TreeNode * t)
 							for (int i = 0; i < 3; i++)
 							{
 								if (t->child[i] != NULL)
-									{
-										scopeAndTypeR(t->child[i]);
-									}
+								{
+									scopeAndTypeR(t->child[i]);
+								}
 
 							}
 							symTab.leave();
@@ -547,8 +561,6 @@ void scopeAndType(TreeNode * t)
 							{
 								scopeAndTypeR(t->child[i]);
 							}
-							
-							
 
 							break;
 
@@ -558,143 +570,148 @@ void scopeAndType(TreeNode * t)
 
 				default:
 					break;
-			}
-
-			
+			}	
 		}
-
-		//printf("we're at %s\n", t->attr.name );
 
 	}
 
 
-	void printError(int errno, int errorLine, char * symbol, int redefline, ExpType right, ExpType wrong)
+void printError(int errno, int errorLine, char * symbol, int redefline, ExpType right, ExpType wrong)
+{
+	char * wrongType;
+	char * rightType;
+	numErrors++;
+	if (wrong != na || right != na)
 	{
-		char * wrongType;
-		char * rightType;
-		numErrors++;
-		if (wrong != na || right != na)
+		switch (wrong)
 		{
-			switch (wrong)
-			{
-				case integer:
-					wrongType =strdup("type int");
-					break;
-				case boolean:
-					wrongType =strdup("type bool");
-					break;
-				case character: 
-					wrongType =strdup("type char");
-					break;
-				case record: 
-					wrongType =strdup("type rec");
-					break;
-				case Void:
-					wrongType =strdup("type void");
-					break;
-				case undefined:
-					wrongType =strdup("type undefined");
-				case charint:
-					wrongType = strdup("type char or type int");
-				case nonvoid:
-					wrongType = strdup("NONVOID");
-					break;
-				default:
-					break;
-			}
-			switch (right)
-			{
-				case integer:
-					rightType =strdup("type int");
-					break;
-				case boolean:
-					rightType =strdup("type bool");
-					break;
-				case character: 
-					rightType =strdup("type char");
-					break;
-				case record: 
-					rightType =strdup("type rec");
-					break;
-				case Void:
-					rightType =strdup("type void");
-					break;
-				case undefined:
-					rightType =strdup("type undefined");
-					break;
-				case charint:
-					rightType = strdup("type char or type int");
-					break;
-				case nonvoid:
-					rightType = strdup("NONVOID");
-				default:
-					break;
-			}
+			case integer:
+				wrongType =strdup("type int");
+				break;
+			case boolean:
+				wrongType =strdup("type bool");
+				break;
+			case character: 
+				wrongType =strdup("type char");
+				break;
+			case record: 
+				wrongType =strdup("type rec");
+				break;
+			case Void:
+				wrongType =strdup("type void");
+				break;
+			case undefined:
+				wrongType =strdup("type undefined");
+			case charint:
+				wrongType = strdup("type char or type int");
+			case nonvoid:
+				wrongType = strdup("NONVOID");
+				break;
+			default:
+				break;
 		}
-
-		switch (errno)
+		switch (right)
 		{
-			case -2:
-				printf("ERROR(LINKER): Procedure main is not defined.\n");
+			case integer:
+				rightType =strdup("type int");
 				break;
-			case -1:
-				printf("ERROR(ARGLIST): source file \"%s\" could not be opened.\n", symbol);
-				exit(-1);
-			case 0:
-				printf("ERROR(%d): '%s' is a simple variable and cannot be called.\n", errorLine, symbol);
+			case boolean:
+				rightType =strdup("type bool");
 				break;
-			case 1:
-				printf("ERROR(%d): '%s' requires operands of %s but lhs is of %s.\n", errorLine, symbol, rightType, wrongType);
+			case character: 
+				rightType =strdup("type char");
 				break;
-			// case -3: 
-			// 	printf("ERROR(%d): Unary '%s' requires an operand of type %s but was given %s.\n", errorLine, symbol, rightType, wrongType);
-			// 	break;
-			case 2:
-				printf("ERROR(%d): '%s' requires operands of %s but rhs is of %s.\n", errorLine, symbol, rightType, wrongType);
+			case record: 
+				rightType =strdup("type rec");
 				break;
-			case 3:
-				printf("ERROR(%d): '%s' requires operands of the same type but lhs is %s and rhs is %s.\n", errorLine, symbol, rightType, wrongType);
+			case Void:
+				rightType =strdup("type void");
 				break;
-			case 4:
-				printf("ERROR(%d): Array '%s' should be indexed by type int but got %s.\n", errorLine, symbol, wrongType);
+			case undefined:
+				rightType =strdup("type undefined");
 				break;
-			case 5:
-				printf("ERROR(%d): Array index is the unindexed array '%s'.\n", errorLine, symbol);
+			case charint:
+				rightType = strdup("type char or type int");
 				break;
-			case 6:
-				printf("ERROR(%d): Cannot index nonarray '%s'.\n", errorLine, symbol);
-				break;
-			case 7:
-				printf("ERROR(%d): Cannot index nonarray.\n", errorLine);
-				break;
-			case 8:
-				printf("ERROR(%d): Cannot return an array.\n", errorLine);
-				break;
-			case 9:
-				printf("ERROR(%d): Cannot use function '%s' as a variable.\n", errorLine, symbol);
-				break;
-			case 10:
-				printf("ERROR(%d): Symbol '%s' is already defined at line %d.\n", errorLine, symbol, redefline);
-				break;
-			case 11:
-				printf("ERROR(%d): Symbol '%s' is not defined.\n", errorLine, symbol);
-				break;
-			case 12:
-				printf("ERROR(%d): The operation '%s' does not work with arrays.\n", errorLine, symbol);
-				break;
-			case 13:
-				printf("ERROR(%d): The operation '%s' only works with arrays.\n", errorLine, symbol);
-				break;
-			case 14:
-				printf("ERROR(%d): Unary '%s' requires an operand of type %s but was given %s.\n", errorLine, symbol, rightType, wrongType);
-				break;
-			
-			default:	
-				printf("ERROR(%d): Undefined error\n", errorLine);
+			case nonvoid:
+				rightType = strdup("NONVOID");
+			default:
 				break;
 		}
 	}
 
+	switch (errno)
+	{
+		case -2:
+			printf("ERROR(LINKER): Procedure main is not defined.\n");
+			break;
+		case -1:
+			printf("ERROR(ARGLIST): source file \"%s\" could not be opened.\n", symbol);
+			exit(-1);
+		case 0:
+			printf("ERROR(%d): '%s' is a simple variable and cannot be called.\n", errorLine, symbol);
+			break;
+		case 1:
+			printf("ERROR(%d): '%s' requires operands of %s but lhs is of %s.\n", errorLine, symbol, rightType, wrongType);
+			break;
+		// case -3: 
+		// 	printf("ERROR(%d): Unary '%s' requires an operand of type %s but was given %s.\n", errorLine, symbol, rightType, wrongType);
+		// 	break;
+		case 2:
+			printf("ERROR(%d): '%s' requires operands of %s but rhs is of %s.\n", errorLine, symbol, rightType, wrongType);
+			break;
+		case 3:
+			printf("ERROR(%d): '%s' requires operands of the same type but lhs is %s and rhs is %s.\n", errorLine, symbol, rightType, wrongType);
+			break;
+		case 4:
+			printf("ERROR(%d): Array '%s' should be indexed by type int but got %s.\n", errorLine, symbol, wrongType);
+			break;
+		case 5:
+			printf("ERROR(%d): Array index is the unindexed array '%s'.\n", errorLine, symbol);
+			break;
+		case 6:
+			printf("ERROR(%d): Cannot index nonarray '%s'.\n", errorLine, symbol);
+			break;
+		case 7:
+			printf("ERROR(%d): Cannot index nonarray.\n", errorLine);
+			break;
+		case 8:
+			printf("ERROR(%d): Cannot return an array.\n", errorLine);
+			break;
+		case 9:
+			printf("ERROR(%d): Cannot use function '%s' as a variable.\n", errorLine, symbol);
+			break;
+		case 10:
+			printf("ERROR(%d): Symbol '%s' is already defined at line %d.\n", errorLine, symbol, redefline);
+			break;
+		case 11:
+			printf("ERROR(%d): Symbol '%s' is not defined.\n", errorLine, symbol);
+			break;
+		case 12:
+			printf("ERROR(%d): The operation '%s' does not work with arrays.\n", errorLine, symbol);
+			break;
+		case 13:
+			printf("ERROR(%d): The operation '%s' only works with arrays.\n", errorLine, symbol);
+			break;
+		case 14:
+			printf("ERROR(%d): Unary '%s' requires an operand of type %s but was given %s.\n", errorLine, symbol, rightType, wrongType);
+			break;
+		
+		default:	
+			printf("ERROR(%d): Undefined error\n", errorLine);
+			break;
+	}
+}
+
+//If we initialize a var to iteself with a colon, throw an error, give node type undefined
+// void checkSelfInit(TreeNode * t, TreeNode * child, bool &found)
+// {
+// 	if(t->attr.name == child->attr.name)
+// 	{
+// 		printf("same: %s\n", t->attr.name);
+// 	}
+	
+// }
 
 
 
