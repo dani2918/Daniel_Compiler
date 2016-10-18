@@ -302,12 +302,13 @@ void scopeAndType(TreeNode * t)
 						lhsCheck = rhsCheck = true;
 						wrongLHS = wrongRHS = undefined;
 						arrayError = 0;
-						lhs = rhs = NULL;
+						
 
 							for(int i = 0; i < 3; i++) 
 							{
 								scopeAndTypeR(t->child[i]);
 							}
+							lhs = rhs = NULL;
 							if (t->child[0] != NULL)
 							{
 								lhs = t->child[0];
@@ -357,11 +358,19 @@ void scopeAndType(TreeNode * t)
 								printError(12, t->lineno, t->attr.name, 0, na, na);
 							}
 
-							//Don't get an array when we should have
+							// Only works on arrays
 							if(arrayError == 2)
 							{
 								printError(13, t->lineno, t->attr.name, 0, na, na);
 							}
+
+							//Cannot index named nonarray
+							if(arrayError == 3)
+							{
+								originalDecl = t->child[0];
+								printError(6, t->lineno, originalDecl->attr.name, 0, na, na);
+							}
+
 							break;
 
 						
@@ -438,6 +447,9 @@ void scopeAndType(TreeNode * t)
 			if(alreadyInTable == false) 
 			{
 				originalDecl = (TreeNode *)symTab.lookup(t->attr.name);
+				t-> type = originalDecl -> type;
+				t -> isArray = originalDecl -> isArray;
+				t -> isStatic = originalDecl -> isStatic;
 				printError(10, t->lineno, t->attr.name, originalDecl->lineno, na, na);
 			}
 			
@@ -496,7 +508,7 @@ void scopeAndType(TreeNode * t)
 					rightType =strdup("void");
 					break;
 				case undefined:
-					wrongType =strdup("undefined");
+					rightType =strdup("undefined");
 					break;
 				default:
 					break;
@@ -515,13 +527,13 @@ void scopeAndType(TreeNode * t)
 				printf("ERROR(%d): '%s' is a simple variable and cannot be called.\n", errorLine, symbol);
 				break;
 			case 1:
-				printf("ERROR(%d): '%s' requires operands of %s but lhs is of type %s.\n", errorLine, symbol, rightType, wrongType);
+				printf("ERROR(%d): '%s' requires operands of type %s but lhs is of type %s.\n", errorLine, symbol, rightType, wrongType);
 				break;
 			case 2:
-				printf("ERROR(%d): '%s' requires operands of %s but rhs is of type %s.\n", errorLine, symbol, rightType, wrongType);
+				printf("ERROR(%d): '%s' requires operands of type %s but rhs is of type %s.\n", errorLine, symbol, rightType, wrongType);
 				break;
 			case 3:
-				printf("ERROR(%d): '%s' requires operands of the same type but lhs is %s and rhs is %s.\n", errorLine, symbol, rightType, wrongType);
+				printf("ERROR(%d): '%s' requires operands of the same type but lhs is type %s and rhs is type %s.\n", errorLine, symbol, rightType, wrongType);
 				break;
 			case 4:
 				printf("ERROR(%d): Array '%s' should be indexed by type int but got %s.\n", errorLine, symbol, rightType);
@@ -668,13 +680,9 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 			wrongRHS = right -> type;
 		}
 
-		if (leftGood && rightGood)
+		if (leftGood)
 		{
 			t-> type = left-> type;
-		}
-		else
-		{
-			t -> type = undefined;
 		}
 
 	}
@@ -715,9 +723,8 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 	}
 
 	// for __= types or arithmetic
-	if (strName == "+=" || strName == "-=" || strName == "*=" || strName == "/=" || strName == "+" || strName == "-" || strName == "*" || strName == "/")
+	if (strName == "+=" || strName == "-=" || strName == "*=" || strName == "/=" || strName == "+" || strName == "-" || strName == "*" || strName == "/" || strName == "/%")
 	{
-
 				// we don't take arrays
 		if(isArrayLHS || isArrayRHS)
 		{
@@ -745,17 +752,19 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 
 	if (strName == "[")
 	{
-		// we need an array
-		if(!isArrayLHS) // TODO: if is array RHS?
-		{
-			arrayError = 2;
-		}
 
 		if(left-> type == undefined || right-> type == undefined)
 		{
 			t->type = left->type;
 			return;
 		}
+		// we need an array, if not issue nonarray
+		if(!isArrayLHS) // TODO: if is array RHS?
+		{
+			arrayError = 3;
+		}
+
+		
 		// we do take arrays, do we need to make sure they're both arrays?
 		// I don't see an error message that would handle that...
 
@@ -789,6 +798,97 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 	}
 
 	// not gets lumped in with the binary ops for some reason
+	
+
+
+}
+
+// For unary ops
+void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bool &leftGood, ExpType &wrongLHS, ExpType &wrongRHS, bool &isArrayLHS, int &arrayError)
+{
+	std::string strName(name);
+		//printf("\n\n %s !!\n", strName.c_str());
+
+	// Unary star
+	if(strName == "*")
+	{
+		//printf("\nunary star\n");
+		// we need an array, if not issue nonarray
+		if(!isArrayLHS) 
+		{
+			//printf("\narray error 2\n");
+			arrayError = 2;
+		}
+
+		if(left-> type == undefined)
+		{
+			t->type = integer;
+			return;
+		}
+		// we do take arrays, do we need to make sure they're both arrays?
+		// I don't see an error message that would handle that...
+
+		// if(isArrayLHS || isArrayRHS)
+		// {
+		// 	arrayError = 1;
+		// }
+
+		if(left->type != boolean && left -> type != integer && left -> type != character)
+		{
+			leftGood = false;
+			wrongLHS = left -> type;
+		}
+
+		if (leftGood)
+		{
+			t-> type = integer;
+		}
+		else
+		{
+			t -> type = undefined;
+		}
+	}
+
+	if(strName == "?")
+	{
+		// we don't take arrays
+		if(isArrayLHS)
+		{
+			arrayError = 1;
+		}
+		t->type = integer;
+		if(left->type == undefined)
+		{
+			return;
+		}
+		if(left->type != integer)
+		{
+			leftGood = false;
+			wrongLHS = left -> type;
+		}	
+	}
+
+	if (strName == "++" || strName == "--")
+	{
+		// we don't take arrays
+		if(isArrayLHS)
+		{
+			arrayError = 1;
+		}
+		t->type = integer;
+
+		if(left-> type == undefined)
+		{
+			return;
+		}
+
+		if(left->type != integer)
+		{
+			leftGood = false;
+			wrongLHS = left -> type;
+		}
+	}
+
 	if (strName == "not")
 	{
 		
@@ -806,43 +906,6 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		}
 
 		if(left->type != boolean)
-		{
-			leftGood = false;
-			wrongLHS = left -> type;
-		}
-	}
-
-
-}
-
-// For unary ops
-void checkTypes(TreeNode * t, char * name, TreeNode * right, TreeNode * left, bool &leftGood, ExpType &wrongLHS, ExpType &wrongRHS, bool &isArrayLHS, int &arrayError)
-{
-	std::string strName(name);
-		//printf("\n\n %s !!\n", strName.c_str());
-
-	// Unary star
-	if(strName == "*")
-	{
-
-	}
-
-
-	if (strName == "++" || strName == "--")
-	{
-		// we don't take arrays
-		if(isArrayLHS)
-		{
-			arrayError = 1;
-		}
-		t->type = integer;
-
-		if(left-> type == undefined)
-		{
-			return;
-		}
-
-		if(left->type != integer)
 		{
 			leftGood = false;
 			wrongLHS = left -> type;
