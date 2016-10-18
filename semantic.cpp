@@ -332,14 +332,23 @@ void scopeAndType(TreeNode * t)
 
 
 							//Print appropriate errors
-							if(!lhsCheck && lhsType != undefined)
+
+							if(!lhsCheck && !rhsCheck)
 							{
-								printError(1, t->lineno, t->attr.name, 0, t->type, wrongLHS);
+								printError(3, t->lineno, t->attr.name, 0, wrongLHS, wrongRHS);
 							}
-							if(!rhsCheck && rhsType != undefined)
+							else
 							{
-								printError(2, t->lineno, t->attr.name, 0, t->type, wrongRHS);
+								if(!lhsCheck && lhsType != undefined)
+								{
+									printError(1, t->lineno, t->attr.name, 0, t->type, wrongLHS);
+								}
+								if(!rhsCheck && rhsType != undefined)
+								{
+									printError(2, t->lineno, t->attr.name, 0, t->type, wrongRHS);
+								}
 							}
+
 
 							//Get an array when we shouldn't have
 							if(arrayError == 1)
@@ -505,10 +514,10 @@ void scopeAndType(TreeNode * t)
 				printf("ERROR(%d): '%s' is a simple variable and cannot be called.\n", errorLine, symbol);
 				break;
 			case 1:
-				printf("ERROR(%d): '%s' requires operands of %s but lhs is of %s.\n", errorLine, symbol, rightType, wrongType);
+				printf("ERROR(%d): '%s' requires operands of %s but lhs is of type %s.\n", errorLine, symbol, rightType, wrongType);
 				break;
 			case 2:
-				printf("ERROR(%d): '%s' requires operands of %s but rhs is of %s.\n", errorLine, symbol, rightType, wrongType);
+				printf("ERROR(%d): '%s' requires operands of %s but rhs is of type %s.\n", errorLine, symbol, rightType, wrongType);
 				break;
 			case 3:
 				printf("ERROR(%d): '%s' requires operands of the same type but lhs is %s and rhs is %s.\n", errorLine, symbol, rightType, wrongType);
@@ -567,6 +576,12 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 			arrayError = 1;
 		}
 		t->type = boolean;
+
+		if(left-> type == undefined || right-> type == undefined)
+		{
+			return;
+		}
+
 		if(left->type != boolean)
 		{
 			leftGood = false;
@@ -587,6 +602,12 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 			arrayError = 1;
 		}
 		t->type = boolean;
+
+		if(left-> type == undefined || right-> type == undefined)
+		{
+			return;
+		}
+
 		if(left->type != boolean && left -> type != integer)
 		{
 			leftGood = false;
@@ -608,10 +629,120 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 
 	}
 
-	if (strName == "")
+	// Assign
+	if (strName == "=")
 	{
 
+		if(left-> type == undefined || right-> type == undefined)
+		{
+			t->type = left->type;
+			return;
+		}
+		// we do take arrays, do we need to make sure they're both arrays?
+		// I don't see an error message that would handle that...
+
+		// if(isArrayLHS || isArrayRHS)
+		// {
+		// 	arrayError = 1;
+		// }
+
+		// keep from having cascading errors
+		
+
+		if(left->type != boolean && left -> type != integer && left -> type != character)
+		{
+			leftGood = false;
+			wrongLHS = left -> type;
+		}
+		if(right -> type != boolean && right -> type != integer && left -> type != character)
+		{
+			rightGood = false;
+			wrongRHS = right -> type;
+		}
+		//Not equal types
+		if (right -> type != left -> type)
+		{
+			leftGood = rightGood = false;
+			wrongLHS = left -> type;
+			wrongRHS = right -> type;
+		}
+
+		if (leftGood && rightGood)
+		{
+			t-> type = left-> type;
+		}
+		else
+		{
+			t -> type = undefined;
+		}
+
 	}
+
+	// Equality checks
+	if (strName == "==" || strName == "!=")
+	{
+		// we do take arrays, do we need to make sure they're both arrays?
+		// I don't see an error message that would handle that...
+
+		// if(isArrayLHS || isArrayRHS)
+		// {
+		// 	arrayError = 1;
+		// }
+		t->type = boolean;
+		if(left-> type == undefined || right-> type == undefined)
+		{
+			return;
+		}
+
+		if(left->type != boolean && left -> type != integer && left -> type != character)
+		{
+			leftGood = false;
+			wrongLHS = left -> type;
+		}
+		if(right -> type != boolean && right -> type != integer && left -> type != character)
+		{
+			rightGood = false;
+			wrongRHS = right -> type;
+		}
+		//Not equal types
+		if (right -> type != left -> type)
+		{
+			leftGood = rightGood = false;
+			wrongLHS = left -> type;
+			wrongRHS = right -> type;
+		}
+	}
+
+	// for __= types
+	if (strName == "+=" || strName == "-=" || strName == "*=" || strName == "/=")
+	{
+
+				// we don't take arrays
+		if(isArrayLHS || isArrayRHS)
+		{
+			arrayError = 1;
+		}
+		t->type = integer;
+
+		if(left-> type == undefined || right-> type == undefined)
+		{
+			return;
+		}
+
+		if(left->type != integer)
+		{
+			leftGood = false;
+			wrongLHS = left -> type;
+		}
+		if(right -> type != integer)
+		{
+			rightGood = false;
+			wrongRHS = right -> type;
+		}
+
+	}
+
+
 
 
 }
