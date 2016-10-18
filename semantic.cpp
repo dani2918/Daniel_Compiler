@@ -7,12 +7,12 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include <map>
 #include "globals.h"
 #include "syntaxTree.h"
 #include "semantic.h"
 #include "printtree.h"
 #include "symbolTable.h"
+#include "typeCheck.h"
 
 
 SymbolTable symTab;
@@ -247,9 +247,10 @@ void scopeAndType(TreeNode * t)
 				case ExpK:
 					bool isArrayLHS, isArrayRHS, isBinaryOp;
 					ExpType lhsType, rhsType;
-					bool lhsCheck, rhsCheck;
-					ExpType wrongLHS, wrongRHS;
+					bool lhsCheck, rhsCheck, mismatch;
+					ExpType wrongLHS, wrongRHS, operandType;
 					int arrayError;
+					bool opErr; 
 
 
 
@@ -300,8 +301,11 @@ void scopeAndType(TreeNode * t)
 						case AssK:
 						case OpK:
 						lhsCheck = rhsCheck = true;
+						mismatch = false;
 						wrongLHS = wrongRHS = undefined;
 						arrayError = 0;
+						opErr = false;
+						operandType = undefined;
 						
 
 							for(int i = 0; i < 3; i++) 
@@ -325,31 +329,32 @@ void scopeAndType(TreeNode * t)
 							
 							if (rhs == NULL)
 							{
-								checkTypes(t, t->attr.name, lhs, rhs, lhsCheck, wrongLHS, wrongRHS, isArrayLHS, arrayError);
+								checkTypes(t, t->attr.name, lhs, rhs, lhsCheck, mismatch, wrongLHS, wrongRHS, isArrayLHS, arrayError, operandType);
 							}
 							else
 							{
-								checkTypes(t, t->attr.name, lhs, rhs, lhsCheck, rhsCheck, wrongLHS, wrongRHS, isArrayLHS, isArrayRHS, arrayError);
+								checkTypes(t, t->attr.name, lhs, rhs, lhsCheck, rhsCheck, mismatch, wrongLHS, wrongRHS, isArrayLHS, isArrayRHS, arrayError, operandType);
 							}
 
 
 							//Print appropriate errors
 
-							if(!lhsCheck && !rhsCheck)
-							{
-								printError(3, t->lineno, t->attr.name, 0, wrongLHS, wrongRHS);
-							}
-							else
-							{
+							
 								if(!lhsCheck && lhsType != undefined)
 								{
-									printError(1, t->lineno, t->attr.name, 0, t->type, wrongLHS);
+									printError(1, t->lineno, t->attr.name, 0, operandType, wrongLHS);
+									opErr = true;
 								}
 								if(!rhsCheck && rhsType != undefined)
 								{
-									printError(2, t->lineno, t->attr.name, 0, t->type, wrongRHS);
+									printError(2, t->lineno, t->attr.name, 0, operandType, wrongRHS);
+									opErr = true;
 								}
-							}
+								if(mismatch && !opErr)
+								{
+									printError(3, t->lineno, t->attr.name, 0, wrongLHS, wrongRHS);
+								}
+							//}
 
 
 							//Get an array when we shouldn't have
@@ -447,9 +452,6 @@ void scopeAndType(TreeNode * t)
 			if(alreadyInTable == false) 
 			{
 				originalDecl = (TreeNode *)symTab.lookup(t->attr.name);
-				t-> type = originalDecl -> type;
-				t -> isArray = originalDecl -> isArray;
-				t -> isStatic = originalDecl -> isStatic;
 				printError(10, t->lineno, t->attr.name, originalDecl->lineno, na, na);
 			}
 			
@@ -470,22 +472,26 @@ void scopeAndType(TreeNode * t)
 			switch (wrong)
 			{
 				case integer:
-					wrongType =strdup("int");
+					wrongType =strdup("type int");
 					break;
 				case boolean:
-					wrongType =strdup("bool");
+					wrongType =strdup("type bool");
 					break;
 				case character: 
-					wrongType =strdup("char");
+					wrongType =strdup("type char");
 					break;
 				case record: 
-					wrongType =strdup("rec");
+					wrongType =strdup("type rec");
 					break;
 				case Void:
-					wrongType =strdup("void");
+					wrongType =strdup("type void");
 					break;
 				case undefined:
-					wrongType =strdup("undefined");
+					wrongType =strdup("type undefined");
+				case charint:
+					wrongType = strdup("type char or type int");
+				case nonvoid:
+					wrongType = strdup("NONVOID");
 					break;
 				default:
 					break;
@@ -493,23 +499,28 @@ void scopeAndType(TreeNode * t)
 			switch (right)
 			{
 				case integer:
-					rightType =strdup("int");
+					rightType =strdup("type int");
 					break;
 				case boolean:
-					rightType =strdup("bool");
+					rightType =strdup("type bool");
 					break;
 				case character: 
-					rightType =strdup("char");
+					rightType =strdup("type char");
 					break;
 				case record: 
-					rightType =strdup("rec");
+					rightType =strdup("type rec");
 					break;
 				case Void:
-					rightType =strdup("void");
+					rightType =strdup("type void");
 					break;
 				case undefined:
-					rightType =strdup("undefined");
+					rightType =strdup("type undefined");
 					break;
+				case charint:
+					rightType = strdup("type char or type int");
+					break;
+				case nonvoid:
+					rightType = strdup("NONVOID");
 				default:
 					break;
 			}
@@ -527,13 +538,13 @@ void scopeAndType(TreeNode * t)
 				printf("ERROR(%d): '%s' is a simple variable and cannot be called.\n", errorLine, symbol);
 				break;
 			case 1:
-				printf("ERROR(%d): '%s' requires operands of type %s but lhs is of type %s.\n", errorLine, symbol, rightType, wrongType);
+				printf("ERROR(%d): '%s' requires operands of %s but lhs is of %s.\n", errorLine, symbol, rightType, wrongType);
 				break;
 			case 2:
-				printf("ERROR(%d): '%s' requires operands of type %s but rhs is of type %s.\n", errorLine, symbol, rightType, wrongType);
+				printf("ERROR(%d): '%s' requires operands of %s but rhs is of %s.\n", errorLine, symbol, rightType, wrongType);
 				break;
 			case 3:
-				printf("ERROR(%d): '%s' requires operands of the same type but lhs is type %s and rhs is type %s.\n", errorLine, symbol, rightType, wrongType);
+				printf("ERROR(%d): '%s' requires operands of the same type but lhs is %s and rhs is %s.\n", errorLine, symbol, rightType, wrongType);
 				break;
 			case 4:
 				printf("ERROR(%d): Array '%s' should be indexed by type int but got %s.\n", errorLine, symbol, rightType);
@@ -576,341 +587,5 @@ void scopeAndType(TreeNode * t)
 	}
 
 
-void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bool &leftGood, bool &rightGood, ExpType &wrongLHS, ExpType &wrongRHS, bool &isArrayLHS, bool &isArrayRHS, int &arrayError)
-{
-	std::string strName(name);
 
-	// for and or booleans
-	if (strName == "and" || strName == "or")
-	{
-		// we don't take arrays
-		if(isArrayLHS || isArrayRHS)
-		{
-			arrayError = 1;
-		}
-		t->type = boolean;
-
-		if(left-> type == undefined || right-> type == undefined)
-		{
-			return;
-		}
-
-		if(left->type != boolean)
-		{
-			leftGood = false;
-			wrongLHS = left -> type;
-		}
-		if(right -> type != boolean)
-		{
-			rightGood = false;
-			wrongRHS = right -> type;
-		}
-	}
-	// for all comparison ops
-	if (strName == "<" || strName == ">" || strName == ">=" || strName == "<=")
-	{
-		// we don't take arrays
-		if(isArrayLHS || isArrayRHS)
-		{
-			arrayError = 1;
-		}
-		t->type = boolean;
-
-		if(left-> type == undefined || right-> type == undefined)
-		{
-			return;
-		}
-
-		if(left->type != boolean && left -> type != integer)
-		{
-			leftGood = false;
-			wrongLHS = left -> type;
-
-		}
-		if(right -> type != boolean && right -> type != integer)
-		{
-			rightGood = false;
-			wrongRHS = right -> type;
-		}
-		//Not equal types
-		if (right -> type != left -> type)
-		{
-			leftGood = rightGood = false;
-			wrongLHS = left -> type;
-			wrongRHS = right -> type;
-		}
-
-	}
-
-	// Assign
-	if (strName == "=")
-	{
-
-		if(left-> type == undefined || right-> type == undefined)
-		{
-			t->type = left->type;
-			return;
-		}
-		// we do take arrays, do we need to make sure they're both arrays?
-		// I don't see an error message that would handle that...
-
-		// if(isArrayLHS || isArrayRHS)
-		// {
-		// 	arrayError = 1;
-		// }
-
-		// keep from having cascading errors
-		
-
-		if(left->type != boolean && left -> type != integer && left -> type != character)
-		{
-			leftGood = false;
-			wrongLHS = left -> type;
-		}
-		if(right -> type != boolean && right -> type != integer && left -> type != character)
-		{
-			rightGood = false;
-			wrongRHS = right -> type;
-		}
-		//Not equal types
-		if (right -> type != left -> type)
-		{
-			leftGood = rightGood = false;
-			wrongLHS = left -> type;
-			wrongRHS = right -> type;
-		}
-
-		if (leftGood)
-		{
-			t-> type = left-> type;
-		}
-
-	}
-
-	// Equality checks
-	if (strName == "==" || strName == "!=")
-	{
-		// we do take arrays, do we need to make sure they're both arrays?
-		// I don't see an error message that would handle that...
-
-		// if(isArrayLHS || isArrayRHS)
-		// {
-		// 	arrayError = 1;
-		// }
-		t->type = boolean;
-		if(left-> type == undefined || right-> type == undefined)
-		{
-			return;
-		}
-
-		if(left->type != boolean && left -> type != integer && left -> type != character)
-		{
-			leftGood = false;
-			wrongLHS = left -> type;
-		}
-		if(right -> type != boolean && right -> type != integer && left -> type != character)
-		{
-			rightGood = false;
-			wrongRHS = right -> type;
-		}
-		//Not equal types
-		if (right -> type != left -> type)
-		{
-			leftGood = rightGood = false;
-			wrongLHS = left -> type;
-			wrongRHS = right -> type;
-		}
-	}
-
-	// for __= types or arithmetic
-	if (strName == "+=" || strName == "-=" || strName == "*=" || strName == "/=" || strName == "+" || strName == "-" || strName == "*" || strName == "/" || strName == "/%")
-	{
-				// we don't take arrays
-		if(isArrayLHS || isArrayRHS)
-		{
-			arrayError = 1;
-		}
-		t->type = integer;
-
-		if(left-> type == undefined || right-> type == undefined)
-		{
-			return;
-		}
-
-		if(left->type != integer)
-		{
-			leftGood = false;
-			wrongLHS = left -> type;
-		}
-		if(right -> type != integer)
-		{
-			rightGood = false;
-			wrongRHS = right -> type;
-		}
-
-	}
-
-	if (strName == "[")
-	{
-
-		if(left-> type == undefined || right-> type == undefined)
-		{
-			t->type = left->type;
-			return;
-		}
-		// we need an array, if not issue nonarray
-		if(!isArrayLHS) // TODO: if is array RHS?
-		{
-			arrayError = 3;
-		}
-
-		
-		// we do take arrays, do we need to make sure they're both arrays?
-		// I don't see an error message that would handle that...
-
-		// if(isArrayLHS || isArrayRHS)
-		// {
-		// 	arrayError = 1;
-		// }
-
-		// keep from having cascading errors
-		
-
-		if(left->type != boolean && left -> type != integer && left -> type != character)
-		{
-			leftGood = false;
-			wrongLHS = left -> type;
-		}
-		if(right -> type != integer)
-		{
-			rightGood = false;
-			wrongRHS = right -> type;
-		}
-
-		if (leftGood && rightGood)
-		{
-			t-> type = left-> type;
-		}
-		else
-		{
-			t -> type = undefined;
-		}
-	}
-
-	// not gets lumped in with the binary ops for some reason
-	
-
-
-}
-
-// For unary ops
-void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bool &leftGood, ExpType &wrongLHS, ExpType &wrongRHS, bool &isArrayLHS, int &arrayError)
-{
-	std::string strName(name);
-		//printf("\n\n %s !!\n", strName.c_str());
-
-	// Unary star
-	if(strName == "*")
-	{
-		//printf("\nunary star\n");
-		// we need an array, if not issue nonarray
-		if(!isArrayLHS) 
-		{
-			//printf("\narray error 2\n");
-			arrayError = 2;
-		}
-
-		if(left-> type == undefined)
-		{
-			t->type = integer;
-			return;
-		}
-		// we do take arrays, do we need to make sure they're both arrays?
-		// I don't see an error message that would handle that...
-
-		// if(isArrayLHS || isArrayRHS)
-		// {
-		// 	arrayError = 1;
-		// }
-
-		if(left->type != boolean && left -> type != integer && left -> type != character)
-		{
-			leftGood = false;
-			wrongLHS = left -> type;
-		}
-
-		if (leftGood)
-		{
-			t-> type = integer;
-		}
-		else
-		{
-			t -> type = undefined;
-		}
-	}
-
-	if(strName == "?")
-	{
-		// we don't take arrays
-		if(isArrayLHS)
-		{
-			arrayError = 1;
-		}
-		t->type = integer;
-		if(left->type == undefined)
-		{
-			return;
-		}
-		if(left->type != integer)
-		{
-			leftGood = false;
-			wrongLHS = left -> type;
-		}	
-	}
-
-	if (strName == "++" || strName == "--")
-	{
-		// we don't take arrays
-		if(isArrayLHS)
-		{
-			arrayError = 1;
-		}
-		t->type = integer;
-
-		if(left-> type == undefined)
-		{
-			return;
-		}
-
-		if(left->type != integer)
-		{
-			leftGood = false;
-			wrongLHS = left -> type;
-		}
-	}
-
-	if (strName == "not")
-	{
-		
-		// we don't take arrays
-		if(isArrayLHS)
-		{
-			arrayError = 1;
-		}
-		t->type = boolean;
-		
-
-		if(left-> type == undefined)
-		{
-			return;
-		}
-
-		if(left->type != boolean)
-		{
-			leftGood = false;
-			wrongLHS = left -> type;
-		}
-	}
-
-}
 
