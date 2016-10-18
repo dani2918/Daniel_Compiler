@@ -12,7 +12,7 @@ void scopeAndTypeR(TreeNode * t);
 void scopeAndType(TreeNode * t);
 
 void printError(int errno, int errorLine, char * symbol, int redefline, ExpType right, ExpType wrong);
-//void checkSelfInit(TreeNode * t, TreeNode * child, bool &found);
+
 
 SymbolTable getSymTab(int errno, int errorLine, char * symbol, int redefline);
 

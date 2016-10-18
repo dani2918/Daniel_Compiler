@@ -169,8 +169,6 @@ recDeclaration 			: RECORD ID LCUR localDeclarations RCUR
 
 varDeclaration			: typeSpecifier varDeclList SEMI 
 							{
-								//yyerrok;
-
 								TreeNode * t = $2;
 								if (t != NULL)
 								{
@@ -1037,9 +1035,12 @@ int main(int argc, char *argv[])
 	{
 		printError(-2, 0, NULL, 0, na, na);
 	}
+
+	/* Symtab printing stuff 
 	//symTab.print(pointerPrintStr);
 	//finalSymTab = getSymTab();
 	//finalSymTab.print(pointerPrintStr);
+	*/
 
 	// print -P w types after errors
 	if (printingTree == 1 && capP) //1)

@@ -56,7 +56,8 @@ void scopeAndType(TreeNode * t)
 			{
 			// if we have a declaration
 				case DeclK:
-				//printf("\ninserting: %s \n\n", t->attr.name );
+
+				// Add to table if we can
 				alreadyInTable = symTab.insert(t->attr.name, (TreeNode *) t);
 				if(alreadyInTable == false) 
 				{
@@ -82,20 +83,6 @@ void scopeAndType(TreeNode * t)
 							}
 
 						}
-						
-							//checkSelfInit(t, t->child[0], found);
-						// if(alreadyInTable == false) 
-						// {
-						// 	//printf("trying to reset!\n");
-						// 	//resetting information to appropriate values
-						// 	t-> type = originalDecl -> type;
-						// 	t -> isArray = originalDecl -> isArray;
-						// 	t -> isStatic = originalDecl -> isStatic;
-						// }
-
-							//Differentiate between var and param
-								//printf("Var %s ", t->attr.name);
-
 							if(t-> isArray == true)
 									{
 									//	arrMsgToggle = arrMsg;
@@ -142,7 +129,6 @@ void scopeAndType(TreeNode * t)
 							}
 							symTab.leave();
 
-							// Print return type
 							switch (t->type)
 								{
 									case integer:
@@ -171,8 +157,6 @@ void scopeAndType(TreeNode * t)
 
 						case paramDeclaration:
 							//printf("Param %s ", t->attr.name);
-
-							//alreadyInTable = symTab.insert(t->attr.name, (TreeNode *) t);
 							if(t-> isArray == true)
 									{
 										// arrMsgToggle = arrMsg;
@@ -185,16 +169,12 @@ void scopeAndType(TreeNode * t)
 								{
 									
 									case integer:
-										// printf("%sof type int ", arrMsgToggle);
 										break;
 									case boolean:
-										// printf("%sof type bool ", arrMsgToggle);
 										break;
 									case character:
-										// printf("%sof type char ", arrMsgToggle);
 										break;	
 									case record:
-										// printf("%sof type record ", arrMsgToggle);
 										break;
 									default:
 										break;
@@ -205,11 +185,6 @@ void scopeAndType(TreeNode * t)
 					break;
 				
 				case StmtK:
-					// if (t->kind.stmt != compoundStmt)
-					// {
-					// 	alreadyInTable = symTab.insert(t->attr.name, (TreeNode *) t);
-					// }
-					//print stmt kind
 					switch(t->kind.stmt)
 					{
 						case compoundStmt:
@@ -237,7 +212,6 @@ void scopeAndType(TreeNode * t)
 											scopeAndTypeR(t->child[i]);
 										}
 								}
-								//symTab.print(pointerPrintStr);
 							}
 			
 							break;
@@ -328,7 +302,7 @@ void scopeAndType(TreeNode * t)
 					
 							break;
 
-						//process these two together?
+						//process these two together
 						case AssK:
 						case OpK:
 						lhsCheck = rhsCheck = true;
@@ -359,6 +333,7 @@ void scopeAndType(TreeNode * t)
 								isFunRHS = rhs -> isFun;
 							}
 							
+							// Calls type checking functions on both unary and binary ops
 							if (rhs == NULL)
 							{
 								checkTypes(t, t->attr.name, lhs, rhs, lhsCheck, mismatch, wrongLHS, wrongRHS, isArrayLHS, arrayError, operandType, isFunLHS);
@@ -370,8 +345,6 @@ void scopeAndType(TreeNode * t)
 
 
 							//Print appropriate errors
-
-							
 								if(!lhsCheck && lhsType != undefined)
 								{
 									// print unary error
@@ -394,7 +367,6 @@ void scopeAndType(TreeNode * t)
 								{
 									printError(3, t->lineno, t->attr.name, 0, wrongLHS, wrongRHS);
 								}
-							//}
 
 							switch (arrayError)
 							{
@@ -434,6 +406,7 @@ void scopeAndType(TreeNode * t)
 									originalDecl = t->child[1];
 									printError(5, t->lineno, originalDecl->attr.name, 0, na, na);
 									break;
+								//Throw both errors 4 and 5
 								case 45:
 									originalDecl = t->child[0];
 									printError(4, t->lineno, originalDecl->attr.name, 0, na, wrongRHS);
@@ -497,42 +470,15 @@ void scopeAndType(TreeNode * t)
 									break;
 								default: 
 									break;
-
 							}
 
 							break;
 
-						
-						//case AssK:
-							// printf("Assign: %s ", t-> attr.name);
-							//break;
 
 						case constK:
-							// printf("Const: ");
 							for(int i = 0; i < 3; i++) 
 							{
 								scopeAndTypeR(t->child[i]);
-							}
-							switch(t -> type)
-							{
-								case boolean:
-									if(t->attr.bvalue == true)
-									{
-										// printf("true ");
-									}
-									else
-									{
-										// printf("false ");
-									}
-									break;
-								case integer:
-									// printf("%d ", t->attr.value );
-									break;
-								case character:
-									// printf("'%c' ", t->attr.cvalue );
-									break;
-								default:
-									break;
 							}
 							break;
 
@@ -703,15 +649,6 @@ void printError(int errno, int errorLine, char * symbol, int redefline, ExpType 
 	}
 }
 
-//If we initialize a var to iteself with a colon, throw an error, give node type undefined
-// void checkSelfInit(TreeNode * t, TreeNode * child, bool &found)
-// {
-// 	if(t->attr.name == child->attr.name)
-// 	{
-// 		printf("same: %s\n", t->attr.name);
-// 	}
-	
-// }
 
 
 

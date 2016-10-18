@@ -18,22 +18,7 @@
 void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bool &leftGood, bool &rightGood, bool &mismatch, ExpType &wrongLHS, ExpType &wrongRHS, bool &isArrayLHS, bool &isArrayRHS, int &arrayError, ExpType &operandType,  bool isFunLHS,  bool isFunRHS)
 {
 	std::string strName(name);
-
-	// ExpType tempR = right -> type;
-	// ExpType tempL = left -> type;
-	// //temp change types so that we don't try to assign, add, etc a function
-	// if(isFunRHS)
-	// {
-	// 	tempR = right -> type;
-	// 	right -> type = undefined;
-	// }
-
-	// if(isFunLHS)
-	// {
-	// 	tempL = left -> type;
-	// 	left -> type = undefined;
-	// }
-
+	
 	// for and or booleans
 	if (strName == "and" || strName == "or")
 	{
@@ -100,7 +85,6 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		if(left-> type == undefined || right-> type == undefined)
 		{
 			t->type = left->type;
-		//	return;
 		}
 		// we do take arrays, do we need to make sure they're both arrays?
 		// I don't see an error message that would handle that...
@@ -149,10 +133,6 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		// }
 		operandType = nonvoid;
 		t->type = boolean;
-		// if(left-> type == undefined || right-> type == undefined)
-		// {
-		// 	return;
-		// }
 
 		if(left->type != boolean && left -> type != integer && left -> type != character && left -> type != undefined)
 		{
@@ -184,11 +164,6 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		}
 		t->type = integer;
 
-		// if(left-> type == undefined || right-> type == undefined)
-		// {
-		// 	return;
-		// }
-
 		if(left->type != integer && left -> type != undefined)
 		{
 			leftGood = false;
@@ -219,8 +194,6 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		}
 
 		// keep from having cascading errors
-		
-
 		if(left->type != boolean && left -> type != integer && left -> type != character && left -> type != undefined)
 		{
 			leftGood = false;
@@ -279,12 +252,6 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		}
 	}
 
-	
-
-// Change types back if function
-	// left -> type = tempL;
-	// right -> type = tempR;
-
 }
 
 // For unary ops
@@ -297,7 +264,7 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 	if(strName == "*")
 	{
 		operandType = integer;
-		//printf("\nunary star\n");
+
 		// we need an array, if not issue nonarray
 		if(!isArrayLHS && left->type != undefined) 
 		{
