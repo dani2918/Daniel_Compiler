@@ -56,6 +56,11 @@ void scopeAndType(TreeNode * t)
 				case DeclK:
 				//printf("\ninserting: %s \n\n", t->attr.name );
 				alreadyInTable = symTab.insert(t->attr.name, (TreeNode *) t);
+				if(alreadyInTable == false) 
+				{
+					originalDecl = (TreeNode *)symTab.lookup(t->attr.name);
+					printError(10, t->lineno, t->attr.name, originalDecl->lineno, na, na);
+				}
 
 					//Switch types of declarations
 
@@ -449,11 +454,6 @@ void scopeAndType(TreeNode * t)
 					break;
 			}
 
-			if(alreadyInTable == false) 
-			{
-				originalDecl = (TreeNode *)symTab.lookup(t->attr.name);
-				printError(10, t->lineno, t->attr.name, originalDecl->lineno, na, na);
-			}
 			
 		}
 
