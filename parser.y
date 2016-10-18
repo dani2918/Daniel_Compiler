@@ -258,6 +258,7 @@ varDeclId				: ID
 							}
 						| ID LBRAC NUMCONST RBRAC
 							{
+
 								$$ = newDeclNode(varDeclaration);
 								$$ -> attr.name = strdup($1 -> tokenString);
 								$$ -> lineno = $1 -> lineno;

@@ -205,8 +205,10 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 	if (strName == "[")
 	{
 		operandType = nonvoid;
-		if(left-> type == undefined || right-> type == undefined)
+
+		if(left-> type == undefined || right-> type == undefined) //|| left -> kind.exp != IdK)
 		{
+
 			t->type = left->type;
 			//return;
 		}

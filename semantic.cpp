@@ -237,19 +237,23 @@ void scopeAndType(TreeNode * t)
 									printError(8, t->lineno, NULL, 0, na, na);
 								}
 							}
-
-
 							break;
 						case selectionStmt:
-							if (t->child[0] != NULL)
+							for (int i = 0; i < 3; i++)
 							{
-								scopeAndTypeR(t->child[0]);
+								if (t->child[i] != NULL)
+								{
+									scopeAndTypeR(t->child[i]);
+								}
 							}
 							break;
 						case iterationStmt:
-							if (t->child[0] != NULL)
+							for (int i = 0; i < 3; i++)
 							{
-								scopeAndTypeR(t->child[0]);
+								if (t->child[i] != NULL)
+								{
+									scopeAndTypeR(t->child[i]);
+								}
 							}
 							break;
 						case breakStmt:
@@ -319,7 +323,6 @@ void scopeAndType(TreeNode * t)
 						arrayError = 0;
 						opErr = false;
 						operandType = undefined;
-						
 
 							for(int i = 0; i < 3; i++) 
 							{
@@ -442,7 +445,6 @@ void scopeAndType(TreeNode * t)
 									printError(4, t->lineno, originalDecl->attr.name, 0, na, wrongRHS);
 									break;
 								case 35:
-									
 									originalDecl = t->child[0];
 									namecheck = (TreeNode *)symTab.lookup(t->child[0]->attr.name);
 									//The name of the array does exist, check to see if there is
@@ -462,7 +464,6 @@ void scopeAndType(TreeNode * t)
 									printError(5, t->lineno, originalDecl->attr.name, 0, na, na);
 									break;
 								case 345:
-								
 									originalDecl = t->child[0];
 									namecheck = (TreeNode *)symTab.lookup(t->child[0]->attr.name);
 									if (originalDecl != NULL)
@@ -484,24 +485,6 @@ void scopeAndType(TreeNode * t)
 									break;
 
 							}
-							// //Get an array when we shouldn't have
-							// if(arrayError == 1)
-							// {
-								
-							// }
-
-							// // Only works on arrays
-							// if(arrayError == 2)
-							// {
-							// 	printError(13, t->lineno, t->attr.name, 0, na, na);
-							// }
-
-							// //Cannot index named nonarray
-							// if(arrayError == 3)
-							// {
-							// 	originalDecl = t->child[0];
-							// 	printError(6, t->lineno, originalDecl->attr.name, 0, na, na);
-							// }
 
 							break;
 
