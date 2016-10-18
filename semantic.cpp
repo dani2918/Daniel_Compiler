@@ -69,6 +69,15 @@ void scopeAndType(TreeNode * t)
 
 						case varDeclaration:
 
+						// if(alreadyInTable == false) 
+						// {
+						// 	//printf("trying to reset!\n");
+						// 	//resetting information to appropriate values
+						// 	t-> type = originalDecl -> type;
+						// 	t -> isArray = originalDecl -> isArray;
+						// 	t -> isStatic = originalDecl -> isStatic;
+						// }
+
 							//Differentiate between var and param
 								//printf("Var %s ", t->attr.name);
 
@@ -106,6 +115,7 @@ void scopeAndType(TreeNode * t)
 						case funDeclaration:
 						//	printf("Func enter %s \n", t->attr.name);
 							symTab.enter(t->attr.name);
+							t-> isFun = true;
 							funcFlag = true;
 							for (int i = 0; i < 3; i++)
 							{
@@ -250,7 +260,7 @@ void scopeAndType(TreeNode * t)
 					break;
 
 				case ExpK:
-					bool isArrayLHS, isArrayRHS, isBinaryOp;
+					bool isArrayLHS, isArrayRHS, isBinaryOp, isFunLHS, isFunRHS;
 					ExpType lhsType, rhsType;
 					bool lhsCheck, rhsCheck, mismatch;
 					ExpType wrongLHS, wrongRHS, operandType;
@@ -267,7 +277,8 @@ void scopeAndType(TreeNode * t)
 					switch(t->kind.exp)
 					{
 						case IdK:
-							//printf("IdK string: %s\n", t->attr.name );
+							
+							//If symbol not defined
 							originalDecl = (TreeNode *)symTab.lookup(t->attr.name);
 							if (originalDecl == NULL)
 							{
@@ -287,6 +298,7 @@ void scopeAndType(TreeNode * t)
 							if (originalDecl != NULL && originalDecl -> kind.decl == funDeclaration)
 							{
 								printError(9, t->lineno, t->attr.name, 0, na, na);
+								t -> type = undefined;
 							}
 
 							if(t->child[0] != NULL)
@@ -306,7 +318,7 @@ void scopeAndType(TreeNode * t)
 						case AssK:
 						case OpK:
 						lhsCheck = rhsCheck = true;
-						mismatch = false;
+						mismatch = isFunLHS = isFunRHS = false;
 						wrongLHS = wrongRHS = undefined;
 						arrayError = 0;
 						opErr = false;
@@ -323,6 +335,7 @@ void scopeAndType(TreeNode * t)
 								lhs = t->child[0];
 								lhsType = lhs -> type;
 								isArrayLHS = lhs -> isArray;
+								isFunLHS = lhs -> isFun;
 							}
 							if (t->child[1] != NULL)
 							{
@@ -330,15 +343,16 @@ void scopeAndType(TreeNode * t)
 								rhsType = rhs -> type;
 								isArrayRHS = rhs -> isArray;
 								isBinaryOp = true;
+								isFunRHS = rhs -> isFun;
 							}
 							
 							if (rhs == NULL)
 							{
-								checkTypes(t, t->attr.name, lhs, rhs, lhsCheck, mismatch, wrongLHS, wrongRHS, isArrayLHS, arrayError, operandType);
+								checkTypes(t, t->attr.name, lhs, rhs, lhsCheck, mismatch, wrongLHS, wrongRHS, isArrayLHS, arrayError, operandType, isFunLHS);
 							}
 							else
 							{
-								checkTypes(t, t->attr.name, lhs, rhs, lhsCheck, rhsCheck, mismatch, wrongLHS, wrongRHS, isArrayLHS, isArrayRHS, arrayError, operandType);
+								checkTypes(t, t->attr.name, lhs, rhs, lhsCheck, rhsCheck, mismatch, wrongLHS, wrongRHS, isArrayLHS, isArrayRHS, arrayError, operandType, isFunLHS, isFunRHS);
 							}
 
 
@@ -347,7 +361,15 @@ void scopeAndType(TreeNode * t)
 							
 								if(!lhsCheck && lhsType != undefined)
 								{
-									printError(1, t->lineno, t->attr.name, 0, operandType, wrongLHS);
+									// print unary error
+									if (rhs == NULL)
+									{
+										printError(14, t->lineno, t->attr.name, 0, operandType, wrongLHS);
+									}
+									else
+									{
+										printError(1, t->lineno, t->attr.name, 0, operandType, wrongLHS);
+									}	
 									opErr = true;
 								}
 								if(!rhsCheck && rhsType != undefined)
@@ -361,25 +383,48 @@ void scopeAndType(TreeNode * t)
 								}
 							//}
 
-
-							//Get an array when we shouldn't have
-							if(arrayError == 1)
+							switch (arrayError)
 							{
-								printError(12, t->lineno, t->attr.name, 0, na, na);
-							}
+								//Get an array when we shouldn't have
+								case 1:
+									printError(12, t->lineno, t->attr.name, 0, na, na);
+									break;
+								// Only works on arrays
+								case 2:
+									printError(13, t->lineno, t->attr.name, 0, na, na);
+									break;
+								//Cannot index named nonarray
+								case 3:
+									originalDecl = t->child[0];
+									printError(6, t->lineno, originalDecl->attr.name, 0, na, na);
+									break;
+								//Indexed by nonint
+								case 4: 
+									originalDecl = t->child[0];
+									printError(4, t->lineno, originalDecl->attr.name, 0, na, wrongRHS);
+									break;
+								default: 
+									break;
 
-							// Only works on arrays
-							if(arrayError == 2)
-							{
-								printError(13, t->lineno, t->attr.name, 0, na, na);
 							}
+							// //Get an array when we shouldn't have
+							// if(arrayError == 1)
+							// {
+								
+							// }
 
-							//Cannot index named nonarray
-							if(arrayError == 3)
-							{
-								originalDecl = t->child[0];
-								printError(6, t->lineno, originalDecl->attr.name, 0, na, na);
-							}
+							// // Only works on arrays
+							// if(arrayError == 2)
+							// {
+							// 	printError(13, t->lineno, t->attr.name, 0, na, na);
+							// }
+
+							// //Cannot index named nonarray
+							// if(arrayError == 3)
+							// {
+							// 	originalDecl = t->child[0];
+							// 	printError(6, t->lineno, originalDecl->attr.name, 0, na, na);
+							// }
 
 							break;
 
@@ -418,11 +463,6 @@ void scopeAndType(TreeNode * t)
 							break;
 
 						case CallK:
-							for(int i = 0; i < 3; i++) 
-							{
-								scopeAndTypeR(t->child[i]);
-							}
-							// lookup, see if it exists
 							originalDecl = (TreeNode *)symTab.lookup(t->attr.name);
 							// if not, throw non exist error
 							if (originalDecl == NULL)
@@ -442,6 +482,11 @@ void scopeAndType(TreeNode * t)
 									printError(0, t->lineno, t->attr.name, 0, na, na);
 								}
 							}
+							for(int i = 0; i < 3; i++) 
+							{
+								scopeAndTypeR(t->child[i]);
+							}
+							
 							
 
 							break;
@@ -540,6 +585,9 @@ void scopeAndType(TreeNode * t)
 			case 1:
 				printf("ERROR(%d): '%s' requires operands of %s but lhs is of %s.\n", errorLine, symbol, rightType, wrongType);
 				break;
+			// case -3: 
+			// 	printf("ERROR(%d): Unary '%s' requires an operand of type %s but was given %s.\n", errorLine, symbol, rightType, wrongType);
+			// 	break;
 			case 2:
 				printf("ERROR(%d): '%s' requires operands of %s but rhs is of %s.\n", errorLine, symbol, rightType, wrongType);
 				break;
@@ -547,7 +595,7 @@ void scopeAndType(TreeNode * t)
 				printf("ERROR(%d): '%s' requires operands of the same type but lhs is %s and rhs is %s.\n", errorLine, symbol, rightType, wrongType);
 				break;
 			case 4:
-				printf("ERROR(%d): Array '%s' should be indexed by type int but got %s.\n", errorLine, symbol, rightType);
+				printf("ERROR(%d): Array '%s' should be indexed by type int but got %s.\n", errorLine, symbol, wrongType);
 				break;
 			case 5:
 				printf("ERROR(%d): Array index is the unindexed array '%s'.\n", errorLine, "UNSURE???");

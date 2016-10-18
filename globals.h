@@ -88,6 +88,7 @@ typedef struct treeNode
     bool isParam;
     int numChildren;
     char * tokenString;
+    bool isFun;
 
    } TreeNode;
 

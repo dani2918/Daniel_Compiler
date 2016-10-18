@@ -3009,9 +3009,15 @@ int main(int argc, char *argv[])
 	yyparse();
 	fclose(yyin);
 
+	// print -p before errors
+	if (printingTree == 1 && !capP) //1)
+	{
+		printTree(savedTree, capP);
+	}
+
 	scopeAndTypeR(savedTree);
 
-
+	
 	if(symTab.lookup("main") == NULL)
 	{
 		printError(-2, 0, NULL, 0, na, na);
@@ -3020,8 +3026,8 @@ int main(int argc, char *argv[])
 	//finalSymTab = getSymTab();
 	//finalSymTab.print(pointerPrintStr);
 
-
-	if (printingTree == 1) //1)
+	// print -P w types after errors
+	if (printingTree == 1 && capP) //1)
 	{
 		printTree(savedTree, capP);
 	}

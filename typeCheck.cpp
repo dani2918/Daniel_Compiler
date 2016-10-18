@@ -15,9 +15,24 @@
 
 
 
-void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bool &leftGood, bool &rightGood, bool &mismatch, ExpType &wrongLHS, ExpType &wrongRHS, bool &isArrayLHS, bool &isArrayRHS, int &arrayError, ExpType &operandType)
+void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bool &leftGood, bool &rightGood, bool &mismatch, ExpType &wrongLHS, ExpType &wrongRHS, bool &isArrayLHS, bool &isArrayRHS, int &arrayError, ExpType &operandType,  bool isFunLHS,  bool isFunRHS)
 {
 	std::string strName(name);
+
+	// ExpType tempR = right -> type;
+	// ExpType tempL = left -> type;
+	// //temp change types so that we don't try to assign, add, etc a function
+	// if(isFunRHS)
+	// {
+	// 	tempR = right -> type;
+	// 	right -> type = undefined;
+	// }
+
+	// if(isFunLHS)
+	// {
+	// 	tempL = left -> type;
+	// 	left -> type = undefined;
+	// }
 
 	// for and or booleans
 	if (strName == "and" || strName == "or")
@@ -30,17 +45,17 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		}
 		t->type = boolean;
 
-		if(left-> type == undefined || right-> type == undefined)
-		{
-			return;
-		}
+		// if(left-> type == undefined || right-> type == undefined)
+		// {
+		// 	return;
+		// }
 
-		if(left->type != boolean)
+		if(left->type != boolean && left -> type != undefined)
 		{
 			leftGood = false;
 			wrongLHS = left -> type;
 		}
-		if(right -> type != boolean)
+		if(right -> type != boolean && right -> type != undefined)
 		{
 			rightGood = false;
 			wrongRHS = right -> type;
@@ -85,7 +100,7 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		if(left-> type == undefined || right-> type == undefined)
 		{
 			t->type = left->type;
-			return;
+		//	return;
 		}
 		// we do take arrays, do we need to make sure they're both arrays?
 		// I don't see an error message that would handle that...
@@ -96,20 +111,19 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		// }
 
 		// keep from having cascading errors
-		
 
-		if(left->type != boolean && left -> type != integer && left -> type != character)
+		if(left -> type != boolean && left -> type != integer && left -> type != character && left -> type != undefined)
 		{
 			leftGood = false;
 			wrongLHS = left -> type;
 		}
-		if(right -> type != boolean && right -> type != integer && left -> type != character)
+		if(right -> type != boolean && right -> type != integer && right -> type != character && right -> type != undefined)
 		{
 			rightGood = false;
 			wrongRHS = right -> type;
 		}
 		//Not equal types
-		if (right -> type != left -> type)
+		if (right -> type != left -> type && left -> type != undefined && right -> type != undefined)
 		{
 			mismatch = true;
 			wrongLHS = left -> type;
@@ -135,23 +149,23 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		// }
 		operandType = nonvoid;
 		t->type = boolean;
-		if(left-> type == undefined || right-> type == undefined)
-		{
-			return;
-		}
+		// if(left-> type == undefined || right-> type == undefined)
+		// {
+		// 	return;
+		// }
 
-		if(left->type != boolean && left -> type != integer && left -> type != character)
+		if(left->type != boolean && left -> type != integer && left -> type != character && left -> type != undefined)
 		{
 			leftGood = false;
 			wrongLHS = left -> type;
 		}
-		if(right -> type != boolean && right -> type != integer && left -> type != character)
+		if(right -> type != boolean && right -> type != integer && left -> type != character && right -> type != undefined)
 		{
 			rightGood = false;
 			wrongRHS = right -> type;
 		}
 		//Not equal types
-		if (right -> type != left -> type)
+		if (right -> type != left -> type && left -> type != undefined && right -> type != undefined)
 		{
 			mismatch = true;
 			wrongLHS = left -> type;
@@ -170,17 +184,17 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		}
 		t->type = integer;
 
-		if(left-> type == undefined || right-> type == undefined)
-		{
-			return;
-		}
+		// if(left-> type == undefined || right-> type == undefined)
+		// {
+		// 	return;
+		// }
 
-		if(left->type != integer)
+		if(left->type != integer && left -> type != undefined)
 		{
 			leftGood = false;
 			wrongLHS = left -> type;
 		}
-		if(right -> type != integer)
+		if(right -> type != integer && right -> type != undefined)
 		{
 			rightGood = false;
 			wrongRHS = right -> type;
@@ -194,7 +208,7 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		if(left-> type == undefined || right-> type == undefined)
 		{
 			t->type = left->type;
-			return;
+			//return;
 		}
 		// we need an array, if not issue nonarray
 		if(!isArrayLHS) // TODO: if is array RHS?
@@ -214,15 +228,21 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		// keep from having cascading errors
 		
 
-		if(left->type != boolean && left -> type != integer && left -> type != character)
+		if(left->type != boolean && left -> type != integer && left -> type != character && left -> type != undefined)
 		{
 			leftGood = false;
 			wrongLHS = left -> type;
 		}
-		if(right -> type != integer)
+		if(right -> type != integer && right -> type != undefined)
 		{
-			rightGood = false;
+			//rightGood = false;
 			wrongRHS = right -> type;
+			// we don't have an int here
+			arrayError = 4;
+			if (t->child[0] == NULL)
+			{
+				printf("indexing error\n");
+			}
 		}
 
 		if (leftGood && rightGood)
@@ -235,14 +255,16 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		}
 	}
 
-	// not gets lumped in with the binary ops for some reason
 	
 
+// Change types back if function
+	// left -> type = tempL;
+	// right -> type = tempR;
 
 }
 
 // For unary ops
-void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bool &leftGood, bool &mismatch, ExpType &wrongLHS, ExpType &wrongRHS, bool &isArrayLHS, int &arrayError, ExpType &operandType)
+void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bool &leftGood, bool &mismatch, ExpType &wrongLHS, ExpType &wrongRHS, bool &isArrayLHS, int &arrayError, ExpType &operandType,  bool isFunLHS)
 {
 	std::string strName(name);
 		//printf("\n\n %s !!\n", strName.c_str());
