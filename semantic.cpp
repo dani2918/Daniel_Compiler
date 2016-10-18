@@ -277,7 +277,6 @@ void scopeAndType(TreeNode * t)
 					switch(t->kind.exp)
 					{
 						case IdK:
-							
 							//If symbol not defined
 							originalDecl = (TreeNode *)symTab.lookup(t->attr.name);
 							if (originalDecl == NULL)
@@ -402,6 +401,16 @@ void scopeAndType(TreeNode * t)
 								case 4: 
 									originalDecl = t->child[0];
 									printError(4, t->lineno, originalDecl->attr.name, 0, na, wrongRHS);
+									break;
+								case 5:
+									originalDecl = t->child[1];
+									printError(5, t->lineno, originalDecl->attr.name, 0, na, na);
+									break;
+								case 45:
+									originalDecl = t->child[0];
+									printError(4, t->lineno, originalDecl->attr.name, 0, na, wrongRHS);
+									originalDecl = t->child[1];
+									printError(5, t->lineno, originalDecl->attr.name, 0, na, na);
 									break;
 								default: 
 									break;
@@ -598,7 +607,7 @@ void scopeAndType(TreeNode * t)
 				printf("ERROR(%d): Array '%s' should be indexed by type int but got %s.\n", errorLine, symbol, wrongType);
 				break;
 			case 5:
-				printf("ERROR(%d): Array index is the unindexed array '%s'.\n", errorLine, "UNSURE???");
+				printf("ERROR(%d): Array index is the unindexed array '%s'.\n", errorLine, symbol);
 				break;
 			case 6:
 				printf("ERROR(%d): Cannot index nonarray '%s'.\n", errorLine, symbol);

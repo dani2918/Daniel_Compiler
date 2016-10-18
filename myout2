@@ -50,7 +50,6 @@ ERROR(109): 'and' requires operands of type bool but lhs is of type int.
 ERROR(109): 'and' requires operands of type bool but rhs is of type int.
 ERROR(115): Cannot use function 'cat' as a variable.
 ERROR(117): Array 'aa' should be indexed by type int but got type char.
-ERROR(117): Array index is the unindexed array 'aa'.
 ERROR(118): Symbol 'AA' is not defined.
 ERROR(118): Cannot index nonarray 'AA'.
 ERROR(120): Symbol 'meerkat' is not defined.
@@ -60,7 +59,6 @@ ERROR(124): Symbol 'xyzzy' is not defined.
 ERROR(124): 'and' requires operands of type bool but rhs is of type int.
 ERROR(126): Symbol 'flight' is not defined.
 ERROR(126): Unary 'not' requires an operand of type type bool but was given type int.
-ERROR(126): Unary '-' requires an operand of type type int but was given type bool.
 ERROR(126): Symbol 'uu' is not defined.
 ERROR(126): Symbol 'y' is not defined.
 ERROR(126): '*' requires operands of type int but lhs is of type char.
@@ -72,7 +70,6 @@ ERROR(142): Cannot use function 'ibex' as a variable.
 ERROR(143): Cannot use function 'ibex' as a variable.
 ERROR(145): Array 'aa' should be indexed by type int but got type char.
 ERROR(146): Array 'aa' should be indexed by type int but got type char.
-ERROR(146): Array index is the unindexed array 'zz'.
 ERROR(147): Array 'aa' should be indexed by type int but got type void.
 ERROR(148): Array 'aa' should be indexed by type int but got type char.
 ERROR(149): Array 'aa' should be indexed by type int but got type bool.
@@ -421,4 +418,4 @@ Sibling: 7  Func main returns type char [type char] [line: 54]
 !   !   Sibling: 71  Return [type void] [line: 170]
 !   !   !   Child: 0  Id: aa [type char] [line: 170]
 Number of warnings: 0
-Number of errors: 103
+Number of errors: 100

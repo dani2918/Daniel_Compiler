@@ -1,7 +1,6 @@
 
 main()
 {
-	int x;
-	char x;
+	int s:s, t:'"', u:'\'';
 
 }

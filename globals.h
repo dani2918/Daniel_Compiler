@@ -89,6 +89,7 @@ typedef struct treeNode
     int numChildren;
     char * tokenString;
     bool isFun;
+    bool isIndexed;
 
    } TreeNode;
 

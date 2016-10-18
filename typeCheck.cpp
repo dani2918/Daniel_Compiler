@@ -174,7 +174,7 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 	}
 
 	// for __= types or arithmetic
-	if (strName == "+=" || strName == "-=" || strName == "*=" || strName == "/=" || strName == "+" || strName == "-" || strName == "*" || strName == "/" || strName == "/%")
+	if (strName == "+=" || strName == "-=" || strName == "*=" || strName == "/=" || strName == "+" || strName == "-" || strName == "*" || strName == "/" || strName == "%")
 	{
 		operandType = integer;
 				// we don't take arrays
@@ -233,16 +233,33 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 			leftGood = false;
 			wrongLHS = left -> type;
 		}
-		if(right -> type != integer && right -> type != undefined)
+		if(right -> type != integer && right -> type != undefined )
 		{
 			//rightGood = false;
 			wrongRHS = right -> type;
 			// we don't have an int here
-			arrayError = 4;
-			if (t->child[0] == NULL)
+			//right -> type = undefined;
+			t->isIndexed = false;
+			arrayError = 4;	
+
+		}
+		//If we have an undindex array index
+		if (right->isArray && !right->isIndexed)
+		{
+			//If we have both this error and a non int index
+			if(arrayError == 4)
 			{
-				printf("indexing error\n");
+				arrayError = 45;
 			}
+			else
+			{
+				arrayError = 5;
+			}
+		}
+
+		else
+		{
+			t->isIndexed = true;
 		}
 
 		if (leftGood && rightGood)
@@ -374,5 +391,24 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 			wrongLHS = left -> type;
 		}
 	}
+
+	if (strName == "-")
+	{
+		operandType = integer;
+				// we don't take arrays
+		if(isArrayLHS)
+		{
+			arrayError = 1;
+		}
+		t->type = integer;
+
+		if(left->type != integer && left -> type != undefined)
+		{
+			leftGood = false;
+			wrongLHS = left -> type;
+		}
+	}
+
+
 
 }
