@@ -3017,7 +3017,7 @@ int main(int argc, char *argv[])
 
 	scopeAndTypeR(savedTree);
 
-	
+
 	if(symTab.lookup("main") == NULL)
 	{
 		printError(-2, 0, NULL, 0, na, na);

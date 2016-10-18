@@ -271,10 +271,6 @@ void scopeAndType(TreeNode * t)
 
 
 					isArrayLHS = isArrayRHS = isBinaryOp = false;
-					// 		if (originalDecl == NULL)
-					// 		{
-					// 			printError(11, lineno, t->child[0]->attr.name, 0);
-					// 		}
 					switch(t->kind.exp)
 					{
 						case IdK:
@@ -284,6 +280,7 @@ void scopeAndType(TreeNode * t)
 							{
 								printError(11, t->lineno, t->attr.name, 0, na, na);
 								t->type = undefined;
+								//t->isArray = false;
 							}
 							else
 							{
@@ -400,7 +397,7 @@ void scopeAndType(TreeNode * t)
 									// even a symbol defined
 									if (originalDecl != NULL)
 									{
-										if (namecheck != NULL)
+										if (namecheck != NULL || t->child[0]-> kind.exp == IdK)
 										{
 											printError(6, t->lineno, originalDecl->attr.name, 0, na, na);
 										}
@@ -433,7 +430,7 @@ void scopeAndType(TreeNode * t)
 									// even a symbol defined
 									if (originalDecl != NULL)
 									{
-										if (namecheck != NULL)
+										if (namecheck != NULL || t->child[0]->kind.exp == IdK)
 										{
 											printError(6, t->lineno, originalDecl->attr.name, 0, na, na);
 										}
@@ -452,7 +449,7 @@ void scopeAndType(TreeNode * t)
 									// even a symbol defined
 									if (originalDecl != NULL)
 									{
-										if (namecheck != NULL)
+										if (namecheck != NULL || t->child[0]-> kind.exp == IdK)
 										{
 											printError(6, t->lineno, originalDecl->attr.name, 0, na, na);
 										}
@@ -470,7 +467,7 @@ void scopeAndType(TreeNode * t)
 									namecheck = (TreeNode *)symTab.lookup(t->child[0]->attr.name);
 									if (originalDecl != NULL)
 									{
-										if (namecheck != NULL)
+										if (namecheck != NULL || t->child[0]-> kind.exp == IdK)
 										{
 											printError(6, t->lineno, originalDecl->attr.name, 0, na, na);
 										}
@@ -549,6 +546,7 @@ void scopeAndType(TreeNode * t)
 							{
 								printError(11, t->lineno, t->attr.name, 0, na, na);
 								t->type = undefined;
+								//t->isArray = false;
 							} 
 							//if not a function, throw that error
 							else 

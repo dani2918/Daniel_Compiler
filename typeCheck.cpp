@@ -216,15 +216,6 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 			arrayError = 3;
 		}
 
-		
-		// we do take arrays, do we need to make sure they're both arrays?
-		// I don't see an error message that would handle that...
-
-		// if(isArrayLHS || isArrayRHS)
-		// {
-		// 	arrayError = 1;
-		// }
-
 		// keep from having cascading errors
 		
 
@@ -256,6 +247,14 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 			if(arrayError == 4)
 			{
 				arrayError = 45;
+			}
+			else if (arrayError == 34)
+			{
+				arrayError = 345;
+			}
+			else if (arrayError == 3)
+			{
+				arrayError = 35;
 			}
 			else
 			{
@@ -298,7 +297,7 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		operandType = integer;
 		//printf("\nunary star\n");
 		// we need an array, if not issue nonarray
-		if(!isArrayLHS) 
+		if(!isArrayLHS && left->type != undefined) 
 		{
 			//printf("\narray error 2\n");
 			arrayError = 2;
@@ -307,7 +306,7 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		if(left-> type == undefined)
 		{
 			t->type = integer;
-			return;
+			//return;
 		}
 		// we do take arrays, do we need to make sure they're both arrays?
 		// I don't see an error message that would handle that...
@@ -317,7 +316,7 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		// 	arrayError = 1;
 		// }
 
-		if(left->type != boolean && left -> type != integer && left -> type != character)
+		if(left->type != boolean && left -> type != integer && left -> type != character && left->type != undefined)
 		{
 			leftGood = false;
 			wrongLHS = left -> type;
