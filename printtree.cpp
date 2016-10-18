@@ -337,6 +337,9 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 					case record:
 						printf("[type record] ");
 						break;
+					case undefined:
+						printf("[undefined type] ");
+						break;
 					default:	
 						printf("[type void] ");
 						break;

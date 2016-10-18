@@ -215,7 +215,14 @@ void scopeAndType(TreeNode * t)
 							if (t->child[0] != NULL)
 							{
 								scopeAndTypeR(t->child[0]);
+								originalDecl = t->child[0];
+								if(originalDecl -> isArray == true)
+								{
+									printError(8, t->lineno, NULL, 0, na, na);
+								}
 							}
+
+
 							break;
 						case selectionStmt:
 							if (t->child[0] != NULL)
@@ -240,9 +247,12 @@ void scopeAndType(TreeNode * t)
 				case ExpK:
 					bool isArrayLHS, isArrayRHS, isBinaryOp;
 					ExpType lhsType, rhsType;
+					bool lhsCheck, rhsCheck;
+					ExpType wrongLHS, wrongRHS;
+
+
 
 					isArrayLHS = isArrayRHS = isBinaryOp = false;
-					// originalDecl = (TreeNode *)symTab.lookup(t->child[0]->attr.name);
 					// 		if (originalDecl == NULL)
 					// 		{
 					// 			printError(11, lineno, t->child[0]->attr.name, 0);
@@ -255,6 +265,7 @@ void scopeAndType(TreeNode * t)
 							if (originalDecl == NULL)
 							{
 								printError(11, t->lineno, t->attr.name, 0, na, na);
+								t->type = undefined;
 							}
 							else
 							{
@@ -263,9 +274,6 @@ void scopeAndType(TreeNode * t)
 								t -> isArray = originalDecl -> isArray;
 								t -> isStatic = originalDecl -> isStatic;
 							}
-
-
-							// TODO: ERROR IS HERE!!
 
 
 							//issue error if trying to use function as variable
@@ -290,6 +298,8 @@ void scopeAndType(TreeNode * t)
 						//process these two together?
 						case AssK:
 						case OpK:
+						lhsCheck = rhsCheck = true;
+						wrongLHS = wrongRHS = undefined;
 
 							for(int i = 0; i < 3; i++) 
 							{
@@ -309,11 +319,25 @@ void scopeAndType(TreeNode * t)
 								isBinaryOp = true;
 							}
 							
-							if (originalDecl == NULL)
+							if (rhs == NULL)
 							{
-								
+								checkTypes(t, t->attr.name, lhs, rhs, lhsCheck, wrongLHS, wrongRHS);
+							}
+							else
+							{
+								checkTypes(t, t->attr.name, lhs, rhs, lhsCheck, rhsCheck, wrongLHS, wrongRHS);
 							}
 
+
+							//Print appropriate errors
+							if(!lhsCheck && lhsType != undefined)
+							{
+								printError(1, t->lineno, t->attr.name, 0, t->type, wrongLHS);
+							}
+							if(!rhsCheck && rhsType != undefined)
+							{
+								printError(2, t->lineno, t->attr.name, 0, t->type, wrongRHS);
+							}
 							break;
 
 						
@@ -361,6 +385,7 @@ void scopeAndType(TreeNode * t)
 							if (originalDecl == NULL)
 							{
 								printError(11, t->lineno, t->attr.name, 0, na, na);
+								t->type = undefined;
 							} 
 							//if not a function, throw that error
 							else 
@@ -404,7 +429,7 @@ void scopeAndType(TreeNode * t)
 		char * wrongType;
 		char * rightType;
 		numErrors++;
-		if (wrong != na && right != na)
+		if (wrong != na || right != na)
 		{
 			switch (wrong)
 			{
@@ -424,6 +449,7 @@ void scopeAndType(TreeNode * t)
 					wrongType =strdup("void");
 					break;
 				case undefined:
+					wrongType =strdup("undefined");
 					break;
 				default:
 					break;
@@ -446,6 +472,7 @@ void scopeAndType(TreeNode * t)
 					rightType =strdup("void");
 					break;
 				case undefined:
+					wrongType =strdup("undefined");
 					break;
 				default:
 					break;
@@ -464,10 +491,10 @@ void scopeAndType(TreeNode * t)
 				printf("ERROR(%d): '%s' is a simple variable and cannot be called.\n", errorLine, symbol);
 				break;
 			case 1:
-				printf("ERROR(%d): '%s' requires operands of %s but lhs is of %s.\n", errorLine, symbol, "", "");
+				printf("ERROR(%d): '%s' requires operands of %s but lhs is of %s.\n", errorLine, symbol, rightType, wrongType);
 				break;
 			case 2:
-				printf("ERROR(%d): '%s' requires operands of %s but rhs is of %s.\n", errorLine, symbol, "", "");
+				printf("ERROR(%d): '%s' requires operands of %s but rhs is of %s.\n", errorLine, symbol, rightType, wrongType);
 				break;
 			case 3:
 				printf("ERROR(%d): '%s' requires operands of the same type but lhs is %s and rhs is %s.\n", errorLine, symbol, rightType, wrongType);
@@ -510,3 +537,61 @@ void scopeAndType(TreeNode * t)
 				break;
 		}
 	}
+
+
+void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bool &leftGood, bool &rightGood, ExpType &wrongLHS, ExpType &wrongRHS)
+{
+	std::string strName(name);
+
+	// for and or booleans
+	if (strName == "and" || strName == "or")
+	{
+		t->type = boolean;
+		if(left->type != boolean)
+		{
+			leftGood = false;
+			wrongLHS = left -> type;
+		}
+		if(right -> type != boolean)
+		{
+			rightGood = false;
+			wrongRHS = right -> type;
+		}
+	}
+	// for all comparison ops
+	if (strName == "<" || strName == ">" || strName == ">=" || strName == "<=")
+	{
+		t->type = boolean;
+		if(left->type != boolean && left -> type != integer)
+		{
+			leftGood = false;
+			wrongLHS = left -> type;
+
+		}
+		if(right -> type != boolean && right -> type != integer)
+		{
+			rightGood = false;
+			wrongRHS = right -> type;
+		}
+		//Not equal types
+		if (right -> type != left -> type)
+		{
+			leftGood = rightGood = false;
+			wrongLHS = left -> type;
+			wrongRHS = right -> type;
+		}
+
+
+
+	}
+
+
+
+}
+
+// For unary ops
+void checkTypes(TreeNode * t, char * name, TreeNode * right, TreeNode * left, bool &leftGood, ExpType &wrongLHS, ExpType &wrongRHS)
+{
+
+}
+
