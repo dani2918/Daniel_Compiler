@@ -249,6 +249,7 @@ void scopeAndType(TreeNode * t)
 					ExpType lhsType, rhsType;
 					bool lhsCheck, rhsCheck;
 					ExpType wrongLHS, wrongRHS;
+					int arrayError;
 
 
 
@@ -300,6 +301,7 @@ void scopeAndType(TreeNode * t)
 						case OpK:
 						lhsCheck = rhsCheck = true;
 						wrongLHS = wrongRHS = undefined;
+						arrayError = 0;
 
 							for(int i = 0; i < 3; i++) 
 							{
@@ -321,11 +323,11 @@ void scopeAndType(TreeNode * t)
 							
 							if (rhs == NULL)
 							{
-								checkTypes(t, t->attr.name, lhs, rhs, lhsCheck, wrongLHS, wrongRHS);
+								checkTypes(t, t->attr.name, lhs, rhs, lhsCheck, wrongLHS, wrongRHS, isArrayLHS, arrayError);
 							}
 							else
 							{
-								checkTypes(t, t->attr.name, lhs, rhs, lhsCheck, rhsCheck, wrongLHS, wrongRHS);
+								checkTypes(t, t->attr.name, lhs, rhs, lhsCheck, rhsCheck, wrongLHS, wrongRHS, isArrayLHS, isArrayRHS, arrayError);
 							}
 
 
@@ -337,6 +339,18 @@ void scopeAndType(TreeNode * t)
 							if(!rhsCheck && rhsType != undefined)
 							{
 								printError(2, t->lineno, t->attr.name, 0, t->type, wrongRHS);
+							}
+
+							//Get an array when we shouldn't have
+							if(arrayError == 1)
+							{
+								printError(12, t->lineno, t->attr.name, 0, na, na);
+							}
+
+							//Don't get an array when we should have
+							if(arrayError == 2)
+							{
+								printError(13, t->lineno, t->attr.name, 0, na, na);
 							}
 							break;
 
@@ -527,6 +541,7 @@ void scopeAndType(TreeNode * t)
 				printf("ERROR(%d): The operation '%s' does not work with arrays.\n", errorLine, symbol);
 				break;
 			case 13:
+				printf("ERROR(%d): The operation '%s' only works with arrays.\n", errorLine, symbol);
 				break;
 			case 14:
 				printf("ERROR(%d): Unary '%s' requires an operand of type %s but was given %s.\n", errorLine, symbol, rightType, wrongType);
@@ -539,13 +554,18 @@ void scopeAndType(TreeNode * t)
 	}
 
 
-void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bool &leftGood, bool &rightGood, ExpType &wrongLHS, ExpType &wrongRHS)
+void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bool &leftGood, bool &rightGood, ExpType &wrongLHS, ExpType &wrongRHS, bool &isArrayLHS, bool &isArrayRHS, int &arrayError)
 {
 	std::string strName(name);
 
 	// for and or booleans
 	if (strName == "and" || strName == "or")
 	{
+		// we don't take arrays
+		if(isArrayLHS || isArrayRHS)
+		{
+			arrayError = 1;
+		}
 		t->type = boolean;
 		if(left->type != boolean)
 		{
@@ -561,6 +581,11 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 	// for all comparison ops
 	if (strName == "<" || strName == ">" || strName == ">=" || strName == "<=")
 	{
+		// we don't take arrays
+		if(isArrayLHS || isArrayRHS)
+		{
+			arrayError = 1;
+		}
 		t->type = boolean;
 		if(left->type != boolean && left -> type != integer)
 		{
@@ -581,16 +606,18 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 			wrongRHS = right -> type;
 		}
 
-
-
 	}
 
+	if (strName == "")
+	{
+
+	}
 
 
 }
 
 // For unary ops
-void checkTypes(TreeNode * t, char * name, TreeNode * right, TreeNode * left, bool &leftGood, ExpType &wrongLHS, ExpType &wrongRHS)
+void checkTypes(TreeNode * t, char * name, TreeNode * right, TreeNode * left, bool &leftGood, ExpType &wrongLHS, ExpType &wrongRHS, bool &isArrayLHS, int &arrayError)
 {
 
 }
