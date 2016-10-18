@@ -302,6 +302,7 @@ void scopeAndType(TreeNode * t)
 						lhsCheck = rhsCheck = true;
 						wrongLHS = wrongRHS = undefined;
 						arrayError = 0;
+						lhs = rhs = NULL;
 
 							for(int i = 0; i < 3; i++) 
 							{
@@ -713,8 +714,8 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		}
 	}
 
-	// for __= types
-	if (strName == "+=" || strName == "-=" || strName == "*=" || strName == "/=")
+	// for __= types or arithmetic
+	if (strName == "+=" || strName == "-=" || strName == "*=" || strName == "/=" || strName == "+" || strName == "-" || strName == "*" || strName == "/")
 	{
 
 				// we don't take arrays
@@ -742,7 +743,74 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 
 	}
 
+	if (strName == "[")
+	{
+		// we need an array
+		if(!isArrayLHS) // TODO: if is array RHS?
+		{
+			arrayError = 2;
+		}
 
+		if(left-> type == undefined || right-> type == undefined)
+		{
+			t->type = left->type;
+			return;
+		}
+		// we do take arrays, do we need to make sure they're both arrays?
+		// I don't see an error message that would handle that...
+
+		// if(isArrayLHS || isArrayRHS)
+		// {
+		// 	arrayError = 1;
+		// }
+
+		// keep from having cascading errors
+		
+
+		if(left->type != boolean && left -> type != integer && left -> type != character)
+		{
+			leftGood = false;
+			wrongLHS = left -> type;
+		}
+		if(right -> type != integer)
+		{
+			rightGood = false;
+			wrongRHS = right -> type;
+		}
+
+		if (leftGood && rightGood)
+		{
+			t-> type = left-> type;
+		}
+		else
+		{
+			t -> type = undefined;
+		}
+	}
+
+	// not gets lumped in with the binary ops for some reason
+	if (strName == "not")
+	{
+		
+		// we don't take arrays
+		if(isArrayLHS)
+		{
+			arrayError = 1;
+		}
+		t->type = boolean;
+		
+
+		if(left-> type == undefined)
+		{
+			return;
+		}
+
+		if(left->type != boolean)
+		{
+			leftGood = false;
+			wrongLHS = left -> type;
+		}
+	}
 
 
 }
@@ -750,6 +818,36 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 // For unary ops
 void checkTypes(TreeNode * t, char * name, TreeNode * right, TreeNode * left, bool &leftGood, ExpType &wrongLHS, ExpType &wrongRHS, bool &isArrayLHS, int &arrayError)
 {
+	std::string strName(name);
+		//printf("\n\n %s !!\n", strName.c_str());
+
+	// Unary star
+	if(strName == "*")
+	{
+
+	}
+
+
+	if (strName == "++" || strName == "--")
+	{
+		// we don't take arrays
+		if(isArrayLHS)
+		{
+			arrayError = 1;
+		}
+		t->type = integer;
+
+		if(left-> type == undefined)
+		{
+			return;
+		}
+
+		if(left->type != integer)
+		{
+			leftGood = false;
+			wrongLHS = left -> type;
+		}
+	}
 
 }
 
