@@ -235,12 +235,18 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		}
 		if(right -> type != integer && right -> type != undefined )
 		{
-			//rightGood = false;
 			wrongRHS = right -> type;
-			// we don't have an int here
-			//right -> type = undefined;
 			t->isIndexed = false;
-			arrayError = 4;	
+
+			//if there are multiple errors, carry them through
+			if(arrayError == 3)
+			{
+				arrayError = 34;
+			}
+			else
+			{
+				arrayError = 4;	
+			}
 
 		}
 		//If we have an undindex array index

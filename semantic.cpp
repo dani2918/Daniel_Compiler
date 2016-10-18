@@ -24,6 +24,7 @@ bool leaveFlag;
 TreeNode * originalDecl;
 TreeNode * lhs;
 TreeNode * rhs;
+TreeNode * namecheck;
 
 SymbolTable getSymTab()
 {
@@ -303,7 +304,6 @@ void scopeAndType(TreeNode * t)
 							if(t->child[0] != NULL)
 							{
 								scopeAndTypeR(t->child[0]);
-
 								// the id has children, but is not an array
 								if(t->isArray == false)
 								{
@@ -395,7 +395,21 @@ void scopeAndType(TreeNode * t)
 								//Cannot index named nonarray
 								case 3:
 									originalDecl = t->child[0];
-									printError(6, t->lineno, originalDecl->attr.name, 0, na, na);
+									namecheck = (TreeNode *)symTab.lookup(t->child[0]->attr.name);
+									//The name of the array does exist, check to see if there is
+									// even a symbol defined
+									if (originalDecl != NULL)
+									{
+										if (namecheck != NULL)
+										{
+											printError(6, t->lineno, originalDecl->attr.name, 0, na, na);
+										}
+										else
+										{
+											printError(7, t->lineno, originalDecl->attr.name, 0, na, na);
+										}
+									}
+
 									break;
 								//Indexed by nonint
 								case 4: 
@@ -408,6 +422,63 @@ void scopeAndType(TreeNode * t)
 									break;
 								case 45:
 									originalDecl = t->child[0];
+									printError(4, t->lineno, originalDecl->attr.name, 0, na, wrongRHS);
+									originalDecl = t->child[1];
+									printError(5, t->lineno, originalDecl->attr.name, 0, na, na);
+									break;
+								case 34:
+									originalDecl = t->child[0];
+									namecheck = (TreeNode *)symTab.lookup(t->child[0]->attr.name);
+									//The name of the array does exist, check to see if there is
+									// even a symbol defined
+									if (originalDecl != NULL)
+									{
+										if (namecheck != NULL)
+										{
+											printError(6, t->lineno, originalDecl->attr.name, 0, na, na);
+										}
+										else
+										{
+											printError(7, t->lineno, originalDecl->attr.name, 0, na, na);
+										}
+									}
+									printError(4, t->lineno, originalDecl->attr.name, 0, na, wrongRHS);
+									break;
+								case 35:
+									
+									originalDecl = t->child[0];
+									namecheck = (TreeNode *)symTab.lookup(t->child[0]->attr.name);
+									//The name of the array does exist, check to see if there is
+									// even a symbol defined
+									if (originalDecl != NULL)
+									{
+										if (namecheck != NULL)
+										{
+											printError(6, t->lineno, originalDecl->attr.name, 0, na, na);
+										}
+										else
+										{
+											printError(7, t->lineno, originalDecl->attr.name, 0, na, na);
+										}
+									}
+									originalDecl = t->child[1];
+									printError(5, t->lineno, originalDecl->attr.name, 0, na, na);
+									break;
+								case 345:
+								
+									originalDecl = t->child[0];
+									namecheck = (TreeNode *)symTab.lookup(t->child[0]->attr.name);
+									if (originalDecl != NULL)
+									{
+										if (namecheck != NULL)
+										{
+											printError(6, t->lineno, originalDecl->attr.name, 0, na, na);
+										}
+										else
+										{
+											printError(7, t->lineno, originalDecl->attr.name, 0, na, na);
+										}
+									}
 									printError(4, t->lineno, originalDecl->attr.name, 0, na, wrongRHS);
 									originalDecl = t->child[1];
 									printError(5, t->lineno, originalDecl->attr.name, 0, na, na);
