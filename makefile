@@ -3,6 +3,7 @@ CC   = g++
 SRCS = $(BIN).y $(BIN).l syntaxTree.cpp symbolTable.cpp printtree.cpp typeCheck.cpp semantic.cpp 
 OBJS = lex.yy.o $(BIN).tab.o syntaxTree.o symbolTable.o printtree.o typeCheck.o semantic.o 
 LIBS = -lm 
+CCFLAGS = -g
 
 
 $(BIN): $(OBJS)
@@ -41,4 +42,9 @@ clean:
 
 tar:
 	tar -cvf $(BIN).tar $(SRCS) globals.h scanType.h syntaxTree.h symbolTable.h printtree.h semantic.h typeCheck.h makefile 
+
+submit: 
+	curl -F student=daniel -F assignment="CS445 F16 Assignment 3" -F "submittedfile=parser.tar" "http://ec2-54-200-16-181.us-west-2.compute.amazonaws.com/cgi-bin/fileCapture.py"
+
+
 

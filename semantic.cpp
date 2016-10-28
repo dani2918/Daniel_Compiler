@@ -19,6 +19,8 @@ SymbolTable symTab;
 int enteredFunc = 0;
 bool funcFlag = false;
 bool leaveFlag;
+bool defnErr = false;
+int checkCount = 0;
 
 // for when we need to lookup, get pointers from symTab
 TreeNode * originalDecl;
@@ -74,15 +76,28 @@ void scopeAndType(TreeNode * t)
 						case varDeclaration:
 
 						// If we have x:x attempted init, throw an error
-						if (t-> child[0] != NULL && t->child[0] -> kind.exp == IdK)
-						{
-							if (strcmp(t->attr.name, t->child[0]->attr.name) == 0)
-							{
-								printError(11, t->lineno, t->attr.name, 0, na, na);
-								t->type = undefined;
-							}
+						// if (t-> child[0] != NULL && t->child[0] -> kind.exp == IdK)
+						// {
+						// 	if (strcmp(t->attr.name, t->child[0]->attr.name) == 0)
+						// 	{
+						// 		printError(11, t->lineno, t->attr.name, 0, na, na);
+						// 		t->type = undefined;
+						// 	}
 
+						// }
+						defnErr = false;
+						checkCount = 0;
+						if (t->child[0] != NULL)
+						{
+							checkDefnErr(t, t, defnErr, checkCount);
 						}
+
+						if (defnErr == true)
+						{
+							printError(11, t->lineno, t->attr.name, 0, na, na);
+							t->type = undefined;
+						}
+
 							if(t-> isArray == true)
 									{
 									//	arrMsgToggle = arrMsg;
@@ -650,5 +665,43 @@ void printError(int errno, int errorLine, char * symbol, int redefline, ExpType 
 }
 
 
+void checkDefnErr(TreeNode * t, TreeNode * checkNode, bool &foundError, int &checkCount)
+{
+	TreeNode * lookup;
+
+	if (checkNode == NULL)
+	{
+		return;
+	}
+
+	//printf("Check node is: %s \n", checkNode -> attr.name);
+
+	lookup = (TreeNode *)symTab.lookup(checkNode->attr.name);
+	checkCount++;
+
+	//If we aren't on the original node
+	if(checkCount != 1)
+	{
+		if(lookup == t)
+		{
+			//printf("found a match!: %s\n", checkNode->attr.name);
+			foundError = true;
+		}
+	}
+
+
+	//printf("got here!!\n");
+	if (checkNode -> child[0] != NULL && checkNode->child[0] -> kind.exp == IdK)
+	{
+		//printf("got here!! child 0 is: %s\n");
+		checkDefnErr(t, checkNode->child[0], defnErr, checkCount);
+	}
+	if (checkNode -> child[1] != NULL && checkNode->child[1] -> kind.exp == IdK)
+	{
+		//printf("got here!! child 1\n");
+		checkDefnErr(t, checkNode->child[1], defnErr, checkCount);
+	}
+
+}
 
 

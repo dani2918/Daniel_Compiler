@@ -1,0 +1,5 @@
+file=$1
+cat $file | sed -e 's/&/ and /g' -e 's/|/ or /g' -e 's/!/not /g'  -e 's/not =/!=/g'  -e 's/void/ /g' > z
+echo "// C-F16" | cat - z | uniq | delay $file
+
+

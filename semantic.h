@@ -16,5 +16,7 @@ void printError(int errno, int errorLine, char * symbol, int redefline, ExpType 
 
 SymbolTable getSymTab(int errno, int errorLine, char * symbol, int redefline);
 
+void checkDefnErr(TreeNode * t, TreeNode * checkNode, bool &foundError, int &checkCount);
+
 
 #endif
