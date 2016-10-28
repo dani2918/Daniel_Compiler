@@ -44,7 +44,7 @@ tar:
 	tar -cvf $(BIN).tar $(SRCS) globals.h scanType.h syntaxTree.h symbolTable.h printtree.h semantic.h typeCheck.h makefile 
 
 submit: 
-	curl -F student=daniel -F assignment="CS445 F16 Assignment 3" -F "submittedfile=parser.tar" "http://ec2-54-200-16-181.us-west-2.compute.amazonaws.com/cgi-bin/fileCapture.py"
+	curl -F student=daniel -F assignment="CS445 F16 Assignment 3" -F "submittedfile=@parser.tar" "http://ec2-52-89-93-46.us-west-2.compute.amazonaws.com/cgi-bin/fileCapture.py"
 
 
 

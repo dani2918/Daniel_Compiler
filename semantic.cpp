@@ -95,7 +95,7 @@ void scopeAndType(TreeNode * t)
 						if (defnErr == true)
 						{
 							printError(11, t->lineno, t->attr.name, 0, na, na);
-							t->type = undefined;
+							
 						}
 
 							if(t-> isArray == true)
@@ -674,29 +674,30 @@ void checkDefnErr(TreeNode * t, TreeNode * checkNode, bool &foundError, int &che
 		return;
 	}
 
-	//printf("Check node is: %s \n", checkNode -> attr.name);
-
-	lookup = (TreeNode *)symTab.lookup(checkNode->attr.name);
 	checkCount++;
 
 	//If we aren't on the original node
 	if(checkCount != 1)
 	{
+		// only look for nodes with ID
+		if(checkNode -> kind.exp == IdK)
+		{
+			lookup = (TreeNode *)symTab.lookup(checkNode->attr.name);
+		}
 		if(lookup == t)
 		{
-			//printf("found a match!: %s\n", checkNode->attr.name);
+			
 			foundError = true;
+			checkNode->type = undefined;
 		}
 	}
 
-
-	//printf("got here!!\n");
-	if (checkNode -> child[0] != NULL && checkNode->child[0] -> kind.exp == IdK)
+	if (checkNode -> child[0] != NULL )
 	{
 		//printf("got here!! child 0 is: %s\n");
 		checkDefnErr(t, checkNode->child[0], defnErr, checkCount);
 	}
-	if (checkNode -> child[1] != NULL && checkNode->child[1] -> kind.exp == IdK)
+	if (checkNode -> child[1] != NULL )
 	{
 		//printf("got here!! child 1\n");
 		checkDefnErr(t, checkNode->child[1], defnErr, checkCount);

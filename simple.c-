@@ -1,6 +1,6 @@
 
 main()
 {
-	int s:s, t:'"', u:'\'';
+	int s:s, t:'"', u:u, y:y*y ;
 
 }
