@@ -22,6 +22,7 @@ bool leaveFlag;
 bool defnErr = false;
 int checkCount = 0;
 bool returnFlag = false;
+TreeNode * returnCheck;
 
 // for when we need to lookup, get pointers from symTab
 TreeNode * originalDecl;
@@ -132,7 +133,8 @@ void scopeAndType(TreeNode * t)
 
 						case funDeclaration:
 						//	printf("Func enter %s \n", t->attr.name);
-							TreeNode * returnCheck;
+							
+							returnCheck = t;
 							symTab.enter(t->attr.name);
 							t-> isFun = true;
 							funcFlag = true;
@@ -153,14 +155,11 @@ void scopeAndType(TreeNode * t)
 								}
 
 							}
-							else
-							{
-
-							}
 
 							returnFlag = false;
 							symTab.leave();
 
+							returnCheck = NULL;
 							switch (t->type)
 								{
 									case integer:
@@ -257,7 +256,22 @@ void scopeAndType(TreeNode * t)
 								{
 									printError(8, t->lineno, NULL, 0, na, na);
 								}
+								if (returnCheck -> type != t -> child[0] -> type && t -> child[0] -> type != Void)
+								{
+									printError(17, t->lineno, t->attr.name, returnCheck -> lineno, returnCheck -> type, t -> type);
+								}
+								if (returnCheck -> type == Void && t -> child[0] -> type != Void)
+								{
+									printError(18, t->lineno, returnCheck -> attr.name, returnCheck -> lineno, na, na);
+								}
 							}
+
+							if (returnCheck -> type != Void && t -> child[0] == NULL)
+							{
+								printError(19, t->lineno, returnCheck -> attr.name, returnCheck -> lineno, returnCheck -> type, na);
+							}
+
+
 							break;
 						case selectionStmt:
 							for (int i = 0; i < 3; i++)
@@ -621,6 +635,7 @@ void printError(int errno, int errorLine, char * symbol, int redefline, ExpType 
 
 	switch (errno)
 	{
+		// System-like Errors ____________________________________________________________________________________________________________
 		case -2:
 			printf("ERROR(LINKER): Procedure main is not defined.\n");
 			break;
@@ -633,9 +648,6 @@ void printError(int errno, int errorLine, char * symbol, int redefline, ExpType 
 		case 1:
 			printf("ERROR(%d): '%s' requires operands of %s but lhs is of %s.\n", errorLine, symbol, rightType, wrongType);
 			break;
-		// case -3: 
-		// 	printf("ERROR(%d): Unary '%s' requires an operand of type %s but was given %s.\n", errorLine, symbol, rightType, wrongType);
-		// 	break;
 		case 2:
 			printf("ERROR(%d): '%s' requires operands of %s but rhs is of %s.\n", errorLine, symbol, rightType, wrongType);
 			break;
@@ -678,13 +690,22 @@ void printError(int errno, int errorLine, char * symbol, int redefline, ExpType 
 		case 15:
 			printf("ERROR(%d): Function '%s' is not defined.\n", errorLine, symbol);
 			break;
-		//Return Errors
+
+		//Return Errors ____________________________________________________________________________________________________________
 		case 16:
 			printf("WARNING(%d): Expecting to return %s but function '%s' has no return statement.\n", errorLine, rightType, symbol);
 			numErrors--;
 			numWarnings++;
 			break;	
-
+		case 17:
+			printf("ERROR(%d): Function '%s' at line %d is expecting to return %s but instead returns %s.\n", errorLine, symbol, redefline, rightType, wrongType );
+			break;
+		case 18:
+			printf("ERROR(%d): Function '%s' at line %d is expecting no return value, but return has return value.\n", errorLine, symbol, redefline);
+			break;
+		case 19:
+			printf("ERROR(%d): Function '%s' at line %d is expecting to return %s but return has no return value.\n", errorLine, symbol, redefline, rightType);
+			break;
 		default:	
 			printf("ERROR(%d): Undefined error\n", errorLine);
 			break;
