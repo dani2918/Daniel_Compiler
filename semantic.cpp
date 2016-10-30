@@ -281,6 +281,19 @@ void scopeAndType(TreeNode * t)
 									scopeAndTypeR(t->child[i]);
 								}
 							}
+							if (t->child[0] != NULL)
+							{
+								if (t->child[0]->type != boolean)
+								{
+									printError(20, t->lineno, t->attr.name, 0, na, t->child[0]->type);
+								}
+								if(t->child[0]->isArray == true)
+								{
+									printError(21, t->lineno, t->attr.name, 0, na, na);
+								}
+
+							}
+
 							break;
 						case iterationStmt:
 							for (int i = 0; i < 3; i++)
@@ -289,6 +302,18 @@ void scopeAndType(TreeNode * t)
 								{
 									scopeAndTypeR(t->child[i]);
 								}
+							}
+							if (t->child[0] != NULL)
+							{
+								if (t->child[0]->type != boolean)
+								{
+									printError(20, t->lineno, t->attr.name, 0, na, t->child[0]->type);
+								}
+								if(t->child[0]->isArray == true)
+								{
+									printError(21, t->lineno, t->attr.name, 0, na, na);
+								}
+
 							}
 							break;
 						case breakStmt:
@@ -711,6 +736,17 @@ void printError(int errno, int errorLine, char * symbol, int redefline, ExpType 
 		case 19:
 			printf("ERROR(%d): Function '%s' at line %d is expecting to return %s but return has no return value.\n", errorLine, symbol, redefline, rightType);
 			break;
+
+		// Boolean Test Errors ____________________________________________________________________________________________________________
+		case 20:
+			printf("ERROR(%d): Expecting Boolean test condition in %s statement but got %s.\n", errorLine, symbol, wrongType);
+			break;
+		case 21:
+			printf("ERROR(%d): Cannot use array as test condition in %s statement.\n", errorLine, symbol);
+			break;
+
+		//  ____________________________________________________________________________________________________________
+
 		default:	
 			printf("ERROR(%d): Undefined error\n", errorLine);
 			break;
