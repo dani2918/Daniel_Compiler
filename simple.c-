@@ -1,6 +1,10 @@
+// C-F16
+//
+bool a;
+int b[100];
 
-main()
+// procedure max
+int max(int x, y)
 {
-	int s:s, t:'"', u:u, y:y*y ;
-
+    int z, zz;
 }

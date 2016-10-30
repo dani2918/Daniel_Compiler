@@ -21,6 +21,7 @@ bool funcFlag = false;
 bool leaveFlag;
 bool defnErr = false;
 int checkCount = 0;
+bool returnFlag = false;
 
 // for when we need to lookup, get pointers from symTab
 TreeNode * originalDecl;
@@ -131,6 +132,7 @@ void scopeAndType(TreeNode * t)
 
 						case funDeclaration:
 						//	printf("Func enter %s \n", t->attr.name);
+							TreeNode * returnCheck;
 							symTab.enter(t->attr.name);
 							t-> isFun = true;
 							funcFlag = true;
@@ -142,6 +144,21 @@ void scopeAndType(TreeNode * t)
 								}
 
 							}
+
+							if (t->type != Void)
+							{
+								if (returnFlag == false)
+								{
+									printError(16, t->lineno, t->attr.name, 0, t->type, na);
+								}
+
+							}
+							else
+							{
+
+							}
+
+							returnFlag = false;
 							symTab.leave();
 
 							switch (t->type)
@@ -231,6 +248,7 @@ void scopeAndType(TreeNode * t)
 			
 							break;
 						case returnStmt:
+							returnFlag = true;
 							if (t->child[0] != NULL)
 							{
 								scopeAndTypeR(t->child[0]);
@@ -502,7 +520,7 @@ void scopeAndType(TreeNode * t)
 							// if not, throw non exist error
 							if (originalDecl == NULL)
 							{
-								printError(11, t->lineno, t->attr.name, 0, na, na);
+								printError(15, t->lineno, t->attr.name, 0, na, na);
 								t->type = undefined;
 								//t->isArray = false;
 							} 
@@ -655,9 +673,18 @@ void printError(int errno, int errorLine, char * symbol, int redefline, ExpType 
 			printf("ERROR(%d): The operation '%s' only works with arrays.\n", errorLine, symbol);
 			break;
 		case 14:
-			printf("ERROR(%d): Unary '%s' requires an operand of type %s but was given %s.\n", errorLine, symbol, rightType, wrongType);
+			printf("ERROR(%d): Unary '%s' requires an operand of %s but was given %s.\n", errorLine, symbol, rightType, wrongType);
 			break;
-		
+		case 15:
+			printf("ERROR(%d): Function '%s' is not defined.\n", errorLine, symbol);
+			break;
+		//Return Errors
+		case 16:
+			printf("WARNING(%d): Expecting to return %s but function '%s' has no return statement.\n", errorLine, rightType, symbol);
+			numErrors--;
+			numWarnings++;
+			break;	
+
 		default:	
 			printf("ERROR(%d): Undefined error\n", errorLine);
 			break;
@@ -684,7 +711,7 @@ void checkDefnErr(TreeNode * t, TreeNode * checkNode, bool &foundError, int &che
 		{
 			lookup = (TreeNode *)symTab.lookup(checkNode->attr.name);
 		}
-		if(lookup == t)
+		if(lookup == t || lookup == NULL)
 		{
 			
 			foundError = true;
