@@ -256,9 +256,9 @@ void scopeAndType(TreeNode * t)
 								{
 									printError(8, t->lineno, NULL, 0, na, na);
 								}
-								if (returnCheck -> type != t -> child[0] -> type && t -> child[0] -> type != Void)
+								if (returnCheck -> type != t -> child[0] -> type && t -> child[0] -> type != Void && returnCheck -> type != Void)
 								{
-									printError(17, t->lineno, t->attr.name, returnCheck -> lineno, returnCheck -> type, t -> type);
+									printError(17, t->lineno, returnCheck -> attr.name, returnCheck -> lineno, returnCheck -> type, t -> child[0] -> type);
 								}
 								if (returnCheck -> type == Void && t -> child[0] -> type != Void)
 								{
@@ -654,6 +654,8 @@ void printError(int errno, int errorLine, char * symbol, int redefline, ExpType 
 		case 3:
 			printf("ERROR(%d): '%s' requires operands of the same type but lhs is %s and rhs is %s.\n", errorLine, symbol, rightType, wrongType);
 			break;
+
+		// Array Errors ____________________________________________________________________________________________________________
 		case 4:
 			printf("ERROR(%d): Array '%s' should be indexed by type int but got %s.\n", errorLine, symbol, wrongType);
 			break;
@@ -669,6 +671,9 @@ void printError(int errno, int errorLine, char * symbol, int redefline, ExpType 
 		case 8:
 			printf("ERROR(%d): Cannot return an array.\n", errorLine);
 			break;
+
+		// Definiton Errors, operation errors ____________________________________________________________________________________
+
 		case 9:
 			printf("ERROR(%d): Cannot use function '%s' as a variable.\n", errorLine, symbol);
 			break;
