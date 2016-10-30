@@ -26,6 +26,7 @@
 
  //Like the TreeNode from tiny.y
  static TreeNode * savedTree;
+ static TreeNode * setupTree;
  int savedLineNo;
 
  ExpType storedType;
@@ -1029,7 +1030,7 @@ int main(int argc, char *argv[])
 	}
 
 	scopeAndTypeR(savedTree);
-
+	//setup(setupTree);
 
 	if(symTab.lookup("main") == NULL)
 	{

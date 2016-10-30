@@ -35,6 +35,30 @@ SymbolTable getSymTab()
 	return symTab;
 }
 
+
+//Set up I/O 
+void setup(TreeNode * t)
+{
+	std::string input, output, inputb, outputb, inputc, outputc, outnl; 
+	output = "output";
+	outputb = "outputb";
+	outputc = "outputc";
+	input = "input";
+	inputb = "inputb";
+	inputc = "inputc";
+	outnl = "outnl";
+
+	//input
+	t = newDeclNode(funDeclaration);
+	t -> lineno = -1;
+	t -> attr.name = strdup(input.c_str());
+	t -> numChildren = 2;
+	t -> type = integer;
+	//t = t -> sibling;
+	printf("GOT HERE\n");
+
+}
+
 void scopeAndTypeR(TreeNode * t)
 {
 
@@ -403,8 +427,13 @@ void scopeAndType(TreeNode * t)
 								isArrayRHS = rhs -> isArray;
 								isBinaryOp = true;
 								isFunRHS = rhs -> isFun;
+
 							}
 							
+							
+							// If we have a binary op, check for array mismatching
+
+
 							// Calls type checking functions on both unary and binary ops
 							if (rhs == NULL)
 							{
@@ -544,6 +573,14 @@ void scopeAndType(TreeNode * t)
 									break;
 							}
 
+							if(arrayError == 0 && isBinaryOp && lhsType != undefined && rhsType != undefined && ((isArrayRHS && !isArrayLHS) || (!isArrayRHS && isArrayLHS)))
+							{
+								std::string strName(t->attr.name);
+								if(strName != "[")
+								{
+									printError(22, t->lineno, t->attr.name, 0, na, na);
+								}
+							}
 							break;
 
 
@@ -745,8 +782,13 @@ void printError(int errno, int errorLine, char * symbol, int redefline, ExpType 
 			printf("ERROR(%d): Cannot use array as test condition in %s statement.\n", errorLine, symbol);
 			break;
 
-		//  ____________________________________________________________________________________________________________
+		//  Binary op array check __________________________________________________________________________________________________________
+		case 22:
+			printf("ERROR(%d): '%s' requires that either both or neither operands be arrays.\n", errorLine, symbol);
+			break;
 
+
+		//  __________________________________________________________________________________________________________
 		default:	
 			printf("ERROR(%d): Undefined error\n", errorLine);
 			break;

@@ -8,6 +8,7 @@
 
 
 int countChildren(TreeNode * t);
+void setup(TreeNode * t);
 void scopeAndTypeR(TreeNode * t);
 void scopeAndType(TreeNode * t);
 
