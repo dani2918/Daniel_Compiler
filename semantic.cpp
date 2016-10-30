@@ -256,11 +256,11 @@ void scopeAndType(TreeNode * t)
 								{
 									printError(8, t->lineno, NULL, 0, na, na);
 								}
-								if (returnCheck -> type != t -> child[0] -> type && t -> child[0] -> type != Void && returnCheck -> type != Void)
+								if (returnCheck -> type != t -> child[0] -> type && t -> child[0] -> type != Void && returnCheck -> type != Void && returnCheck -> type != undefined && t -> child[0] -> type != undefined)
 								{
 									printError(17, t->lineno, returnCheck -> attr.name, returnCheck -> lineno, returnCheck -> type, t -> child[0] -> type);
 								}
-								if (returnCheck -> type == Void && t -> child[0] -> type != Void)
+								if (returnCheck -> type == Void && t -> child[0] -> type != Void && returnCheck -> type != undefined && t -> child[0] -> type != undefined)
 								{
 									printError(18, t->lineno, returnCheck -> attr.name, returnCheck -> lineno, na, na);
 								}
@@ -283,7 +283,7 @@ void scopeAndType(TreeNode * t)
 							}
 							if (t->child[0] != NULL)
 							{
-								if (t->child[0]->type != boolean)
+								if (t->child[0]->type != boolean && t->child[0]->type != undefined)
 								{
 									printError(20, t->lineno, t->attr.name, 0, na, t->child[0]->type);
 								}
@@ -305,7 +305,7 @@ void scopeAndType(TreeNode * t)
 							}
 							if (t->child[0] != NULL)
 							{
-								if (t->child[0]->type != boolean)
+								if (t->child[0]->type != boolean && t->child[0]->type != undefined)
 								{
 									printError(20, t->lineno, t->attr.name, 0, na, t->child[0]->type);
 								}
