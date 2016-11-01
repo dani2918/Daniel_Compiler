@@ -1,4 +1,5 @@
 ERROR(2): Symbol 's' is not defined.
+ERROR(2): Initializer for variable 's' is not a constant expression.
 ERROR(2): Variable 't' is of type int but is being initialized with an expression of type char.
 ERROR(2): Variable 'u' is of type int but is being initialized with an expression of type char.
 ERROR(LINKER): Procedure main is not defined.
@@ -19,4 +20,4 @@ Sibling: 7  Var t of type int [type int] [line: 2]
 Sibling: 8  Var u of type int [type int] [line: 2]
 !   Child: 0  Const: ''' [type char] [line: 2]
 Number of warnings: 0
-Number of errors: 4
+Number of errors: 5

@@ -1,13 +1,2 @@
-// C-F16
-//
 
-int ant(int x[])
-{
-	return 3;
-}
-
-main()
-{
-	char x[3];
-	ant(x);
-}
+int s:s, t:'"', u:'\'';

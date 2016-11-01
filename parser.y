@@ -240,9 +240,10 @@ varDeclInitialize 		: varDeclId
 							}
 						| varDeclId COL simpleExpression
 							{
+								$$ = $1;
 								$$ -> child[0] = $3;
 								$$ -> numChildren = 1;
-								$$ = $1;
+								
 							}
 						;
 
@@ -965,6 +966,10 @@ constant	 			: NUMCONST
 							{
 								$$ = newExpNode(constK);
 								$$ ->attr.cvalue = $1->charVal;
+								//if($$->attr.cvalue == '\'')
+								//{
+								//	printf("Apost!!\n");
+								//}
 								$$ -> type = character;
 							}	
 						| BOOLCONST 

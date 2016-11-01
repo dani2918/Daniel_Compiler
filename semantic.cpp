@@ -157,39 +157,49 @@ void scopeAndType(TreeNode * t)
 			// if we have a declaration
 				case DeclK:
 
-				// Add to table if we can
-				alreadyInTable = symTab.insert(t->attr.name, (TreeNode *) t);
-				if(alreadyInTable == false) 
-				{
-					originalDecl = (TreeNode *)symTab.lookup(t->attr.name);
-					printError(10, t->lineno, t->attr.name, originalDecl->lineno, na, na, 0);
-				}
+					// Add to table if we can
+					alreadyInTable = symTab.insert(t->attr.name, (TreeNode *) t);
+					if(alreadyInTable == false) 
+					{
+						originalDecl = (TreeNode *)symTab.lookup(t->attr.name);
+						printError(10, t->lineno, t->attr.name, originalDecl->lineno, na, na, 0);
+					}
 
 				
-				//Switch types of declarations
+					//Switch types of declarations
 
 					switch (t->kind.decl)
 					{
 
 						case varDeclaration:
+							defnErr = false;
+							//May need to do this
+							// for (int i = 0; i < 3; i++)
+							// {
+							// 	if (t->child[i] != NULL)
+							// 	{
+							// 		scopeAndTypeR(t->child[i]);
+							// 	}
 
-						defnErr = false;
-						checkCount = 0;
-						if (t->child[0] != NULL)
-						{
-							checkDefnErr(t, t, defnErr, checkCount);
-							if (defnErr == true)
+							// }
+							checkCount = 0;
+							if (t->child[0] != NULL)
 							{
-								printError(11, t->lineno, t->attr.name, 0, na, na, 0);
-							}
-							else 
-							{
-								if(t->type != t->child[0]->type)
+								TreeNode * checkNode = t;
+								checkDefnErr(t, checkNode, defnErr, checkCount);
+								if (defnErr == true)
 								{
-									printError(24, t->lineno, t->attr.name, 0, t->type, t->child[0]->type, 0);
+									t->child[0]->type = undefined;
+									printError(11, t->lineno, t->attr.name, 0, na, na, 0);
+								}
+								else 
+								{
+									if(t->type != t->child[0]->type)
+									{
+										printError(24, t->lineno, t->attr.name, 0, t->type, t->child[0]->type, 0);
+									}
 								}
 							}
-						}
 
 						
 
@@ -225,7 +235,7 @@ void scopeAndType(TreeNode * t)
 							break;
 
 						case funDeclaration:
-						//	printf("Func enter %s \n", t->attr.name);
+							//	printf("Func enter %s \n", t->attr.name);
 							
 							returnCheck = t;
 							symTab.enter(t->attr.name);
@@ -242,6 +252,7 @@ void scopeAndType(TreeNode * t)
 
 							if (t->type != Void)
 							{
+								//Expected return, got none
 								if (returnFlag == false)
 								{
 									printError(16, t->lineno, t->attr.name, 0, t->type, na, 0);
@@ -360,11 +371,19 @@ void scopeAndType(TreeNode * t)
 								
 							}
 
+							//Expected return value, but didn't get anything
 							if (returnCheck -> type != Void && t -> child[0] == NULL)
 							{
 								printError(19, t->lineno, returnCheck -> attr.name, returnCheck -> lineno, returnCheck -> type, na, 0);
 							}
-
+							//Same error - handle the case where we return a function's results
+							if(t->child[0] != NULL)
+							{
+								if (returnCheck -> type != Void && t -> child[0]->type == Void)
+								{
+									printError(19, t->lineno, returnCheck -> attr.name, returnCheck -> lineno, returnCheck -> type, na, 0);
+								}
+							}
 
 							break;
 						case selectionStmt:
@@ -941,17 +960,19 @@ void checkDefnErr(TreeNode * t, TreeNode * checkNode, bool &foundError, int &che
 	//If we aren't on the original node
 	if(checkCount != 1)
 	{
+		lookup = NULL;
 		// only look for nodes with ID
 		if(checkNode -> kind.exp == IdK)
 		{
 			lookup = (TreeNode *)symTab.lookup(checkNode->attr.name);
-		}
-		if(lookup == t || lookup == NULL)
-		{
+			if(lookup == t || lookup == NULL)
+			{
 			
-			foundError = true;
-			checkNode->type = undefined;
+				foundError = true;
+				//checkNode->type = undefined;
+			}
 		}
+		
 	}
 
 	if (checkNode -> child[0] != NULL )

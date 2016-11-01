@@ -43,6 +43,11 @@ int setTokenData(int tokenClass)
 				{
 					yylval.tokenData->charVal = '\0';
 				}
+				else if (yytext[2] == '\'')
+				{
+					yylval.tokenData->charVal = '\'';
+					//printf("Value is: %c\n" , yylval.tokenData->charVal);
+				}
 				else
 				{
 					yylval.tokenData->charVal = yytext[2];
