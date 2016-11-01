@@ -81,11 +81,11 @@ TreeNode * setup(TreeNode * t, TreeNode * oldTree)
 				}
 				if (i == 3)
 				{
-					param -> type = character;
+					param -> type = boolean;
 				}
 				if (i  == 5)
 				{
-					param -> type = Void;
+					param -> type = character;
 				}
 				newNode -> child[0] = param;
 				break;
@@ -901,7 +901,7 @@ void printError(int errno, int errorLine, char * symbol, int redefline, ExpType 
 			printf("ERROR(%d): Too few parameters passed for function '%s' defined on line %d.\n", errorLine, symbol, redefline);
 			break;
 		case 26:
-			//printf("ERROR(%d): Expecting %s in parameter %i of call to '%s' defined on line %d but got %s.\n", errorLine, rightType, 
+			printf("ERROR(%d): Expecting %s in parameter %i of call to '%s' defined on line %d but got %s.\n", errorLine, rightType, paramNo, symbol, redefline, wrongType);
 			break;
 		case 27:
 			printf("ERROR(%d): Expecting array in parameter %i of call to '%s' defined on line %d.\n", errorLine, paramNo, symbol, redefline);

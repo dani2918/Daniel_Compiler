@@ -8,6 +8,6 @@ int ant(int x[])
 
 main()
 {
-	int x[3];
-	ant(3,x);
+	char x[3];
+	ant(x);
 }

@@ -413,11 +413,14 @@ void checkParams(TreeNode * t, TreeNode * originalDecl, TreeNode * callName, Tre
 			return;
 		}
 
-		// if(originalDecl->isArray)
-		// {
-		// 	printf("array!\n");
-		// }
+		//If a parameter type doesn't match (and isn't undefined)
+		if(t->type != originalDecl->type && t->type != undefined)
+		{
+			printError(26, callName->lineno, funName->attr.name, funName->lineno, originalDecl->type, t->type, paramCount);
+		}
 
+
+		//If we wanted an array but didn't get one
 		if(!t->isArray && originalDecl->isArray)
 		{
 			printError(27, callName->lineno, funName->attr.name, funName->lineno, na, na, paramCount);
@@ -429,6 +432,7 @@ void checkParams(TreeNode * t, TreeNode * originalDecl, TreeNode * callName, Tre
 		{
 			printError(28, callName->lineno, funName->attr.name, funName->lineno, na, na, paramCount);
 		}
+
 
 		t = t->sibling;
 		originalDecl = originalDecl -> sibling;
