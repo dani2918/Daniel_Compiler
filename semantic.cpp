@@ -21,6 +21,7 @@ int enteredFunc = 0;
 bool funcFlag = false;
 bool leaveFlag;
 bool defnErr = false;
+bool constErr = false;
 int checkCount = 0;
 bool returnFlag = false;
 int whileLevels = 0;
@@ -172,19 +173,24 @@ void scopeAndType(TreeNode * t)
 					{
 
 						case varDeclaration:
-							defnErr = false;
-							//May need to do this
-							// for (int i = 0; i < 3; i++)
-							// {
-							// 	if (t->child[i] != NULL)
-							// 	{
-							// 		scopeAndTypeR(t->child[i]);
-							// 	}
 
-							// }
+							for (int i = 0; i < 3; i++)
+							{
+								if (t->child[i] != NULL)
+								{
+									scopeAndTypeR(t->child[i]);
+								}
+
+							}
+							defnErr = false;
+							constErr = false;
+
 							checkCount = 0;
+
+							//i.e. if we have an initalizer
 							if (t->child[0] != NULL)
 							{
+								//Check for symbol not defined or wrong initilization errors
 								TreeNode * checkNode = t;
 								checkDefnErr(t, checkNode, defnErr, checkCount);
 								if (defnErr == true)
@@ -199,6 +205,11 @@ void scopeAndType(TreeNode * t)
 										printError(24, t->lineno, t->attr.name, 0, t->type, t->child[0]->type, 0);
 									}
 								}
+
+								//Check for non constant initialization errors
+								checkNode = t;
+								checkConst(t, checkNode, defnErr);
+
 							}
 
 						
@@ -376,12 +387,12 @@ void scopeAndType(TreeNode * t)
 							{
 								printError(19, t->lineno, returnCheck -> attr.name, returnCheck -> lineno, returnCheck -> type, na, 0);
 							}
-							//Same error - handle the case where we return a function's results
+							//handle the case where we return a function's results
 							if(t->child[0] != NULL)
 							{
 								if (returnCheck -> type != Void && t -> child[0]->type == Void)
 								{
-									printError(19, t->lineno, returnCheck -> attr.name, returnCheck -> lineno, returnCheck -> type, na, 0);
+									printError(17, t->lineno, returnCheck -> attr.name, returnCheck -> lineno, returnCheck -> type, t -> child[0]->type, 0);
 								}
 							}
 
@@ -988,4 +999,18 @@ void checkDefnErr(TreeNode * t, TreeNode * checkNode, bool &foundError, int &che
 
 }
 
+
+void checkConst(TreeNode * t, TreeNode * checkNode, bool &defnErr)
+{
+	while(checkNode->child[0] != NULL)
+	{
+		checkNode = checkNode->child[0];
+	}
+
+	if(checkNode->kind.exp != constK)
+	{
+		printError(23, t->lineno, t->attr.name, 0, na, na, 0);
+	} 
+
+}
 

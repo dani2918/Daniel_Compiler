@@ -624,7 +624,7 @@ static const yytype_uint16 yyrline[] =
      792,   794,   796,   798,   802,   811,   817,   819,   823,   832,
      836,   838,   840,   844,   852,   856,   858,   860,   864,   866,
      870,   875,   883,   898,   902,   906,   912,   924,   929,   935,
-     953,   959,   965,   975
+     953,   959,   965,   971
 };
 #endif
 
@@ -2732,16 +2732,12 @@ yyreduce:
     {
 								(yyval.treeNode) = newExpNode(constK);
 								(yyval.treeNode) ->attr.cvalue = (yyvsp[(1) - (1)].tokenData)->charVal;
-								//if($$->attr.cvalue == '\'')
-								//{
-								//	printf("Apost!!\n");
-								//}
 								(yyval.treeNode) -> type = character;
 							;}
     break;
 
   case 113:
-#line 976 "parser.y"
+#line 972 "parser.y"
     {
 								(yyval.treeNode) = newExpNode(constK);
 								(yyval.treeNode) -> attr.bvalue = (yyvsp[(1) - (1)].tokenData)->bvalue;
@@ -2751,7 +2747,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 2755 "parser.tab.c"
+#line 2751 "parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2965,7 +2961,7 @@ yyreturn:
 }
 
 
-#line 983 "parser.y"
+#line 979 "parser.y"
 
 
 int main(int argc, char *argv[])

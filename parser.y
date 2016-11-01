@@ -966,10 +966,6 @@ constant	 			: NUMCONST
 							{
 								$$ = newExpNode(constK);
 								$$ ->attr.cvalue = $1->charVal;
-								//if($$->attr.cvalue == '\'')
-								//{
-								//	printf("Apost!!\n");
-								//}
 								$$ -> type = character;
 							}	
 						| BOOLCONST 
