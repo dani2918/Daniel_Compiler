@@ -388,28 +388,49 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 
 
 
-void checkParams(TreeNode * t, TreeNode * originalDecl)
+void checkParams(TreeNode * t, TreeNode * originalDecl, TreeNode * callName, TreeNode * funName)
 {
-	//Not enough params in the call
-	if(t == NULL)
-	{
-		//printError()
-	}
 
-	//Too many params in the call
-	if(originalDecl == NULL)
+	int paramCount = 1;	
+	
+	while(1)
 	{
-		//printError()
-	}
-
-	if(t != NULL)
-	{
-
-		if(originalDecl->type == t->type)
+		//If both lists are done, then return
+		if(t == NULL && originalDecl == NULL)
 		{
-			//printf("TRUE\n");
+			return;
 		}
-	}	
+		//Too few params passed
+		if (t == NULL)
+		{
+			printError(25, callName->lineno, funName->attr.name, funName->lineno, na, na, 0);
+			return;
+		}
+		//Too many params passed
+		if (originalDecl == NULL)
+		{
+			printError(29, callName->lineno, funName->attr.name, funName->lineno, na, na, 0);
+			return;
+		}
+
+		if(!t->isArray && originalDecl->isArray)
+		{
+			printError(27, callName->lineno, funName->attr.name, funName->lineno, na, na, paramCount);
+		}
+
+
+		//If we got an array but weren't expecting one
+		if(t->isArray && !originalDecl->isArray)
+		{
+			printError(28, callName->lineno, funName->attr.name, funName->lineno, na, na, paramCount);
+		}
+
+		t = t->sibling;
+		originalDecl = originalDecl -> sibling;
+
+		paramCount++;
+	}
+		
 }
 
 

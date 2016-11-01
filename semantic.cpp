@@ -67,7 +67,7 @@ TreeNode * setup(TreeNode * t, TreeNode * oldTree)
 				newNode -> type = integer;
 				break;
 			// All outputs return void, different outputs have different params
-			case 1: case 3: case 5: case 6:
+			case 1: case 3: case 5:
 				newNode -> type = Void;
 				param = newDeclNode(paramDeclaration);
 				param -> attr.name = strdup(dummyString.c_str());
@@ -95,6 +95,10 @@ TreeNode * setup(TreeNode * t, TreeNode * oldTree)
 			case 4:
 				newNode -> type = character;
 				break;
+			case 6:
+				newNode -> type = Void;
+				break;
+
 		}
 		
 
@@ -696,10 +700,13 @@ void scopeAndType(TreeNode * t)
 								scopeAndTypeR(t->child[i]);
 							}
 
-							//Check for paramater errors, if we have parameters
-							if(originalDecl -> child[0] != NULL && t->child[0] != NULL)
+							//Check for paramater errors, if we have parameters, if we don't have either of the other 2 errors
+							if(originalDecl != NULL && originalDecl -> kind.decl == funDeclaration)
 							{
-								checkParams(t->child[0], originalDecl->child[0]);
+								if(originalDecl -> child[0] != NULL || t->child[0] != NULL)
+								{
+									checkParams(t->child[0], originalDecl->child[0], t, originalDecl);
+								}
 							}
 							
 
@@ -892,10 +899,13 @@ void printError(int errno, int errorLine, char * symbol, int redefline, ExpType 
 			//printf("ERROR(%d): Expecting %s in parameter %i of call to '%s' defined on line %d but got %s.\n", errorLine, rightType, 
 			break;
 		case 27:
+			printf("ERROR(%d): Expecting array in parameter %i of call to '%s' defined on line %d.\n", errorLine, paramNo, symbol, redefline);
 			break;
 		case 28:
+			printf("ERROR(%d): Not expecting array in parameter %i of call to '%s' defined on line %d.\n", errorLine, paramNo, symbol, redefline);
 			break;
 		case 29:
+			printf("ERROR(%d): Too many parameters passed for function '%s' defined on line %d.\n", errorLine, symbol, redefline);
 			break;
 
 		// Break Error  ______________________________________________________________________________________________________________
