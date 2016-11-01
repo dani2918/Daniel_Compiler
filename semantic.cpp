@@ -863,6 +863,10 @@ void printError(int errno, int errorLine, char * symbol, int redefline, ExpType 
 		case 8:
 			printf("ERROR(%d): Cannot return an array.\n", errorLine);
 			break;
+		//NOTE: Out of order
+		case 30:
+			printf("ERROR(%d): Array index is an unindexed array.\n", errorLine);
+			break;
 
 		// Definiton Errors, operation errors ____________________________________________________________________________________
 
