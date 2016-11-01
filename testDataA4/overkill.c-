@@ -368,8 +368,8 @@ main(){
     c=ba;
     c!=v();
     c<=v();
-    c==v();
-    c>=v();
+    c==v(); //HERE!!
+    c>=v(); 
     c<v();
     c>v();
     c*=v();
@@ -494,7 +494,7 @@ main(){
     ca=ba;
     ca!=v();
     ca<=v();
-    ca==v();
+    ca==v(); //HERE!
     ca>=v();
     ca<v();
     ca>v();

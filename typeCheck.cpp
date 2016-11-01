@@ -139,7 +139,7 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 			leftGood = false;
 			wrongLHS = left -> type;
 		}
-		if(right -> type != boolean && right -> type != integer && left -> type != character && right -> type != undefined)
+		if(right -> type != boolean && right -> type != integer && right -> type != character && right -> type != undefined)
 		{
 			rightGood = false;
 			wrongRHS = right -> type;
@@ -147,6 +147,12 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		//Not equal types
 		if (right -> type != left -> type && left -> type != undefined && right -> type != undefined)
 		{
+			//Try this to fix overkill, print right error
+			if(right -> type != Void)
+			{
+				leftGood = true;
+				rightGood = true;
+			}
 			mismatch = true;
 			wrongLHS = left -> type;
 			wrongRHS = right -> type;
@@ -286,7 +292,9 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		// 	arrayError = 1;
 		// }
 
-		if(left->type != boolean && left -> type != integer && left -> type != character && left->type != undefined)
+
+		//The void part may be wrong, but fixes a mismatch with overkill.c-
+		if(left->type != boolean && left -> type != integer && left -> type != character && left->type != Void &&left->type != undefined)
 		{
 			leftGood = false;
 			wrongLHS = left -> type;
