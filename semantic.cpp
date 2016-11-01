@@ -302,7 +302,7 @@ void scopeAndType(TreeNode * t)
 							break;
 
 						case paramDeclaration:
-							//printf("Param %s ", t->attr.name);
+							//printf("Param %s \n", t->attr.name);
 							if(t-> isArray == true)
 									{
 										// arrMsgToggle = arrMsg;
@@ -1007,6 +1007,7 @@ void checkConst(TreeNode * t, TreeNode * checkNode, bool &defnErr)
 		checkNode = checkNode->child[0];
 	}
 
+	//TODO: Check child[1]? check to see if const is passed up tree?
 	if(checkNode->kind.exp != constK)
 	{
 		printError(23, t->lineno, t->attr.name, 0, na, na, 0);
