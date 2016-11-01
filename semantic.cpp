@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <vector>
 #include "globals.h"
 #include "syntaxTree.h"
 #include "semantic.h"
@@ -22,6 +23,7 @@ bool leaveFlag;
 bool defnErr = false;
 int checkCount = 0;
 bool returnFlag = false;
+int whileLevels = 0;
 TreeNode * returnCheck;
 
 // for when we need to lookup, get pointers from symTab
@@ -37,37 +39,103 @@ SymbolTable getSymTab()
 
 
 //Set up I/O 
-void setup(TreeNode * t)
+TreeNode * setup(TreeNode * t, TreeNode * oldTree)
 {
-	std::string input, output, inputb, outputb, inputc, outputc, outnl; 
-	output = "output";
-	outputb = "outputb";
-	outputc = "outputc";
-	input = "input";
-	inputb = "inputb";
-	inputc = "inputc";
-	outnl = "outnl";
+	std::string names[] = {"input", "output", "inputb", "outputb", "inputc", "outputc", "outnl"};
+	std::string dummyString = "*dummy*";
 
-	//input
-	t = newDeclNode(funDeclaration);
-	t -> lineno = -1;
-	t -> attr.name = strdup(input.c_str());
-	t -> numChildren = 2;
-	t -> type = integer;
-	//t = t -> sibling;
-	printf("GOT HERE\n");
+	bool alreadyInTable = true;
 
+	TreeNode * newNode;
+	TreeNode * head = t;
+	TreeNode * param;
+	
+	for(int i = 0; i < 7; i++)
+	{
+		newNode = NULL;
+		param = NULL;
+		//printf("Name: %s\n", names[i].c_str());
+		newNode = newDeclNode(funDeclaration);
+		newNode -> lineno = -1;
+		newNode -> attr.name = strdup(names[i].c_str());
+		newNode -> numChildren = 2;
+
+
+		switch(i)
+		{ 
+			case 0:
+				newNode -> type = integer;
+				break;
+			// All outputs return void, different outputs have different params
+			case 1: case 3: case 5: case 6:
+				newNode -> type = Void;
+				param = newDeclNode(paramDeclaration);
+				param -> attr.name = strdup(dummyString.c_str());
+				param -> isArray = false;
+				param -> isParam = true;
+				param -> lineno = -1;
+				if(i == 1)
+				{
+					param -> type = integer;
+			
+				}
+				if (i == 3)
+				{
+					param -> type = character;
+				}
+				if (i  == 5)
+				{
+					param -> type = Void;
+				}
+				newNode -> child[0] = param;
+				break;
+			case 2:
+				newNode -> type = boolean;
+				break;
+			case 4:
+				newNode -> type = character;
+				break;
+		}
+		
+
+		if(i == 0)
+		{
+			t = newNode;
+			alreadyInTable = symTab.insert(t->attr.name, (TreeNode *) t);
+		}
+		else
+		{
+			t -> sibling = newNode;
+			if (i == 1)
+			{
+				head = t;
+			}
+			t = t -> sibling;
+			alreadyInTable = symTab.insert(t->attr.name, (TreeNode *) t);
+		}
+		
+	}
+
+	t -> sibling = oldTree;
+	return head;
 }
 
 void scopeAndTypeR(TreeNode * t)
 {
 
+	// Don't proces a NULL 
 	if (t == NULL)
+	{
 		return;
-	//Unlinke in printtree.cpp, I'll process children in the function below
-	scopeAndType(t);
+	}
 
-	
+	//Unlinke in printtree.cpp, I'll process children in the function below
+	//Don't process and I/O node
+	if(t->lineno != -1)
+	{	
+		scopeAndType(t);
+	}
+
 	//If we initialize a var to iteself with a colon, throw an error, give node type undefined
 	scopeAndTypeR(t->sibling);
 
@@ -90,7 +158,7 @@ void scopeAndType(TreeNode * t)
 				if(alreadyInTable == false) 
 				{
 					originalDecl = (TreeNode *)symTab.lookup(t->attr.name);
-					printError(10, t->lineno, t->attr.name, originalDecl->lineno, na, na);
+					printError(10, t->lineno, t->attr.name, originalDecl->lineno, na, na, 0);
 				}
 
 				
@@ -101,28 +169,25 @@ void scopeAndType(TreeNode * t)
 
 						case varDeclaration:
 
-						// If we have x:x attempted init, throw an error
-						// if (t-> child[0] != NULL && t->child[0] -> kind.exp == IdK)
-						// {
-						// 	if (strcmp(t->attr.name, t->child[0]->attr.name) == 0)
-						// 	{
-						// 		printError(11, t->lineno, t->attr.name, 0, na, na);
-						// 		t->type = undefined;
-						// 	}
-
-						// }
 						defnErr = false;
 						checkCount = 0;
 						if (t->child[0] != NULL)
 						{
 							checkDefnErr(t, t, defnErr, checkCount);
+							if (defnErr == true)
+							{
+								printError(11, t->lineno, t->attr.name, 0, na, na, 0);
+							}
+							else 
+							{
+								if(t->type != t->child[0]->type)
+								{
+									printError(24, t->lineno, t->attr.name, 0, t->type, t->child[0]->type, 0);
+								}
+							}
 						}
 
-						if (defnErr == true)
-						{
-							printError(11, t->lineno, t->attr.name, 0, na, na);
-							
-						}
+						
 
 							if(t-> isArray == true)
 									{
@@ -175,7 +240,7 @@ void scopeAndType(TreeNode * t)
 							{
 								if (returnFlag == false)
 								{
-									printError(16, t->lineno, t->attr.name, 0, t->type, na);
+									printError(16, t->lineno, t->attr.name, 0, t->type, na, 0);
 								}
 
 							}
@@ -276,23 +341,24 @@ void scopeAndType(TreeNode * t)
 							{
 								scopeAndTypeR(t->child[0]);
 								originalDecl = t->child[0];
+								if (returnCheck -> type == Void && t -> child[0] -> type != Void && returnCheck -> type != undefined && t -> child[0] -> type != undefined)
+								{
+									printError(18, t->lineno, returnCheck -> attr.name, returnCheck -> lineno, na, na, 0);
+								}
 								if(originalDecl -> isArray == true)
 								{
-									printError(8, t->lineno, NULL, 0, na, na);
+									printError(8, t->lineno, NULL, 0, na, na, 0);
 								}
 								if (returnCheck -> type != t -> child[0] -> type && t -> child[0] -> type != Void && returnCheck -> type != Void && returnCheck -> type != undefined && t -> child[0] -> type != undefined)
 								{
-									printError(17, t->lineno, returnCheck -> attr.name, returnCheck -> lineno, returnCheck -> type, t -> child[0] -> type);
+									printError(17, t->lineno, returnCheck -> attr.name, returnCheck -> lineno, returnCheck -> type, t -> child[0] -> type, 0);
 								}
-								if (returnCheck -> type == Void && t -> child[0] -> type != Void && returnCheck -> type != undefined && t -> child[0] -> type != undefined)
-								{
-									printError(18, t->lineno, returnCheck -> attr.name, returnCheck -> lineno, na, na);
-								}
+								
 							}
 
 							if (returnCheck -> type != Void && t -> child[0] == NULL)
 							{
-								printError(19, t->lineno, returnCheck -> attr.name, returnCheck -> lineno, returnCheck -> type, na);
+								printError(19, t->lineno, returnCheck -> attr.name, returnCheck -> lineno, returnCheck -> type, na, 0);
 							}
 
 
@@ -309,11 +375,11 @@ void scopeAndType(TreeNode * t)
 							{
 								if (t->child[0]->type != boolean && t->child[0]->type != undefined)
 								{
-									printError(20, t->lineno, t->attr.name, 0, na, t->child[0]->type);
+									printError(20, t->lineno, t->attr.name, 0, na, t->child[0]->type, 0);
 								}
 								if(t->child[0]->isArray == true)
 								{
-									printError(21, t->lineno, t->attr.name, 0, na, na);
+									printError(21, t->lineno, t->attr.name, 0, na, na, 0);
 								}
 
 							}
@@ -322,26 +388,33 @@ void scopeAndType(TreeNode * t)
 						case iterationStmt:
 							for (int i = 0; i < 3; i++)
 							{
+								whileLevels++;
 								if (t->child[i] != NULL)
 								{
 									scopeAndTypeR(t->child[i]);
 								}
+								whileLevels--;
 							}
 							if (t->child[0] != NULL)
 							{
 								if (t->child[0]->type != boolean && t->child[0]->type != undefined)
 								{
-									printError(20, t->lineno, t->attr.name, 0, na, t->child[0]->type);
+									printError(20, t->lineno, t->attr.name, 0, na, t->child[0]->type, 0);
 								}
 								if(t->child[0]->isArray == true)
 								{
-									printError(21, t->lineno, t->attr.name, 0, na, na);
+									printError(21, t->lineno, t->attr.name, 0, na, na, 0);
 								}
 
 							}
 							break;
+
+
 						case breakStmt:
-							// printf("Break ");
+							if(whileLevels <= 0)
+							{
+								printError(30, t->lineno, t->attr.name, 0, na, na, 0);
+							}
 							break;
 						default:
 							break;
@@ -366,7 +439,7 @@ void scopeAndType(TreeNode * t)
 							originalDecl = (TreeNode *)symTab.lookup(t->attr.name);
 							if (originalDecl == NULL)
 							{
-								printError(11, t->lineno, t->attr.name, 0, na, na);
+								printError(11, t->lineno, t->attr.name, 0, na, na, 0);
 								t->type = undefined;
 								//t->isArray = false;
 							}
@@ -382,7 +455,7 @@ void scopeAndType(TreeNode * t)
 							//issue error if trying to use function as variable
 							if (originalDecl != NULL && originalDecl -> kind.decl == funDeclaration)
 							{
-								printError(9, t->lineno, t->attr.name, 0, na, na);
+								printError(9, t->lineno, t->attr.name, 0, na, na, 0);
 								t -> type = undefined;
 							}
 
@@ -392,7 +465,7 @@ void scopeAndType(TreeNode * t)
 								// the id has children, but is not an array
 								if(t->isArray == false)
 								{
-									printError(6, t->lineno, t->attr.name, 0, na, na);
+									printError(6, t->lineno, t->attr.name, 0, na, na, 0);
 								}
 							}
 					
@@ -451,33 +524,33 @@ void scopeAndType(TreeNode * t)
 									// print unary error
 									if (rhs == NULL)
 									{
-										printError(14, t->lineno, t->attr.name, 0, operandType, wrongLHS);
+										printError(14, t->lineno, t->attr.name, 0, operandType, wrongLHS, 0);
 									}
 									else
 									{
-										printError(1, t->lineno, t->attr.name, 0, operandType, wrongLHS);
+										printError(1, t->lineno, t->attr.name, 0, operandType, wrongLHS, 0);
 									}	
 									opErr = true;
 								}
 								if(!rhsCheck && rhsType != undefined)
 								{
-									printError(2, t->lineno, t->attr.name, 0, operandType, wrongRHS);
+									printError(2, t->lineno, t->attr.name, 0, operandType, wrongRHS, 0);
 									opErr = true;
 								}
 								if(mismatch && !opErr)
 								{
-									printError(3, t->lineno, t->attr.name, 0, wrongLHS, wrongRHS);
+									printError(3, t->lineno, t->attr.name, 0, wrongLHS, wrongRHS, 0);
 								}
 
 							switch (arrayError)
 							{
 								//Get an array when we shouldn't have
 								case 1:
-									printError(12, t->lineno, t->attr.name, 0, na, na);
+									printError(12, t->lineno, t->attr.name, 0, na, na, 0);
 									break;
 								// Only works on arrays
 								case 2:
-									printError(13, t->lineno, t->attr.name, 0, na, na);
+									printError(13, t->lineno, t->attr.name, 0, na, na, 0);
 									break;
 								//Cannot index named nonarray
 								case 3:
@@ -489,11 +562,11 @@ void scopeAndType(TreeNode * t)
 									{
 										if (namecheck != NULL || t->child[0]-> kind.exp == IdK)
 										{
-											printError(6, t->lineno, originalDecl->attr.name, 0, na, na);
+											printError(6, t->lineno, originalDecl->attr.name, 0, na, na, 0);
 										}
 										else
 										{
-											printError(7, t->lineno, originalDecl->attr.name, 0, na, na);
+											printError(7, t->lineno, originalDecl->attr.name, 0, na, na, 0);
 										}
 									}
 
@@ -501,18 +574,18 @@ void scopeAndType(TreeNode * t)
 								//Indexed by nonint
 								case 4: 
 									originalDecl = t->child[0];
-									printError(4, t->lineno, originalDecl->attr.name, 0, na, wrongRHS);
+									printError(4, t->lineno, originalDecl->attr.name, 0, na, wrongRHS, 0);
 									break;
 								case 5:
 									originalDecl = t->child[1];
-									printError(5, t->lineno, originalDecl->attr.name, 0, na, na);
+									printError(5, t->lineno, originalDecl->attr.name, 0, na, na, 0);
 									break;
 								//Throw both errors 4 and 5
 								case 45:
 									originalDecl = t->child[0];
-									printError(4, t->lineno, originalDecl->attr.name, 0, na, wrongRHS);
+									printError(4, t->lineno, originalDecl->attr.name, 0, na, wrongRHS, 0);
 									originalDecl = t->child[1];
-									printError(5, t->lineno, originalDecl->attr.name, 0, na, na);
+									printError(5, t->lineno, originalDecl->attr.name, 0, na, na, 0);
 									break;
 								case 34:
 									originalDecl = t->child[0];
@@ -523,14 +596,14 @@ void scopeAndType(TreeNode * t)
 									{
 										if (namecheck != NULL || t->child[0]->kind.exp == IdK)
 										{
-											printError(6, t->lineno, originalDecl->attr.name, 0, na, na);
+											printError(6, t->lineno, originalDecl->attr.name, 0, na, na, 0);
 										}
 										else
 										{
-											printError(7, t->lineno, originalDecl->attr.name, 0, na, na);
+											printError(7, t->lineno, originalDecl->attr.name, 0, na, na, 0);
 										}
 									}
-									printError(4, t->lineno, originalDecl->attr.name, 0, na, wrongRHS);
+									printError(4, t->lineno, originalDecl->attr.name, 0, na, wrongRHS, 0);
 									break;
 								case 35:
 									originalDecl = t->child[0];
@@ -541,15 +614,15 @@ void scopeAndType(TreeNode * t)
 									{
 										if (namecheck != NULL || t->child[0]-> kind.exp == IdK)
 										{
-											printError(6, t->lineno, originalDecl->attr.name, 0, na, na);
+											printError(6, t->lineno, originalDecl->attr.name, 0, na, na, 0);
 										}
 										else
 										{
-											printError(7, t->lineno, originalDecl->attr.name, 0, na, na);
+											printError(7, t->lineno, originalDecl->attr.name, 0, na, na, 0);
 										}
 									}
 									originalDecl = t->child[1];
-									printError(5, t->lineno, originalDecl->attr.name, 0, na, na);
+									printError(5, t->lineno, originalDecl->attr.name, 0, na, na, 0);
 									break;
 								case 345:
 									originalDecl = t->child[0];
@@ -558,16 +631,16 @@ void scopeAndType(TreeNode * t)
 									{
 										if (namecheck != NULL || t->child[0]-> kind.exp == IdK)
 										{
-											printError(6, t->lineno, originalDecl->attr.name, 0, na, na);
+											printError(6, t->lineno, originalDecl->attr.name, 0, na, na, 0);
 										}
 										else
 										{
-											printError(7, t->lineno, originalDecl->attr.name, 0, na, na);
+											printError(7, t->lineno, originalDecl->attr.name, 0, na, na, 0);
 										}
 									}
-									printError(4, t->lineno, originalDecl->attr.name, 0, na, wrongRHS);
+									printError(4, t->lineno, originalDecl->attr.name, 0, na, wrongRHS, 0);
 									originalDecl = t->child[1];
-									printError(5, t->lineno, originalDecl->attr.name, 0, na, na);
+									printError(5, t->lineno, originalDecl->attr.name, 0, na, na, 0);
 									break;
 								default: 
 									break;
@@ -578,7 +651,7 @@ void scopeAndType(TreeNode * t)
 								std::string strName(t->attr.name);
 								if(strName != "[")
 								{
-									printError(22, t->lineno, t->attr.name, 0, na, na);
+									printError(22, t->lineno, t->attr.name, 0, na, na, 0);
 								}
 							}
 							break;
@@ -593,29 +666,42 @@ void scopeAndType(TreeNode * t)
 
 						case CallK:
 							originalDecl = (TreeNode *)symTab.lookup(t->attr.name);
+
+
 							// if not, throw non exist error
 							if (originalDecl == NULL)
 							{
-								printError(15, t->lineno, t->attr.name, 0, na, na);
+								printError(15, t->lineno, t->attr.name, 0, na, na, 0);
 								t->type = undefined;
 								//t->isArray = false;
 							} 
 							//if not a function, throw that error
 							else 
 							{
+								//Set types, array, is static
 								t-> type = originalDecl -> type;
 								t -> isArray = originalDecl -> isArray;
 								t -> isStatic = originalDecl -> isStatic;
 									
+								//check if simple decl	
 								if(originalDecl -> kind.decl != funDeclaration)
 								{
-									printError(0, t->lineno, t->attr.name, 0, na, na);
+									printError(0, t->lineno, t->attr.name, 0, na, na, 0);
 								}
 							}
+
+
 							for(int i = 0; i < 3; i++) 
 							{
 								scopeAndTypeR(t->child[i]);
 							}
+
+							//Check for paramater errors, if we have parameters
+							if(originalDecl -> child[0] != NULL && t->child[0] != NULL)
+							{
+								checkParams(t->child[0], originalDecl->child[0]);
+							}
+							
 
 							break;
 
@@ -631,7 +717,7 @@ void scopeAndType(TreeNode * t)
 	}
 
 
-void printError(int errno, int errorLine, char * symbol, int redefline, ExpType right, ExpType wrong)
+void printError(int errno, int errorLine, char * symbol, int redefline, ExpType right, ExpType wrong, int paramNo)
 {
 	char * wrongType;
 	char * rightType;
@@ -704,6 +790,8 @@ void printError(int errno, int errorLine, char * symbol, int redefline, ExpType 
 		case -1:
 			printf("ERROR(ARGLIST): source file \"%s\" could not be opened.\n", symbol);
 			exit(-1);
+
+		// Calling, Operand Errors ___________________________________________________________________________________________________________
 		case 0:
 			printf("ERROR(%d): '%s' is a simple variable and cannot be called.\n", errorLine, symbol);
 			break;
@@ -787,6 +875,34 @@ void printError(int errno, int errorLine, char * symbol, int redefline, ExpType 
 			printf("ERROR(%d): '%s' requires that either both or neither operands be arrays.\n", errorLine, symbol);
 			break;
 
+
+		//  Initalization errors  ____________________________________________________________________________________________________
+		case 23:
+			printf("ERROR(%d): Initializer for variable '%s' is not a constant expression.\n", errorLine, symbol);
+			break;
+		case 24:
+			printf("ERROR(%d): Variable '%s' is of %s but is being initialized with an expression of %s.\n", errorLine, symbol, rightType, wrongType);
+			break;
+
+		//  Param Errors _____________________________________________________________________________________________________________
+		case 25:
+			printf("ERROR(%d): Too few parameters passed for function '%s' defined on line %d.\n", errorLine, symbol, redefline);
+			break;
+		case 26:
+			//printf("ERROR(%d): Expecting %s in parameter %i of call to '%s' defined on line %d but got %s.\n", errorLine, rightType, 
+			break;
+		case 27:
+			break;
+		case 28:
+			break;
+		case 29:
+			break;
+
+		// Break Error  ______________________________________________________________________________________________________________
+
+		case 30:
+			printf("ERROR(%d): Cannot have a break statement outside of loop.\n", errorLine);
+			break;
 
 		//  __________________________________________________________________________________________________________
 		default:	

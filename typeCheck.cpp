@@ -223,6 +223,7 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 			{
 				arrayError = 45;
 			}
+			//If we have all 3 errors
 			else if (arrayError == 34)
 			{
 				arrayError = 345;
@@ -383,6 +384,32 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		}
 	}
 
-
-
 }
+
+
+
+void checkParams(TreeNode * t, TreeNode * originalDecl)
+{
+	//Not enough params in the call
+	if(t == NULL)
+	{
+		//printError()
+	}
+
+	//Too many params in the call
+	if(originalDecl == NULL)
+	{
+		//printError()
+	}
+
+	if(t != NULL)
+	{
+
+		if(originalDecl->type == t->type)
+		{
+			//printf("TRUE\n");
+		}
+	}	
+}
+
+

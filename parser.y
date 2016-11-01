@@ -805,6 +805,7 @@ sumExpression			: sumExpression sumop term
 								$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
 								$$ -> attr.name = $2 -> tokenString;
+								$$ -> lineno = $2 -> lineno;
 							}
 						| term
 							{
@@ -845,6 +846,7 @@ unaryExpression			: unaryop unaryExpression
 								$$ -> child[0] = $2;
 								$$ -> numChildren = 1;
 								$$ -> attr.name = $1 -> tokenString;
+								$$ -> lineno = $1 -> lineno;
 							}
 						| factor
 							{$$ = $1;}
@@ -913,6 +915,7 @@ call					: ID LPAREN args RPAREN
 								$$ -> numChildren = 1;
 								$$ -> attr.name = strdup($1 -> tokenString);
 								$$ ->isArray = false;
+								$$ -> lineno = $1 -> lineno;
 
 							}
 						;
@@ -986,6 +989,8 @@ int main(int argc, char *argv[])
 	bool capP;
 
 
+	
+	
 	// for options
 	int opt; 
 
@@ -1014,7 +1019,7 @@ int main(int argc, char *argv[])
 		FILE *infile = fopen(argv[optCount], "r");
 		if (infile == NULL)
 		{
-			printError(-1, 0, argv[optCount], 0, na, na);
+			printError(-1, 0, argv[optCount], 0, na, na, 0);
 			exit(-1);
 		}
 		yyin = infile;
@@ -1023,6 +1028,8 @@ int main(int argc, char *argv[])
 	yyparse();
 	fclose(yyin);
 
+	savedTree = setup(setupTree, savedTree);
+
 	// print -p before errors
 	if (printingTree == 1 && !capP) //1)
 	{
@@ -1030,11 +1037,11 @@ int main(int argc, char *argv[])
 	}
 
 	scopeAndTypeR(savedTree);
-	//setup(setupTree);
+	
 
 	if(symTab.lookup("main") == NULL)
 	{
-		printError(-2, 0, NULL, 0, na, na);
+		printError(-2, 0, NULL, 0, na, na, 0);
 	}
 
 	/* Symtab printing stuff 
@@ -1051,6 +1058,7 @@ int main(int argc, char *argv[])
 
 	printf("Number of warnings: %d\n", numWarnings);
 	printf("Number of errors: %d\n", numErrors);
+	//symTab.print(pointerPrintStr);
 
 	return 0;
 }
