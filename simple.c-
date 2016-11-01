@@ -1,7 +1,7 @@
 // C-F16
 //
 
-int ant()
+int ant(int x[])
 {
 	return 3;
 }
@@ -9,5 +9,5 @@ int ant()
 main()
 {
 	int x[3];
-	ant();
+	ant(3,x);
 }

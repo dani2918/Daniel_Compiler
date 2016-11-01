@@ -413,6 +413,11 @@ void checkParams(TreeNode * t, TreeNode * originalDecl, TreeNode * callName, Tre
 			return;
 		}
 
+		// if(originalDecl->isArray)
+		// {
+		// 	printf("array!\n");
+		// }
+
 		if(!t->isArray && originalDecl->isArray)
 		{
 			printError(27, callName->lineno, funName->attr.name, funName->lineno, na, na, paramCount);

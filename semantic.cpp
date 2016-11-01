@@ -683,6 +683,7 @@ void scopeAndType(TreeNode * t)
 							else 
 							{
 								//Set types, array, is static
+								//TODO: don't want to equate
 								t-> type = originalDecl -> type;
 								t -> isArray = originalDecl -> isArray;
 								t -> isStatic = originalDecl -> isStatic;
@@ -700,9 +701,13 @@ void scopeAndType(TreeNode * t)
 								scopeAndTypeR(t->child[i]);
 							}
 
+							//Do this again in case it got changed in typing children
+							originalDecl = (TreeNode *)symTab.lookup(t->attr.name);
+							
 							//Check for paramater errors, if we have parameters, if we don't have either of the other 2 errors
 							if(originalDecl != NULL && originalDecl -> kind.decl == funDeclaration)
 							{
+								//printf("got here\n");
 								if(originalDecl -> child[0] != NULL || t->child[0] != NULL)
 								{
 									checkParams(t->child[0], originalDecl->child[0], t, originalDecl);
