@@ -713,7 +713,6 @@ void scopeAndType(TreeNode * t)
 							else 
 							{
 								//Set types, array, is static
-								//TODO: don't want to equate
 								t-> type = originalDecl -> type;
 								t -> isArray = originalDecl -> isArray;
 								t -> isStatic = originalDecl -> isStatic;
@@ -737,7 +736,6 @@ void scopeAndType(TreeNode * t)
 							//Check for paramater errors, if we have parameters, if we don't have either of the other 2 errors
 							if(originalDecl != NULL && originalDecl -> kind.decl == funDeclaration)
 							{
-								//printf("got here\n");
 								if(originalDecl -> child[0] != NULL || t->child[0] != NULL)
 								{
 									checkParams(t->child[0], originalDecl->child[0], t, originalDecl);
@@ -864,7 +862,7 @@ void printError(int errno, int errorLine, char * symbol, int redefline, ExpType 
 			printf("ERROR(%d): Cannot return an array.\n", errorLine);
 			break;
 		//NOTE: Out of order
-		case 30:
+		case 85:
 			printf("ERROR(%d): Array index is an unindexed array.\n", errorLine);
 			break;
 
