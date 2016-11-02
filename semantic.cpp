@@ -685,6 +685,9 @@ void scopeAndType(TreeNode * t)
 								std::string strName(t->attr.name);
 								if(strName != "[")
 								{
+									t->isIndexed = false;
+									t->isArray = true;
+									//printf("t->attr: %s\n", t->child[0]->attr.name);
 									printError(22, t->lineno, t->attr.name, 0, na, na, 0);
 								}
 							}
@@ -730,7 +733,7 @@ void scopeAndType(TreeNode * t)
 								scopeAndTypeR(t->child[i]);
 							}
 
-							//Do this again in case it got changed in typing children
+							//Do this again in case originalDecl got changed in typing children
 							originalDecl = (TreeNode *)symTab.lookup(t->attr.name);
 							
 							//Check for paramater errors, if we have parameters, if we don't have either of the other 2 errors

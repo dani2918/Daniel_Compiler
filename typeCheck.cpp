@@ -199,6 +199,7 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 			arrayError = 3;
 		}
 
+
 		// keep from having cascading errors
 		if(left->type != boolean && left -> type != integer && left -> type != character && left -> type != undefined)
 		{
@@ -222,7 +223,7 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 
 		}
 		//If we have an undindex array index
-		if (right->isArray && !right->isIndexed)
+		if (right->isArray && !right->isIndexed && right->kind.exp==IdK)
 		{
 			//If we have both this error and a non int index
 			if(arrayError == 4)
@@ -257,6 +258,12 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 		{
 			t -> type = undefined;
 		}
+
+		if(right->isArray && !right->isIndexed && arrayError == 0)
+		{
+			printError(85, t->lineno, NULL, 0, na, na, 0);
+		}
+
 	}
 
 }
@@ -398,7 +405,6 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 
 void checkParams(TreeNode * t, TreeNode * originalDecl, TreeNode * callName, TreeNode * funName)
 {
-
 	int paramCount = 1;	
 	
 	while(1)
@@ -446,8 +452,7 @@ void checkParams(TreeNode * t, TreeNode * originalDecl, TreeNode * callName, Tre
 		originalDecl = originalDecl -> sibling;
 
 		paramCount++;
-	}
-		
+	}	
 }
 
 
