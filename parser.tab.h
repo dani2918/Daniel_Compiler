@@ -144,15 +144,15 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 78 "parser.y"
+#line 80 "parser.y"
 {
 	TokenData *tokenData;
 
-#line 83 "parser.y"
+#line 85 "parser.y"
 
 	TreeNode *treeNode;
 
-#line 88 "parser.y"
+#line 90 "parser.y"
 
 	ExpType expType;
 	int number; 
@@ -161,7 +161,7 @@ typedef union YYSTYPE
 	char * name;
 
 
-#line 98 "parser.y"
+#line 100 "parser.y"
 
 	char * c;
 }

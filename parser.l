@@ -12,6 +12,8 @@
 
 int lineno = 1;
 SymbolTable st;
+int numErrors;
+int numWarnings;
 
 int setTokenData(int tokenClass)
 {
@@ -19,7 +21,7 @@ int setTokenData(int tokenClass)
 	yylval.tokenData->tokenClass = tokenClass;
 	yylval.tokenData->lineno = lineno;
 	yylval.tokenData->tokenString = strdup(yytext);
-	//printf("yytext: %s\n", yytext);
+	
 
 	switch (tokenClass)
 	{
@@ -176,7 +178,7 @@ comment		"//".*
 {CHARCONST}		{return setTokenData(CHARCONST);}
 
 {whitespace}	;
-.				{printf("ERROR(%d): Invalid or misplaced input character: \"%s\"\n", lineno, yytext);}
+.				{printf("WARNING(%d): Invalid input character: \"%s\". Character ignored.\n", lineno, yytext); numWarnings++;}
 
 %%
 

@@ -1,7 +1,7 @@
 BIN  = parser
 CC   = g++
-SRCS = $(BIN).y $(BIN).l syntaxTree.cpp symbolTable.cpp printtree.cpp typeCheck.cpp semantic.cpp 
-OBJS = lex.yy.o $(BIN).tab.o syntaxTree.o symbolTable.o printtree.o typeCheck.o semantic.o 
+SRCS = $(BIN).y $(BIN).l syntaxTree.cpp symbolTable.cpp printtree.cpp typeCheck.cpp semantic.cpp yyerror.cpp
+OBJS = lex.yy.o $(BIN).tab.o syntaxTree.o symbolTable.o printtree.o typeCheck.o semantic.o yyerror.o
 LIBS = -lm 
 CCFLAGS = -g
 
@@ -30,6 +30,9 @@ typeCheck.o: typeCheck.cpp typeCheck.h globals.h
 semantic.o: semantic.cpp semantic.h globals.h
 	$(CC) $(CCFLAGS) -c semantic.cpp
 
+yyerror.o: yyerror.cpp yyerror.h globals.h
+	$(CC) $(CCFLAGS) -c yyerror.cpp
+
 
 
 
@@ -41,10 +44,10 @@ clean:
 	rm -f $(OBJS) $(BIN) syntaxTree.o lex.yy.c $(BIN).tab.h $(BIN).tab.c $(BIN).tar *~ *.output 
 
 tar:
-	tar -cvf $(BIN).tar $(SRCS) globals.h scanType.h syntaxTree.h symbolTable.h printtree.h semantic.h typeCheck.h makefile 
+	tar -cvf $(BIN).tar $(SRCS) globals.h scanType.h syntaxTree.h symbolTable.h printtree.h semantic.h typeCheck.h yyerror.h makefile 
 
 submit: 
-	curl -F student=daniel -F assignment="CS445 F16 Assignment 4" -F "submittedfile=@parser.tar" "http://ec2-52-89-93-46.us-west-2.compute.amazonaws.com/cgi-bin/fileCapture.py"
+	curl -F student=daniel -F assignment="CS445 F16 Assignment 5" -F "submittedfile=@parser.tar" "http://ec2-52-89-93-46.us-west-2.compute.amazonaws.com/cgi-bin/fileCapture.py"
 
 
 

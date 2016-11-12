@@ -9,17 +9,19 @@
  #include "symbolTable.h"
  #include "printtree.h"
  #include "semantic.h"
+ #include "yyerror.h"
 
  #include "parser.tab.h"
 
+#define YYERROR_VERBOSE 1
 
  extern int yylex();
  extern int yyparse();
  extern FILE *yyin;
  extern int lineno;
  extern SymbolTable symTab;
- int numErrors;
- int numWarnings;
+ 
+
 
  SymbolTable finalSymTab;
  
@@ -36,12 +38,12 @@
 // To track epsilon productions
  int firstTimeThrough = 0;
 
-//#define YYERROR_VERBOSE 1
-void yyerror(const char *errMsg)
-{
- 	printf("ERROR(%d): %s\n", lineno, errMsg);
 
-}
+//void yyerror(const char *errMsg)
+//{
+ //	printf("ERROR(%d): %s\n", lineno, errMsg);
+
+//}
 
 void printToken(int lineno, char* tokenString)
 {
@@ -150,11 +152,11 @@ declaration 			: varDeclaration
 							{$$ = $1; }
 						| recDeclaration 
 							{$$ = $1; }
+						| error
 						;
 
 recDeclaration 			: RECORD ID LCUR localDeclarations RCUR
 							{
-							
 
 								$$ = newDeclNode(recDeclaration);
 								$$ -> isRecord = true;
@@ -184,7 +186,10 @@ varDeclaration			: typeSpecifier varDeclList SEMI
 								{
 									$$ = NULL;
 								}
+								yyerrok;
  							}
+						| error varDeclList SEMI
+						| typeSpecifier error SEMI
 						;
 
 scopedVarDeclaration 	: scopedTypeSpecifier varDeclList SEMI
@@ -204,7 +209,12 @@ scopedVarDeclaration 	: scopedTypeSpecifier varDeclList SEMI
 								{
 									$$ = NULL;
 								}
+								yyerrok;
 							}
+						| error varDeclList SEMI 
+							{yyerrok;}
+						| scopedTypeSpecifier error SEMI 
+							{yyerrok;}
 						;
 
 varDeclList				: varDeclList COMMA varDeclInitialize
@@ -225,13 +235,15 @@ varDeclList				: varDeclList COMMA varDeclInitialize
 									$$ = $3;
 									
 								}
+								yyerrok;
 							}							
-								 
+						| varDeclList COMMA error								 
 
 						| varDeclInitialize
 							{ 
 								$$ = $1; 
 							}
+						| error
 						;
 
 varDeclInitialize 		: varDeclId
@@ -1025,10 +1037,10 @@ int main(int argc, char *argv[])
 		}
 		yyin = infile;
 	}
-	
+	initErrorProcessing();
 	yyparse();
 	fclose(yyin);
-
+	
 	savedTree = setup(setupTree, savedTree);
 
 	// print -p before errors
