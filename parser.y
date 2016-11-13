@@ -560,6 +560,7 @@ expressionStmt			: expression SEMI
 						| SEMI
 							{
 								$$ = NULL;
+								//printf("Got here\n");
 								yyerrok;
 							}
 						;
@@ -678,6 +679,7 @@ unmatched				: IF LPAREN simpleExpression RPAREN matched
 
 							}
 						| IF error
+							//{printf("got here\n");}
 						| IF error RPAREN unmatched
 							{yyerrok;}
 						| IF error RPAREN matched ELSE unmatched
@@ -757,6 +759,7 @@ expression 				: mutable ASS expression
 								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
 							}
+	
 						| mutable SUBASS expression
 							{
 								$$ = newExpNode(AssK);
