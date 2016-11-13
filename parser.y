@@ -105,9 +105,9 @@ void printErrToken(int lineno, char* tokenString)
 %type <treeNode> declarationList declaration
 %type <treeNode> varDeclaration funDeclaration  recDeclaration varDeclList varDeclInitialize varDeclId simpleExpression
 	%type <treeNode> params paramList paramTypeList paramIdList paramId
-%type <treeNode> statement otherStatement selectIterStmt expressionStmt compoundStmt returnStmt breakStmt
+%type <treeNode> statement otherstmt selectIterStmt expressionStmt compoundStmt returnStmt breakStmt
 	%type <treeNode> localDeclarations scopedVarDeclaration statementList
-%type <treeNode> expression firstmatched matched unmatched
+%type <treeNode> expression  matched unmatched
 	%type <treeNode> andExpression unaryRelExpression relExpression sumExpression term unaryExpression
 	%type <treeNode> factor immutable mutable
 	%type <treeNode> argList args call constant
@@ -466,11 +466,9 @@ paramId 				: ID
 
 statement 				: selectIterStmt
 							{$$ = $1;}
-						| otherStatement
-							{ $$ = $1; }
 						;
-
-otherStatement 			: expressionStmt 
+					
+otherstmt				: expressionStmt 
 							{$$ = $1;}
 						| compoundStmt
 							{$$ = $1;}
@@ -478,8 +476,6 @@ otherStatement 			: expressionStmt
 							{$$ = $1;}
 						| breakStmt
 							{$$ = $1;}
-						;
-					
 
 compoundStmt			: LCUR localDeclarations statementList RCUR
 							{
@@ -567,44 +563,14 @@ expressionStmt			: expression SEMI
 
 
 
-selectIterStmt 			: firstmatched 
+selectIterStmt 			: matched 
 							{ $$ = $1;} 
 						| unmatched
 							{ $$ = $1;} 
 
 						; 
 
-firstmatched			: IF LPAREN simpleExpression RPAREN matched ELSE matched 
-							{
-								$$ = newStmtNode(selectionStmt);
-								$$ -> attr.name = $1 -> tokenString;
-								$$ -> numChildren = 3;
-								$$ -> child[0] = $3; 
-								$$ -> child[1] = $5;
-								$$ -> child[2] = $7;
-								$$ -> lineno = $1 -> lineno;
-								$$ -> type = Void;
-							}
 
-						| IF error RPAREN matched ELSE matched
-							{yyerrok;}
-
-
-						| WHILE LPAREN simpleExpression RPAREN matched
-							{
-								$$ = newStmtNode(iterationStmt);
-								$$ -> attr.name = $1 -> tokenString;
-								$$ -> numChildren = 2;
-								$$ -> child[0] = $3;
-								$$ -> child[1] = $5;
-								$$ -> lineno = $1 -> lineno;
-								$$ -> type = Void;
-							}
-						| WHILE error RPAREN matched
-							{yyerrok;}
-						| WHILE LPAREN error RPAREN matched
-							{yyerrok;}
-						;
 
 matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched 
 							{
@@ -618,9 +584,6 @@ matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched
 								$$ -> type = Void;
 							}
 
-						| IF LPAREN error
-						| IF error RPAREN matched ELSE matched
-							{yyerrok;}
 
 						| WHILE LPAREN simpleExpression RPAREN matched
 							{
@@ -633,20 +596,14 @@ matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched
 								$$ -> type = Void;
 							}
 
-						| WHILE error RPAREN matched
-							{yyerrok;}
-						| WHILE LPAREN error RPAREN matched
-							{yyerrok;}
-						| WHILE error
 
-						| otherStatement
+						| otherstmt
 							{
 								$$ = $1;
 							}
-						| error
 						;
 
-unmatched				: IF LPAREN simpleExpression RPAREN matched	
+unmatched				: IF LPAREN simpleExpression RPAREN statement	
 							{
 								$$ = newStmtNode(selectionStmt);
 								$$ -> attr.name = $1 -> tokenString;
@@ -655,39 +612,11 @@ unmatched				: IF LPAREN simpleExpression RPAREN matched
 								$$ -> child[1] = $5;
 								$$ -> lineno = $1 -> lineno;
 								$$ -> type = Void;
-							}
-						| IF LPAREN simpleExpression RPAREN unmatched	
-							{
-								$$ = newStmtNode(selectionStmt);
-								$$ -> attr.name = $1 -> tokenString;
-								$$ -> numChildren = 2;
-								$$ -> child[0] = $3;
-								$$ -> child[1] = $5;
-								$$ -> lineno = $1 -> lineno;
-								$$ -> type = Void;
-							}					
-						| IF LPAREN simpleExpression RPAREN matched ELSE unmatched
-							{
-								$$ = newStmtNode(selectionStmt);
-								$$ -> attr.name = $1 -> tokenString;
-								$$ -> child[0] = $3;
-								$$ -> child[2] = $5;
-								$$ -> child[2] = $7;
-								$$ -> numChildren = 3;
-								$$ -> lineno = $1 -> lineno;
-								$$ -> type = Void;
-
-							}
-						| IF error
-							//{printf("got here\n");}
-						| IF error RPAREN unmatched
-							{yyerrok;}
-						| IF error RPAREN matched ELSE unmatched
-							{yyerrok;}
+							}		
 
 
 
-						| WHILE LPAREN simpleExpression RPAREN unmatched	
+						| WHILE LPAREN simpleExpression RPAREN statement	
 							{
 								$$ = newStmtNode(iterationStmt);
 								$$ -> attr.name = $1 -> tokenString;
@@ -699,10 +628,6 @@ unmatched				: IF LPAREN simpleExpression RPAREN matched
 							}					
 
 
-						| WHILE error RPAREN unmatched
-							{yyerrok;}
-						| WHILE LPAREN error RPAREN unmatched
-							{yyerrok;}
 						;
 
 
