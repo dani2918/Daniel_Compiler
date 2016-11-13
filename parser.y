@@ -105,7 +105,7 @@ void printErrToken(int lineno, char* tokenString)
 %type <treeNode> declarationList declaration
 %type <treeNode> varDeclaration funDeclaration  recDeclaration varDeclList varDeclInitialize varDeclId simpleExpression
 	%type <treeNode> params paramList paramTypeList paramIdList paramId
-%type <treeNode> statement otherstmt selectIterStmt expressionStmt compoundStmt returnStmt breakStmt
+%type <treeNode> statement otherstmt  expressionStmt compoundStmt returnStmt breakStmt
 	%type <treeNode> localDeclarations scopedVarDeclaration statementList
 %type <treeNode> expression  matched unmatched
 	%type <treeNode> andExpression unaryRelExpression relExpression sumExpression term unaryExpression
@@ -153,6 +153,7 @@ declaration 			: varDeclaration
 						| recDeclaration 
 							{$$ = $1; }
 						| error
+							{$$ = NULL;}
 						;
 
 recDeclaration 			: RECORD ID LCUR localDeclarations RCUR
@@ -172,6 +173,7 @@ recDeclaration 			: RECORD ID LCUR localDeclarations RCUR
 
 varDeclaration			: typeSpecifier varDeclList SEMI 
 							{
+								yyerrok;
 								TreeNode * t = $2;
 								if (t != NULL)
 								{
@@ -186,15 +188,16 @@ varDeclaration			: typeSpecifier varDeclList SEMI
 								{
 									$$ = NULL;
 								}
-								yyerrok;
+								
  							}
-						| error varDeclList SEMI
+						| error varDeclList SEMI {$$ = NULL;}
 						| typeSpecifier error SEMI
-							{yyerrok;}
+							{yyerrok; $$ = NULL;}
 						;
 
 scopedVarDeclaration 	: scopedTypeSpecifier varDeclList SEMI
 							{
+								yyerrok;
 								TreeNode * t = $2;
 								if (t != NULL)
 								{
@@ -210,16 +213,17 @@ scopedVarDeclaration 	: scopedTypeSpecifier varDeclList SEMI
 								{
 									$$ = NULL;
 								}
-								yyerrok;
+								
 							}
 						| error varDeclList SEMI 
-							{yyerrok;}
+							{yyerrok; $$ = NULL;}
 						| scopedTypeSpecifier error SEMI 
-							{yyerrok;}
+							{yyerrok; $$ = NULL;}
 						;
 
 varDeclList				: varDeclList COMMA varDeclInitialize
 							{
+								yyerrok;
 								TreeNode * t = $1;
 								if (t != NULL)
 								{
@@ -236,15 +240,17 @@ varDeclList				: varDeclList COMMA varDeclInitialize
 									$$ = $3;
 									
 								}
-								yyerrok;
+								
 							}							
-						| varDeclList COMMA error								 
+						| varDeclList COMMA error
+							{$$ = NULL;}								 
 
 						| varDeclInitialize
 							{ 
 								$$ = $1; 
 							}
 						| error
+							{$$ = NULL;}
 						;
 
 varDeclInitialize 		: varDeclId
@@ -259,8 +265,9 @@ varDeclInitialize 		: varDeclId
 								
 							}
 						| error COL simpleExpression 
-							{yyerrok;}
+							{yyerrok; $$ = NULL;}
 						| varDeclId COL error
+							{$$ = NULL;}
 						;
 
 
@@ -282,8 +289,9 @@ varDeclId				: ID
 								//$$ -> isStatic = isStatic;
 							}	
 						| ID LBRAC error 
+							{$$ = NULL;}
 						| error RBRAC
-							{yyerrok;}	
+							{yyerrok; $$ = NULL;}	
 						;
 
 
@@ -337,8 +345,11 @@ funDeclaration			: typeSpecifier ID LPAREN params RPAREN statement
 								
 							}
 						| typeSpecifier error
+							{$$ = NULL;}
 						| typeSpecifier ID LPAREN error
+							{$$ = NULL;}
 					 	| typeSpecifier ID LPAREN params LPAREN error
+					 		{$$ = NULL;}
 
 						| ID LPAREN params RPAREN statement
 							{
@@ -351,7 +362,9 @@ funDeclaration			: typeSpecifier ID LPAREN params RPAREN statement
 								$$ -> child[1] = $5; 
 							}
 						| ID LPAREN error
+							{$$ = NULL;}
 						| ID LPAREN params RPAREN error	
+							{ $$ = NULL;}
 						;
 
 
@@ -367,6 +380,7 @@ params					: paramList
 
 paramList				: paramList SEMI paramTypeList 
 							{
+								yyerrok;
 								TreeNode * t = $1;
 								if (t != NULL)
 								{
@@ -383,7 +397,7 @@ paramList				: paramList SEMI paramTypeList
 									$$ = $3;
 									
 								}
-								yyerrok;
+								
 							}
 						| paramList SEMI error
 
@@ -392,6 +406,7 @@ paramList				: paramList SEMI paramTypeList
 								$$ = $1; 
 							}
 						| error
+							{$$ = NULL;}
 						;
 
 
@@ -413,10 +428,12 @@ paramTypeList			: typeSpecifier paramIdList
 								}
 							}
 						| typeSpecifier error
+							{$$ = NULL;}
 						;
 
 paramIdList				: paramIdList COMMA paramId 
 							{
+								yyerrok;
 								TreeNode * t = $1;
 								if (t != NULL)
 								{
@@ -432,10 +449,11 @@ paramIdList				: paramIdList COMMA paramId
 									$$ = $3; 
 									
 								}
-								yyerrok;
+								
 							}
 
 						| paramIdList COMMA error
+							{$$ = NULL;}
 
 						| paramId
 							{ 
@@ -443,6 +461,7 @@ paramIdList				: paramIdList COMMA paramId
 							}
 
 						| error
+							{$$ = NULL;}
 						;
 
 paramId 				: ID 
@@ -460,11 +479,13 @@ paramId 				: ID
 								$$->isParam = true;
 							}	
 						| error RBRAC
-							{yyerrok;}	
+							{yyerrok; $$ = NULL;}	
 						;
 
 
-statement 				: selectIterStmt
+statement 				: matched
+							{$$ = $1;}
+						| unmatched
 							{$$ = $1;}
 						;
 					
@@ -476,9 +497,11 @@ otherstmt				: expressionStmt
 							{$$ = $1;}
 						| breakStmt
 							{$$ = $1;}
+						;
 
 compoundStmt			: LCUR localDeclarations statementList RCUR
 							{
+								yyerrok;
 								$$ = newStmtNode(compoundStmt); 
 								$$ -> lineno = $1 -> lineno;
 								$$ -> numChildren = 2;
@@ -489,12 +512,12 @@ compoundStmt			: LCUR localDeclarations statementList RCUR
 								$$ -> attr.name = $1 -> tokenString; 
 								$$ -> type = Void;
 
-								yyerrok;
+								
 							}
 						| LCUR error statementList RCUR
-							{yyerrok;}
+							{yyerrok; $$ = NULL;}
 						| LCUR localDeclarations error RCUR
-							{yyerrok;}
+							{yyerrok; $$ = NULL;}
 						;
 
 localDeclarations		: localDeclarations scopedVarDeclaration
@@ -545,30 +568,24 @@ statementList			: statementList statement
 							{
 								$$ = NULL;
 							}
+
 						;
 
 expressionStmt			: expression SEMI 
 							{
-								$$ = $1;
 								yyerrok;
+								$$ = $1;
+
 							}
 
 						| SEMI
 							{
-								$$ = NULL;
-								//printf("Got here\n");
 								yyerrok;
+								$$ = NULL;
+								
 							}
+
 						;
-
-
-
-selectIterStmt 			: matched 
-							{ $$ = $1;} 
-						| unmatched
-							{ $$ = $1;} 
-
-						; 
 
 
 
@@ -584,6 +601,11 @@ matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched
 								$$ -> type = Void;
 							}
 
+						| IF LPAREN error
+							{ $$ = NULL;}
+						| IF error RPAREN matched ELSE matched
+							{yyerrok; $$ = NULL;}
+
 
 						| WHILE LPAREN simpleExpression RPAREN matched
 							{
@@ -596,11 +618,19 @@ matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched
 								$$ -> type = Void;
 							}
 
+						| WHILE error RPAREN matched	
+							{yyerrok; $$ = NULL;}
+						| WHILE LPAREN error RPAREN matched
+							{yyerrok; $$ = NULL;}
+						| WHILE error
+							{$$ = NULL;}
 
 						| otherstmt
 							{
 								$$ = $1;
 							}
+						| error
+							{$$ = NULL;}
 						;
 
 unmatched				: IF LPAREN simpleExpression RPAREN statement	
@@ -614,6 +644,12 @@ unmatched				: IF LPAREN simpleExpression RPAREN statement
 								$$ -> type = Void;
 							}		
 
+						| IF error
+							{$$ = NULL;}
+						| IF error RPAREN statement
+							{yyerrok; $$ = NULL;}
+						| IF error RPAREN matched ELSE unmatched
+							{yyerrok; $$ = NULL;}
 
 
 						| WHILE LPAREN simpleExpression RPAREN statement	
@@ -625,39 +661,46 @@ unmatched				: IF LPAREN simpleExpression RPAREN statement
 								$$ -> numChildren = 2;
 								$$ -> lineno = $1 -> lineno;
 								$$ -> type = Void;
-							}					
+							}	
 
+						| WHILE error RPAREN unmatched
+							{yyerrok; $$ = NULL;}
+						| WHILE LPAREN error RPAREN unmatched
+							{yyerrok; $$ = NULL;}	
 
 						;
 
 
 returnStmt				: RETURN SEMI
-							{
+							{   
+								yyerrok;
 								$$ = newStmtNode(returnStmt); 
 								$$ -> attr.name = $1 -> tokenString;
 								$$ -> lineno = $1 -> lineno;
 								$$ -> type = Void;
 
-								yyerrok;
+								
 							}
 						| RETURN expression SEMI
-							{
+							{ 	
+								yyerrok;
 								$$ = newStmtNode(returnStmt);
 								$$ -> attr.name = $1 -> tokenString;
 								$$ -> lineno = $1 -> lineno;
 								$$ -> child[0] = $2;
 								$$ -> numChildren = 1;
 								$$ -> type = Void;
-								yyerrok;
+								
 							}
 						;
 
 breakStmt 				: BREAK SEMI
-							{
+							{	
+								yyerrok;
 								$$ = newStmtNode(breakStmt);
 								$$ -> attr.name = $1 -> tokenString;
 								$$ -> type = Void;
-								yyerrok;
+								
 							}
 						;
 //_________________________________________________________________________________
@@ -674,6 +717,7 @@ expression 				: mutable ASS expression
 							}
 
 						| error ASS error 
+							{$$ = NULL;}
 
 						| mutable ADDASS expression
 							{
@@ -684,6 +728,9 @@ expression 				: mutable ASS expression
 								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
 							}
+
+						| error ADDASS error 
+							{$$ = NULL;}
 	
 						| mutable SUBASS expression
 							{
@@ -694,6 +741,10 @@ expression 				: mutable ASS expression
 								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
 							}
+
+						| error SUBASS error 
+							{$$ = NULL;}
+
 						| mutable MULASS expression
 							{
 								$$ = newExpNode(AssK);
@@ -703,6 +754,10 @@ expression 				: mutable ASS expression
 								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
 							}
+
+						| error MULASS error 
+							{$$ = NULL;}	
+
 						| mutable DIVASS expression
 							{
 								$$ = newExpNode(AssK);
@@ -712,31 +767,37 @@ expression 				: mutable ASS expression
 								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
 							}
+
+						| error DIVASS error 
+							{$$ = NULL;}	
+
 						| mutable INC 
-							{
+							{	
+								yyerrok;
 								$$ = newExpNode(AssK);
 								$$ -> child[0] = $1;
 								$$ -> numChildren = 2;
 								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
-								yyerrok;
+								
 							}
 
 						| error INC
-							{yyerrok;}
+							{yyerrok; $$ = NULL;}
 
 						| mutable DEC 
 							{
+								yyerrok;
 								$$ = newExpNode(AssK);
 								$$ -> child[0] = $1;
 								$$ -> numChildren = 2;
 								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
-								yyerrok;
+								
 							}
 
 						| error DEC
-							{yyerrok;}
+							{yyerrok; $$ = NULL;}
 
 						| simpleExpression 
 							{
@@ -755,6 +816,7 @@ simpleExpression		: simpleExpression OR andExpression
 
 							}
 						| simpleExpression OR error
+							{$$ = NULL;}
 						| andExpression
 							{
 								$$ = $1;
@@ -771,6 +833,7 @@ andExpression			: andExpression AND unaryRelExpression
 								$$ -> attr.name = strdup($2 -> tokenString);
 						}
 						| andExpression AND error
+							{$$ = NULL;}
 						| unaryRelExpression
 							{
 								$$ = $1;
@@ -786,6 +849,7 @@ unaryRelExpression		: NOT unaryRelExpression
 							}
 
 						| NOT error 
+							{$$ = NULL;}
 							
 						| relExpression
 							{
@@ -803,8 +867,9 @@ relExpression			: sumExpression relop sumExpression
 							}
 
 						| sumExpression relop error
+							{$$ = NULL;}
 						| error relop sumExpression
-							{yyerrok;}	
+							{yyerrok; $$ = NULL;}	
 						| sumExpression
 							{
 								$$ = $1;
@@ -837,7 +902,7 @@ sumExpression			: sumExpression sumop term
 							}
 
 						| sumExpression sumop error
-							{yyerrok;}	
+							{yyerrok; $$ = NULL;}	
 						| term
 							{
 								$$ = $1;
@@ -861,6 +926,7 @@ term					: term mulop unaryExpression
 							}
 
 						| term mulop error
+							{$$ = NULL;}
 							
 						| unaryExpression
 							{$$ = $1;}
@@ -883,6 +949,7 @@ unaryExpression			: unaryop unaryExpression
 								$$ -> lineno = $1 -> lineno;
 							}
 						| unaryop error
+							{$$ = NULL;}
 						| factor
 							{$$ = $1;}
 						;
@@ -936,8 +1003,9 @@ immutable				: LPAREN expression RPAREN
 							} 
 
 						| LPAREN error
+							{$$ = NULL;}
 						| error RPAREN
-							{yyerrok;}	
+							{yyerrok; $$ = NULL;}	
 
 						| call
 							{
@@ -960,7 +1028,7 @@ call					: ID LPAREN args RPAREN
 
 							}
 						| error LPAREN
-							{yyerrok;}
+							{yyerrok; $$ = NULL;}
 						;
 
 args 					: argList	
@@ -976,6 +1044,7 @@ args 					: argList
 
 argList					: argList COMMA expression 
 							{
+								yyerrok;
 								TreeNode *t = $1;
 								if (t != NULL)
 								{
@@ -990,9 +1059,10 @@ argList					: argList COMMA expression
 								{
 									$$ = $3;
 								}
-								yyerrok;
+								
 							}
 						| argList COMMA error
+							{$$ = NULL;}
 						| expression
 							{
 								$$ = $1;
@@ -1029,6 +1099,7 @@ int main(int argc, char *argv[])
 	int printingTree = 0;
 	numWarnings = 0;
 	numErrors = 0;
+	bool syntaxErrors = false;
 
 	bool capP;
 
@@ -1071,6 +1142,11 @@ int main(int argc, char *argv[])
 	initErrorProcessing();
 	yyparse();
 	fclose(yyin);
+
+	if (numErrors != 0)
+	{
+		syntaxErrors = true;
+	}
 	
 	savedTree = setup(setupTree, savedTree);
 
@@ -1080,10 +1156,14 @@ int main(int argc, char *argv[])
 		printTree(savedTree, capP);
 	}
 
-	scopeAndTypeR(savedTree);
+
+	if(!syntaxErrors)
+	{
+		scopeAndTypeR(savedTree);
+	}
 	
 
-	if(symTab.lookup("main") == NULL)
+	if(symTab.lookup("main") == NULL && !syntaxErrors)
 	{
 		printError(-2, 0, NULL, 0, na, na, 0);
 	}
