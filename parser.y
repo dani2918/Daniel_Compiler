@@ -190,6 +190,7 @@ varDeclaration			: typeSpecifier varDeclList SEMI
  							}
 						| error varDeclList SEMI
 						| typeSpecifier error SEMI
+							{yyerrok;}
 						;
 
 scopedVarDeclaration 	: scopedTypeSpecifier varDeclList SEMI
@@ -257,6 +258,9 @@ varDeclInitialize 		: varDeclId
 								$$ -> numChildren = 1;
 								
 							}
+						| error COL simpleExpression 
+							{yyerrok;}
+						| varDeclId COL error
 						;
 
 
@@ -276,7 +280,10 @@ varDeclId				: ID
 								$$ -> lineno = $1 -> lineno;
 								$$->isArray = true; 
 								//$$ -> isStatic = isStatic;
-							}		
+							}	
+						| ID LBRAC error 
+						| error RBRAC
+							{yyerrok;}	
 						;
 
 
@@ -329,6 +336,9 @@ funDeclaration			: typeSpecifier ID LPAREN params RPAREN statement
 								$$ -> child[1] = $6;
 								
 							}
+						| typeSpecifier error
+						| typeSpecifier ID LPAREN error
+					 	| typeSpecifier ID LPAREN params LPAREN error
 
 						| ID LPAREN params RPAREN statement
 							{
@@ -340,6 +350,8 @@ funDeclaration			: typeSpecifier ID LPAREN params RPAREN statement
 								$$ -> child[0] = $3;
 								$$ -> child[1] = $5; 
 							}
+						| ID LPAREN error
+						| ID LPAREN params RPAREN error	
 						;
 
 
@@ -371,12 +383,15 @@ paramList				: paramList SEMI paramTypeList
 									$$ = $3;
 									
 								}
+								yyerrok;
 							}
+						| paramList SEMI error
 
 						| paramTypeList
 							{ 
 								$$ = $1; 
 							}
+						| error
 						;
 
 
@@ -397,6 +412,7 @@ paramTypeList			: typeSpecifier paramIdList
 									$$ = NULL;
 								}
 							}
+						| typeSpecifier error
 						;
 
 paramIdList				: paramIdList COMMA paramId 
@@ -416,14 +432,17 @@ paramIdList				: paramIdList COMMA paramId
 									$$ = $3; 
 									
 								}
-								
+								yyerrok;
 							}
-							
+
+						| paramIdList COMMA error
 
 						| paramId
 							{ 
 								$$ = $1; 
 							}
+
+						| error
 						;
 
 paramId 				: ID 
@@ -439,16 +458,16 @@ paramId 				: ID
 								$$ -> attr.name = strdup($1 -> tokenString);
 								$$->isArray = true;
 								$$->isParam = true;
-							}		
+							}	
+						| error RBRAC
+							{yyerrok;}	
 						;
 
 
 statement 				: selectIterStmt
 							{$$ = $1;}
 						| otherStatement
-							{
-								$$ = $1; 
-							}
+							{ $$ = $1; }
 						;
 
 otherStatement 			: expressionStmt 
@@ -473,7 +492,13 @@ compoundStmt			: LCUR localDeclarations statementList RCUR
 								//TODO: Remove this, enter new scope for compoundStmt
 								$$ -> attr.name = $1 -> tokenString; 
 								$$ -> type = Void;
+
+								yyerrok;
 							}
+						| LCUR error statementList RCUR
+							{yyerrok;}
+						| LCUR localDeclarations error RCUR
+							{yyerrok;}
 						;
 
 localDeclarations		: localDeclarations scopedVarDeclaration
@@ -529,11 +554,13 @@ statementList			: statementList statement
 expressionStmt			: expression SEMI 
 							{
 								$$ = $1;
+								yyerrok;
 							}
 
 						| SEMI
 							{
 								$$ = NULL;
+								yyerrok;
 							}
 						;
 
@@ -543,6 +570,7 @@ selectIterStmt 			: firstmatched
 							{ $$ = $1;} 
 						| unmatched
 							{ $$ = $1;} 
+
 						; 
 
 firstmatched			: IF LPAREN simpleExpression RPAREN matched ELSE matched 
@@ -556,6 +584,11 @@ firstmatched			: IF LPAREN simpleExpression RPAREN matched ELSE matched
 								$$ -> lineno = $1 -> lineno;
 								$$ -> type = Void;
 							}
+
+						| IF error RPAREN matched ELSE matched
+							{yyerrok;}
+
+
 						| WHILE LPAREN simpleExpression RPAREN matched
 							{
 								$$ = newStmtNode(iterationStmt);
@@ -566,6 +599,10 @@ firstmatched			: IF LPAREN simpleExpression RPAREN matched ELSE matched
 								$$ -> lineno = $1 -> lineno;
 								$$ -> type = Void;
 							}
+						| WHILE error RPAREN matched
+							{yyerrok;}
+						| WHILE LPAREN error RPAREN matched
+							{yyerrok;}
 						;
 
 matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched 
@@ -579,6 +616,11 @@ matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched
 								$$ -> lineno = $1 -> lineno;
 								$$ -> type = Void;
 							}
+
+						| IF LPAREN error
+						| IF error RPAREN matched ELSE matched
+							{yyerrok;}
+
 						| WHILE LPAREN simpleExpression RPAREN matched
 							{
 								$$ = newStmtNode(iterationStmt);
@@ -589,10 +631,18 @@ matched					: IF LPAREN simpleExpression RPAREN matched ELSE matched
 								$$ -> lineno = $1 -> lineno;
 								$$ -> type = Void;
 							}
+
+						| WHILE error RPAREN matched
+							{yyerrok;}
+						| WHILE LPAREN error RPAREN matched
+							{yyerrok;}
+						| WHILE error
+
 						| otherStatement
 							{
 								$$ = $1;
 							}
+						| error
 						;
 
 unmatched				: IF LPAREN simpleExpression RPAREN matched	
@@ -627,6 +677,14 @@ unmatched				: IF LPAREN simpleExpression RPAREN matched
 								$$ -> type = Void;
 
 							}
+						| IF error
+						| IF error RPAREN unmatched
+							{yyerrok;}
+						| IF error RPAREN matched ELSE unmatched
+							{yyerrok;}
+
+
+
 						| WHILE LPAREN simpleExpression RPAREN unmatched	
 							{
 								$$ = newStmtNode(iterationStmt);
@@ -637,7 +695,12 @@ unmatched				: IF LPAREN simpleExpression RPAREN matched
 								$$ -> lineno = $1 -> lineno;
 								$$ -> type = Void;
 							}					
-	
+
+
+						| WHILE error RPAREN unmatched
+							{yyerrok;}
+						| WHILE LPAREN error RPAREN unmatched
+							{yyerrok;}
 						;
 
 
@@ -648,6 +711,7 @@ returnStmt				: RETURN SEMI
 								$$ -> lineno = $1 -> lineno;
 								$$ -> type = Void;
 
+								yyerrok;
 							}
 						| RETURN expression SEMI
 							{
@@ -657,6 +721,7 @@ returnStmt				: RETURN SEMI
 								$$ -> child[0] = $2;
 								$$ -> numChildren = 1;
 								$$ -> type = Void;
+								yyerrok;
 							}
 						;
 
@@ -665,6 +730,7 @@ breakStmt 				: BREAK SEMI
 								$$ = newStmtNode(breakStmt);
 								$$ -> attr.name = $1 -> tokenString;
 								$$ -> type = Void;
+								yyerrok;
 							}
 						;
 //_________________________________________________________________________________
@@ -679,6 +745,9 @@ expression 				: mutable ASS expression
 								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
 							}
+
+						| error ASS error 
+
 						| mutable ADDASS expression
 							{
 								$$ = newExpNode(AssK);
@@ -722,7 +791,12 @@ expression 				: mutable ASS expression
 								$$ -> numChildren = 2;
 								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
+								yyerrok;
 							}
+
+						| error INC
+							{yyerrok;}
+
 						| mutable DEC 
 							{
 								$$ = newExpNode(AssK);
@@ -730,7 +804,12 @@ expression 				: mutable ASS expression
 								$$ -> numChildren = 2;
 								$$ -> attr.name = strdup($2 -> tokenString);
 								$$ -> lineno = $2 -> lineno;
+								yyerrok;
 							}
+
+						| error DEC
+							{yyerrok;}
+
 						| simpleExpression 
 							{
 								$$ = $1;
@@ -747,6 +826,7 @@ simpleExpression		: simpleExpression OR andExpression
 								$$ -> attr.name = strdup($2 -> tokenString);
 
 							}
+						| simpleExpression OR error
 						| andExpression
 							{
 								$$ = $1;
@@ -762,6 +842,7 @@ andExpression			: andExpression AND unaryRelExpression
 								$$ -> numChildren = 2;
 								$$ -> attr.name = strdup($2 -> tokenString);
 						}
+						| andExpression AND error
 						| unaryRelExpression
 							{
 								$$ = $1;
@@ -775,6 +856,9 @@ unaryRelExpression		: NOT unaryRelExpression
 								$$ -> numChildren = 1;
 								$$ -> attr.name = strdup($1 -> tokenString);
 							}
+
+						| NOT error 
+							
 						| relExpression
 							{
 								$$ = $1;
@@ -790,6 +874,9 @@ relExpression			: sumExpression relop sumExpression
 								$$ -> attr.name = strdup($2 -> tokenString);
 							}
 
+						| sumExpression relop error
+						| error relop sumExpression
+							{yyerrok;}	
 						| sumExpression
 							{
 								$$ = $1;
@@ -820,6 +907,9 @@ sumExpression			: sumExpression sumop term
 								$$ -> attr.name = $2 -> tokenString;
 								$$ -> lineno = $2 -> lineno;
 							}
+
+						| sumExpression sumop error
+							{yyerrok;}	
 						| term
 							{
 								$$ = $1;
@@ -841,6 +931,9 @@ term					: term mulop unaryExpression
 								$$ -> attr.name = $2 -> tokenString;
 								$$ -> lineno = $2 -> lineno;
 							}
+
+						| term mulop error
+							
 						| unaryExpression
 							{$$ = $1;}
 						;
@@ -861,6 +954,7 @@ unaryExpression			: unaryop unaryExpression
 								$$ -> attr.name = $1 -> tokenString;
 								$$ -> lineno = $1 -> lineno;
 							}
+						| unaryop error
 						| factor
 							{$$ = $1;}
 						;
@@ -910,7 +1004,13 @@ mutable					: ID
 immutable				: LPAREN expression RPAREN
 							{	
 								$$ = $2;
+								yyerrok;
 							} 
+
+						| LPAREN error
+						| error RPAREN
+							{yyerrok;}	
+
 						| call
 							{
 								$$ = $1;
@@ -931,6 +1031,8 @@ call					: ID LPAREN args RPAREN
 								$$ -> lineno = $1 -> lineno;
 
 							}
+						| error LPAREN
+							{yyerrok;}
 						;
 
 args 					: argList	
@@ -960,8 +1062,9 @@ argList					: argList COMMA expression
 								{
 									$$ = $3;
 								}
+								yyerrok;
 							}
-
+						| argList COMMA error
 						| expression
 							{
 								$$ = $1;

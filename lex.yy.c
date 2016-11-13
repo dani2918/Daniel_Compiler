@@ -1169,7 +1169,7 @@ YY_RULE_SETUP
 case 51:
 YY_RULE_SETUP
 #line 181 "parser.l"
-{printf("WARNING(%d): Invalid input character: \"%s\". Character ignored.\n", lineno, yytext); numWarnings++;}
+{printf("WARNING(%d): Invalid input character: \'%s\'.  Character ignored.\n", lineno, yytext); numWarnings++;}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP

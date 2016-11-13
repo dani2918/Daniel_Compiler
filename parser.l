@@ -178,7 +178,7 @@ comment		"//".*
 {CHARCONST}		{return setTokenData(CHARCONST);}
 
 {whitespace}	;
-.				{printf("WARNING(%d): Invalid input character: \"%s\". Character ignored.\n", lineno, yytext); numWarnings++;}
+.				{printf("WARNING(%d): Invalid input character: \'%s\'.  Character ignored.\n", lineno, yytext); numWarnings++;}
 
 %%
 

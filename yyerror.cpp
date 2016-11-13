@@ -102,27 +102,27 @@ void initErrorProcessing() {
     niceTokenNameMap["STRINGCONST"] = (char *)"string constant";
     niceTokenNameMap["$end"] = (char *)"end of input";
 
-    niceTokenNameMap["LPAREN"] = (char *)"(";
-    niceTokenNameMap["RPAREN"] = (char *)")";
-    niceTokenNameMap["LBRAC"] = (char *)"[";
-    niceTokenNameMap["RBRAC"] = (char *)"]";
-    niceTokenNameMap["LCUR"] = (char *)"{";
-    niceTokenNameMap["RCUR"] = (char *)"}";
+    niceTokenNameMap["LPAREN"] = (char *)"'('";
+    niceTokenNameMap["RPAREN"] = (char *)"')'";
+    niceTokenNameMap["LBRAC"] = (char *)"'['";
+    niceTokenNameMap["RBRAC"] = (char *)"']'";
+    niceTokenNameMap["LCUR"] = (char *)"'{'";
+    niceTokenNameMap["RCUR"] = (char *)"'}'";
 
-    niceTokenNameMap["ASS"] = (char *)"=";
-    niceTokenNameMap["SEMI"] = (char *)";";
-    niceTokenNameMap["COL"] = (char *)":";
-    niceTokenNameMap["MUL"] = (char *)"*";
-    niceTokenNameMap["RAND"] = (char *)"?";
-    niceTokenNameMap["DOT"] = (char *)".";
-    niceTokenNameMap["ADD"] = (char *)"+";
-    niceTokenNameMap["SUB"] = (char *)"-";
-    niceTokenNameMap["DIV"] = (char *)"/";
-    niceTokenNameMap["MOD"] = (char *)"%";
-    niceTokenNameMap["COMMA"] = (char *)",";
+    niceTokenNameMap["ASS"] = (char *)"'='";
+    niceTokenNameMap["SEMI"] = (char *)"';'";
+    niceTokenNameMap["COL"] = (char *)"':'";
+    niceTokenNameMap["MUL"] = (char *)"'*'";
+    niceTokenNameMap["RAND"] = (char *)"'?'";
+    niceTokenNameMap["DOT"] = (char *)"'.'";
+    niceTokenNameMap["ADD"] = (char *)"'+'";
+    niceTokenNameMap["SUB"] = (char *)"'-'";
+    niceTokenNameMap["DIV"] = (char *)"'/'";
+    niceTokenNameMap["MOD"] = (char *)"'%'";
+    niceTokenNameMap["COMMA"] = (char *)"','";
 
-    niceTokenNameMap["LT"] = (char *)"<";
-    niceTokenNameMap["GT"] = (char *)">";
+    niceTokenNameMap["LT"] = (char *)"'<'";
+    niceTokenNameMap["GT"] = (char *)"'>'";
 
 
 }
