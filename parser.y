@@ -163,7 +163,7 @@ recDeclaration 			: RECORD ID LCUR localDeclarations RCUR
 								$$ -> isRecord = true;
 								$$ -> lineno = $1 -> lineno;
 								$$ -> attr.name = strdup($2 -> tokenString);
-								st.insert($$ -> attr.name, (char *)"RECORD");
+								//symTab.insert($$ -> attr.name, (char *)"RECORD");
 								//st.print(pointerPrintStr); 
 								$$ -> child[0] = $4;
 								$$ -> numChildren = 1;

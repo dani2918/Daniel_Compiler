@@ -9,11 +9,13 @@ September 20, 2016
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include "symbolTable.h"
 #include "globals.h"
 #include "syntaxTree.h"
 
 
-
+extern SymbolTable symTab;
+	
 
 TreeNode * newDeclNode(DeclKind kind)
 {
@@ -26,6 +28,7 @@ TreeNode * newDeclNode(DeclKind kind)
 
   	else 
   	{
+
 	    for (i=0;i<MAXCHILDREN;i++) 
 	    	{
 	    		t->child[i] = NULL;
@@ -34,8 +37,17 @@ TreeNode * newDeclNode(DeclKind kind)
 	    t->nodekind = DeclK;
 	    t->kind.decl = kind;
 	    t->lineno = lineno;
-  	}
-		
+	    if(symTab.depth() == 1)
+	    {
+	    	t->isGlobal = true;
+	    }
+	    else
+	    {
+	    	t->isGlobal = false;
+	    }
+  	}	
+
+
 	return t;
 }
 
@@ -57,6 +69,7 @@ TreeNode * newStmtNode(StmtKind kind)
 	    t->nodekind = StmtK;
 	    t->kind.stmt = kind; 
 	    t->lineno = lineno;
+
   	}
 		
 	return t;
@@ -81,8 +94,6 @@ TreeNode * newExpNode(ExpKind kind)
 	    t->nodekind = ExpK;
 	    t->kind.exp = kind;
 	    t->lineno = lineno;
-
-	   // t->type = integer;
   	}
 		
 	return t;
@@ -106,6 +117,7 @@ TreeNode * newExpTypeNode()
 	    t->nodekind = ExpK;
 	    t->lineno = lineno;
 	    //t->type = type;
+	   
   	}
 		
 	return t;

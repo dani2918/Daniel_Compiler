@@ -23,7 +23,7 @@ extern int lineno;
 extern int indent;
 extern int sibCount;
 extern int childCount;
-extern SymbolTable st;
+extern SymbolTable symTab;
 extern int numErrors;
 extern int numWarnings;
 
@@ -91,6 +91,11 @@ typedef struct treeNode
     bool isFun;
     bool isIndexed;
     int arrLen;
+
+    int memSize;
+    int memLoc;
+
+    bool isGlobal;
 
    } TreeNode;
 

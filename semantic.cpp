@@ -153,6 +153,15 @@ void scopeAndType(TreeNode * t)
 
 		if(t != NULL)
 		{
+			//Determine local/global depeding on symtab scope
+			if(symTab.depth() == 1)
+	    	{
+	  		  	t->isGlobal = true;
+		    }
+		    else
+		    {
+		    	t->isGlobal = false;
+		    }
 			switch (t -> nodekind)
 			{
 			// if we have a declaration

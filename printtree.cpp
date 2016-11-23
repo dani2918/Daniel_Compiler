@@ -147,7 +147,7 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 										arrMsgToggle = "";
 									}
 
-								// switch types, maybe do this if only -p?
+								// switch types, maybe do this iff -p?
 								if(!capP)
 								{
 									switch (t->type)
@@ -333,7 +333,14 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 						switch(t->kind.decl)
 						{
 							case funDeclaration:
-								printf("ref: Global, ");
+								if(t->isGlobal)
+								{
+									printf("ref: Global, ");
+								}
+								else
+								{
+									printf("ref: Local, ");
+								}
 								printSize = true;
 								break;
 							case paramDeclaration:
@@ -342,7 +349,7 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 								break;
 							case varDeclaration:
 								printSize = true;
-								if(symTab.depth() == 0)
+								if(t->isGlobal)
 								{
 									printf("ref: Global, ");
 								}
@@ -364,14 +371,14 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 							printSize = true;
 
 							//Determine if we're in local or global scope
-							if(symTab.depth() == 0)
+							if(t->isGlobal)
 							{
-								//printf("symTab depth it: %d\n", symTab.depth());
+								//printf("symtab depth is: %d\n", symTab.depth());
 								printf("ref: Global, ");
 							}
 							else
 							{
-								//printf("symTab dept it: %d\n", symTab.depth());
+								//printf("symtab depth is: %d\n", symTab.depth());
 								printf("ref: Local, ");
 							}
 						}

@@ -1903,7 +1903,7 @@ yyreduce:
 								(yyval.treeNode) -> isRecord = true;
 								(yyval.treeNode) -> lineno = (yyvsp[(1) - (5)].tokenData) -> lineno;
 								(yyval.treeNode) -> attr.name = strdup((yyvsp[(2) - (5)].tokenData) -> tokenString);
-								st.insert((yyval.treeNode) -> attr.name, (char *)"RECORD");
+								//symTab.insert($$ -> attr.name, (char *)"RECORD");
 								//st.print(pointerPrintStr); 
 								(yyval.treeNode) -> child[0] = (yyvsp[(4) - (5)].treeNode);
 								(yyval.treeNode) -> numChildren = 1;
