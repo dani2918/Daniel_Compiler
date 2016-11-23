@@ -16,6 +16,7 @@ int sibCount;
 int childCount;
 int indent;
 bool capP = false;
+extern SymbolTable symTab;
 
 
 
@@ -146,24 +147,27 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 										arrMsgToggle = "";
 									}
 
-								// switch types
-								switch (t->type)
+								// switch types, maybe do this if only -p?
+								if(!capP)
 								{
-									
-									case integer:
-										printf("%sof type int ", arrMsgToggle);
-										break;
-									case boolean:
-										printf("%sof type bool ", arrMsgToggle);
-										break;
-									case character:
-										printf("%sof type char ", arrMsgToggle);
-										break;	
-									case record:
-										printf("%sof type record ", arrMsgToggle);
-										break;
-									default:
-										break;
+									switch (t->type)
+									{
+										
+										case integer:
+											printf("%sof type int ", arrMsgToggle);
+											break;
+										case boolean:
+											printf("%sof type bool ", arrMsgToggle);
+											break;
+										case character:
+											printf("%sof type char ", arrMsgToggle);
+											break;	
+										case record:
+											printf("%sof type record ", arrMsgToggle);
+											break;
+										default:
+											break;
+									}
 								}
 
 							break;
@@ -320,6 +324,68 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 
 			if (capP)
 			{
+				bool printSize = false;
+				// Print reference, size, location with -P option
+				switch (t->nodekind)
+				{
+					case DeclK:
+						printf("[" );
+						switch(t->kind.decl)
+						{
+							case funDeclaration:
+								printf("ref: Global, ");
+								printSize = true;
+								break;
+							case paramDeclaration:
+								printf("ref: Param, ");
+								printSize = true;
+								break;
+							case varDeclaration:
+								printSize = true;
+								if(symTab.depth() == 0)
+								{
+									printf("ref: Global, ");
+								}
+								else
+								{
+									printf("ref: Local, ");
+								}
+								break;
+							default:
+								printSize = false;
+								break;
+						}
+						break;
+
+					case ExpK:
+						if (t->kind.exp == IdK)
+						{
+							printf("[" );
+							printSize = true;
+
+							//Determine if we're in local or global scope
+							if(symTab.depth() == 0)
+							{
+								//printf("symTab depth it: %d\n", symTab.depth());
+								printf("ref: Global, ");
+							}
+							else
+							{
+								//printf("symTab dept it: %d\n", symTab.depth());
+								printf("ref: Local, ");
+							}
+						}
+
+					default:
+						break;	
+					
+				}
+				if(printSize)
+				{
+					printf("size: %d, loc: %d] ", 111, 111);
+				}
+
+
 				switch (t -> type)
 				{
 					case Void:

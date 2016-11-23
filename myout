@@ -1,17 +1,18 @@
-ERROR(10): Syntax error, unexpected ';'.
-ERROR(12): Syntax error, unexpected ';'.
-ERROR(15): Syntax error, unexpected '+='.
-ERROR(16): Syntax error, unexpected '-='.
-ERROR(18): Syntax error, unexpected '='.
-ERROR(19): Syntax error, unexpected '+='.
-ERROR(20): Syntax error, unexpected '-='.
-ERROR(21): Syntax error, unexpected '++'.
-ERROR(22): Syntax error, unexpected '--'.
-ERROR(24): Syntax error, unexpected bool.
-ERROR(26): Syntax error, unexpected bool.
-ERROR(29): Syntax error, unexpected '+='.
-ERROR(30): Syntax error, unexpected '-='.
-ERROR(31): Syntax error, unexpected '++'.
-ERROR(32): Syntax error, unexpected '--'.
+Func input returns type int [ref: Global, size: 111, loc: 111] [type int] [line: -1]
+Sibling: 0  Func output returns type void [ref: Global, size: 111, loc: 111] [type void] [line: -1]
+!   Child: 0  Param *dummy* of type int [ref: Param, size: 111, loc: 111] [type int] [line: -1]
+Sibling: 1  Func inputb returns type bool [ref: Global, size: 111, loc: 111] [type bool] [line: -1]
+Sibling: 2  Func outputb returns type void [ref: Global, size: 111, loc: 111] [type void] [line: -1]
+!   Child: 0  Param *dummy* of type bool [ref: Param, size: 111, loc: 111] [type bool] [line: -1]
+Sibling: 3  Func inputc returns type char [ref: Global, size: 111, loc: 111] [type char] [line: -1]
+Sibling: 4  Func outputc returns type void [ref: Global, size: 111, loc: 111] [type void] [line: -1]
+!   Child: 0  Param *dummy* of type char [ref: Param, size: 111, loc: 111] [type char] [line: -1]
+Sibling: 5  Func outnl returns type void [ref: Global, size: 111, loc: 111] [type void] [line: -1]
+Sibling: 6  Func main returns type void [ref: Global, size: 111, loc: 111] [type void] [line: 3]
+!   Child: 1  Compound [type void] [line: 4]
+!   !   Child: 0  Var x [ref: Local, size: 111, loc: 111] [type int] [line: 5]
+!   !   Child: 1  Assign: = [type int] [line: 7]
+!   !   !   Child: 0  Id: x [ref: Local, size: 111, loc: 111] [type int] [line: 7]
+!   !   !   Child: 1  Const: 666 [type int] [line: 7]
 Number of warnings: 0
-Number of errors: 15
+Number of errors: 0

@@ -286,6 +286,7 @@ varDeclId				: ID
 								$$ -> attr.name = strdup($1 -> tokenString);
 								$$ -> lineno = $1 -> lineno;
 								$$->isArray = true; 
+								$$->arrLen = $3 -> numVal;
 								//$$ -> isStatic = isStatic;
 							}	
 						| ID LBRAC error 
