@@ -213,23 +213,27 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 									{
 										arrMsgToggle = "";
 									}
-							switch (t->type)
-								{
-									
-									case integer:
-										printf("%sof type int ", arrMsgToggle);
-										break;
-									case boolean:
-										printf("%sof type bool ", arrMsgToggle);
-										break;
-									case character:
-										printf("%sof type char ", arrMsgToggle);
-										break;	
-									case record:
-										printf("%sof type record ", arrMsgToggle);
-										break;
-									default:
-										break;
+
+							if(!capP)
+								{	
+									switch (t->type)
+									{
+										
+										case integer:
+											printf("%sof type int ", arrMsgToggle);
+											break;
+										case boolean:
+											printf("%sof type bool ", arrMsgToggle);
+											break;
+										case character:
+											printf("%sof type char ", arrMsgToggle);
+											break;	
+										case record:
+											printf("%sof type record ", arrMsgToggle);
+											break;
+										default:
+											break;
+									}
 								}
 
 					}
@@ -389,7 +393,7 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 				}
 				if(printSize)
 				{
-					printf("size: %d, loc: %d] ", 111, 111);
+					printf("size: %d, loc: %d] ", t->memSize, t->memLoc);
 				}
 
 

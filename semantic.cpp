@@ -27,6 +27,10 @@ bool returnFlag = false;
 int whileLevels = 0;
 TreeNode * returnCheck;
 
+
+int localOff = 0;
+int globalOff = 0;
+
 // for when we need to lookup, get pointers from symTab
 TreeNode * originalDecl;
 TreeNode * lhs;
@@ -43,7 +47,10 @@ SymbolTable getSymTab()
 TreeNode * setup(TreeNode * t, TreeNode * oldTree)
 {
 	std::string names[] = {"input", "output", "inputb", "outputb", "inputc", "outputc", "outnl"};
-	std::string dummyString = "*dummy*";
+
+	//Added an extra space here for assn 6
+	std::string dummyString = "*dummy* ";
+	int memSizes[] = {-2,-3,-2,-3,-2, -3, -2};
 
 	bool alreadyInTable = true;
 
@@ -88,6 +95,8 @@ TreeNode * setup(TreeNode * t, TreeNode * oldTree)
 				{
 					param -> type = character;
 				}
+				param -> memSize = 1;
+				param -> memLoc = -2;
 				newNode -> child[0] = param;
 				break;
 			case 2:
@@ -119,7 +128,11 @@ TreeNode * setup(TreeNode * t, TreeNode * oldTree)
 			alreadyInTable = symTab.insert(t->attr.name, (TreeNode *) t);
 		}
 		
+		// Set up memory sizes
+		t -> memSize = memSizes[i];
+		t -> memLoc = 0;
 	}
+	
 
 	t -> sibling = oldTree;
 	return head;
@@ -162,6 +175,12 @@ void scopeAndType(TreeNode * t)
 		    {
 		    	t->isGlobal = false;
 		    }
+
+
+		    //TODO: remove these boiler plate assignments
+		    t->memSize = 1;
+		    t->memLoc = 0;
+
 			switch (t -> nodekind)
 			{
 			// if we have a declaration
@@ -224,13 +243,13 @@ void scopeAndType(TreeNode * t)
 						
 
 							if(t-> isArray == true)
-									{
-									//	arrMsgToggle = arrMsg;
-									}
-									else
-									{
-									//	arrMsgToggle = "";
-									}
+							{
+							 	t->memSize = t->arrLen+1;
+							}
+							else
+							{
+								t->memSize = 1;
+							}
 
 								// switch types
 								switch (t->type)
@@ -313,13 +332,13 @@ void scopeAndType(TreeNode * t)
 						case paramDeclaration:
 							//printf("Param %s \n", t->attr.name);
 							if(t-> isArray == true)
-									{
-										// arrMsgToggle = arrMsg;
-									}
-									else
-									{
-										// arrMsgToggle = "";
-									}
+							{
+								t->memSize = t->arrLen+1;
+							}
+							else
+							{
+								t->memSize = 1;
+							}
 							switch (t->type)
 								{
 									
