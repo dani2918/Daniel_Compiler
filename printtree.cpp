@@ -169,6 +169,10 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 											break;
 									}
 								}
+								else
+								{
+									printf("%s", arrMsgToggle );
+								}
 
 							break;
 
@@ -215,26 +219,30 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 									}
 
 							if(!capP)
-								{	
-									switch (t->type)
-									{
-										
-										case integer:
-											printf("%sof type int ", arrMsgToggle);
-											break;
-										case boolean:
-											printf("%sof type bool ", arrMsgToggle);
-											break;
-										case character:
-											printf("%sof type char ", arrMsgToggle);
-											break;	
-										case record:
-											printf("%sof type record ", arrMsgToggle);
-											break;
-										default:
-											break;
-									}
+							{	
+								switch (t->type)
+								{
+									
+									case integer:
+										printf("%sof type int ", arrMsgToggle);
+										break;
+									case boolean:
+										printf("%sof type bool ", arrMsgToggle);
+										break;
+									case character:
+										printf("%sof type char ", arrMsgToggle);
+										break;	
+									case record:
+										printf("%sof type record ", arrMsgToggle);
+										break;
+									default:
+										break;
 								}
+							}
+							else
+							{
+								printf("%s", arrMsgToggle );
+							}
 
 					}
 					
@@ -273,6 +281,7 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 							if(t-> isArray == true)
 								{
 									arrMsgToggle = arrMsg;
+									printf("%s", arrMsgToggle );
 								}
 								else
 								{
@@ -333,10 +342,11 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 				switch (t->nodekind)
 				{
 					case DeclK:
-						printf("[" );
+						
 						switch(t->kind.decl)
 						{
 							case funDeclaration:
+								printf("[" );
 								if(t->isGlobal)
 								{
 									printf("ref: Global, ");
@@ -348,11 +358,13 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 								printSize = true;
 								break;
 							case paramDeclaration:
+								printf(" [" );
 								printf("ref: Param, ");
 								printSize = true;
 								break;
 							case varDeclaration:
 								printSize = true;
+								printf(" [" );
 								if(t->isGlobal)
 								{
 									printf("ref: Global, ");
@@ -371,18 +383,26 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 					case ExpK:
 						if (t->kind.exp == IdK)
 						{
-							printf("[" );
+							printf(" [" );
 							printSize = true;
 
 							//Determine if we're in local or global scope
-							if(t->isGlobal)
+							if(t->type == undefined)
 							{
 								//printf("symtab depth is: %d\n", symTab.depth());
+								printf("ref: None, ");
+							}
+							else if (t->isParam)
+							{
+								//printf("symtab depth is: %d\n", symTab.depth());
+								printf("ref: Param, ");
+							}
+							else if (t->isGlobal)
+							{
 								printf("ref: Global, ");
 							}
 							else
 							{
-								//printf("symtab depth is: %d\n", symTab.depth());
 								printf("ref: Local, ");
 							}
 						}

@@ -31,7 +31,6 @@ enum childSib
 {
     non, chi, sib
 };
-
 enum NodeKind
 {
 	DeclK, StmtK, ExpK

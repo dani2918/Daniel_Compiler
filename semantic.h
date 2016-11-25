@@ -21,4 +21,6 @@ void checkDefnErr(TreeNode * t, TreeNode * checkNode, bool &foundError, int &che
 void checkConst(TreeNode * t, TreeNode * checkNode, bool &defnErr);
 
 
+int getGlobalOff();
+
 #endif

@@ -3447,6 +3447,7 @@ int main(int argc, char *argv[])
 		printTree(savedTree, capP);
 	}
 
+	printf("Offset for end of global space: %d\n", getGlobalOff());
 	printf("Number of warnings: %d\n", numWarnings);
 	printf("Number of errors: %d\n", numErrors);
 	//symTab.print(pointerPrintStr);

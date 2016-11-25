@@ -42,6 +42,11 @@ SymbolTable getSymTab()
 	return symTab;
 }
 
+int getGlobalOff()
+{
+	return globalOff;
+}
+
 
 //Set up I/O 
 TreeNode * setup(TreeNode * t, TreeNode * oldTree)
@@ -49,7 +54,7 @@ TreeNode * setup(TreeNode * t, TreeNode * oldTree)
 	std::string names[] = {"input", "output", "inputb", "outputb", "inputc", "outputc", "outnl"};
 
 	//Added an extra space here for assn 6
-	std::string dummyString = "*dummy* ";
+	std::string dummyString = "*dummy*";
 	int memSizes[] = {-2,-3,-2,-3,-2, -3, -2};
 
 	bool alreadyInTable = true;
@@ -251,6 +256,17 @@ void scopeAndType(TreeNode * t)
 								t->memSize = 1;
 							}
 
+							if(t->isGlobal)
+							{
+								t->memLoc = globalOff;
+								globalOff--;
+							}
+							else
+							{
+								t->memLoc = localOff;
+								localOff--;
+							}
+
 								// switch types
 								switch (t->type)
 								{
@@ -280,6 +296,8 @@ void scopeAndType(TreeNode * t)
 							symTab.enter(t->attr.name);
 							t-> isFun = true;
 							funcFlag = true;
+							t->memSize = -3;
+							localOff = -2;
 							for (int i = 0; i < 3; i++)
 							{
 								if (t->child[i] != NULL)
@@ -301,6 +319,7 @@ void scopeAndType(TreeNode * t)
 
 							returnFlag = false;
 							symTab.leave();
+							localOff = 0;
 
 							returnCheck = NULL;
 							switch (t->type)
@@ -339,6 +358,10 @@ void scopeAndType(TreeNode * t)
 							{
 								t->memSize = 1;
 							}
+
+							t->memLoc = localOff;
+							localOff--;
+
 							switch (t->type)
 								{
 									
@@ -362,6 +385,7 @@ void scopeAndType(TreeNode * t)
 					switch(t->kind.stmt)
 					{
 						case compoundStmt:
+
 							if (!funcFlag)
 							{	
 								symTab.enter("Compound Statement");
@@ -511,6 +535,12 @@ void scopeAndType(TreeNode * t)
 								t-> type = originalDecl -> type;
 								t -> isArray = originalDecl -> isArray;
 								t -> isStatic = originalDecl -> isStatic;
+								t -> isParam = originalDecl -> isParam;
+								t -> isGlobal = originalDecl -> isGlobal;
+
+								//For mem reference assignment
+								t->memLoc = originalDecl->memLoc;
+								t->memSize = originalDecl->memSize;
 							}
 
 
@@ -530,7 +560,10 @@ void scopeAndType(TreeNode * t)
 									printError(6, t->lineno, t->attr.name, 0, na, na, 0);
 								}
 							}
-					
+							
+
+
+
 							break;
 
 						//process these two together
