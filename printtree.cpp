@@ -407,6 +407,12 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 							}
 						}
 
+						if(t->kind.exp == CallK)
+						{
+							printSize = true;
+							printf(" [ref: None, ");
+						}
+
 					default:
 						break;	
 					

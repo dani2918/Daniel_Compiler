@@ -258,14 +258,29 @@ void scopeAndType(TreeNode * t)
 
 							if(t->isGlobal)
 							{
-								t->memLoc = globalOff;
-								globalOff--;
-							}
-							else
-							{
-								t->memLoc = localOff;
-								localOff--;
-							}
+								if(t->isArray)
+								{
+                    				t->memLoc = globalOff - 1;
+               					} 
+               					else 
+								{	
+               						t->memLoc = globalOff; 
+               					}
+               					globalOff -= t->memSize;
+            				} 
+            				//Locals
+            				else
+            				{
+                				if(t->isArray) 
+                				{
+                   					 t->memLoc = localOff - 1;
+                				}
+                				else
+                				{
+                					t->memLoc = localOff;
+                				}
+          	      				localOff -= t->memSize; 
+            				}
 
 								// switch types
 								switch (t->type)
@@ -569,12 +584,12 @@ void scopeAndType(TreeNode * t)
 						//process these two together
 						case AssK:
 						case OpK:
-						lhsCheck = rhsCheck = true;
-						mismatch = isFunLHS = isFunRHS = false;
-						wrongLHS = wrongRHS = undefined;
-						arrayError = 0;
-						opErr = false;
-						operandType = undefined;
+							lhsCheck = rhsCheck = true;
+							mismatch = isFunLHS = isFunRHS = false;
+							wrongLHS = wrongRHS = undefined;
+							arrayError = 0;
+							opErr = false;
+							operandType = undefined;
 
 							for(int i = 0; i < 3; i++) 
 							{
@@ -780,6 +795,9 @@ void scopeAndType(TreeNode * t)
 								t-> type = originalDecl -> type;
 								t -> isArray = originalDecl -> isArray;
 								t -> isStatic = originalDecl -> isStatic;
+
+								t->memLoc = originalDecl->memLoc;
+								t->memSize = originalDecl->memSize;
 									
 								//check if simple decl	
 								if(originalDecl -> kind.decl != funDeclaration)
