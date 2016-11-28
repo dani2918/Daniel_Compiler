@@ -31,6 +31,8 @@ TreeNode * savedFunc;
 
 int localOff = 0;
 int globalOff = 0;
+int staticOff = -1;
+int rememberLastStaticOff = -1;
 
 // for when we need to lookup, get pointers from symTab
 TreeNode * originalDecl;
@@ -45,7 +47,8 @@ SymbolTable getSymTab()
 
 int getGlobalOff()
 {
-	return globalOff;
+
+	return globalOff; //+ staticOff - rememberLastStaticOff;
 }
 
 
@@ -243,7 +246,6 @@ void scopeAndType(TreeNode * t)
 								//Check for non constant initialization errors
 								checkNode = t;
 								checkConst(t, checkNode, defnErr);
-
 							}
 
 						
@@ -257,40 +259,60 @@ void scopeAndType(TreeNode * t)
 								t->memSize = 1;
 							}
 
-							if(t->isGlobal)
+							// skip if we have a redefinition error
+							if(alreadyInTable == false) 
 							{
+								t->memLoc = 0;
+							}
+							//Statics
+							else if(t->isStatic)
+               				{
+               					if(globalOff == 0)
+               					{
+               						globalOff = -1;
+               					}
 								if(t->isArray)
 								{
-                    				t->memLoc = globalOff - 1;
-               					} 
-               					else 
+				    				t->memLoc = globalOff - 1;
+								} 
+								else 
 								{	
-               						t->memLoc = globalOff; 
-               					}
-               					globalOff -= t->memSize;
-            				} 
+									t->memLoc = globalOff; 
+								}
+									globalOff -= t->memSize;
+									//Add back for final computation
+									//rememberLastStaticOff = -1 * t->memSize;
+								
+        					} 
+							else if(t->isGlobal)
+							{
+								
+									if(t->isArray)
+									{
+	                    				t->memLoc = globalOff - 1;
+	               					} 
+	               					else 
+									{	
+	               						t->memLoc = globalOff; 
+	               					}
+	               					globalOff -= t->memSize;
+               				}
             				//Locals
             				else
             				{
+            					//If we're in a function change mem size on a vardecl
                 				if(t->isArray) 
                 				{
                    					 t->memLoc = localOff - 1;
+                   					 savedFunc -> memSize -= t->arrLen+1;
                 				}
                 				else
                 				{
                 					t->memLoc = localOff;
+                					savedFunc -> memSize--;
                 				}
           	      				localOff -= t->memSize; 
 
-          	      				//If we're in a function change mem size on a vardecl
-          	      				if(t->isArray)
-      	      					{
-      	      						savedFunc -> memSize -= t->arrLen+1;
-      	      					}
-      	      					else
-      	      					{
-      	      						savedFunc -> memSize--;
-      	      					}
             				}
 
 								// switch types
@@ -440,8 +462,7 @@ void scopeAndType(TreeNode * t)
 											scopeAndTypeR(t->child[i]);
 										}
 								}
-								//symTab.print(pointerPrintStr);
-								//printf("Leaving compound\n");
+								
 								symTab.leave();
 							}
 							else
@@ -455,8 +476,8 @@ void scopeAndType(TreeNode * t)
 										}
 								}
 							}
-							t->memSize = localOff;
-							localOff = savedOff;
+							// t->memSize = localOff;
+							// localOff = savedOff;
 			
 							break;
 						case returnStmt:
@@ -584,15 +605,6 @@ void scopeAndType(TreeNode * t)
 								t -> isStatic = originalDecl -> isStatic;
 								t -> isParam = originalDecl -> isParam;
 								
-
-								//TODO: Check to make sure IDKs can't be global
-								// t -> isGlobal = originalDecl -> isGlobal;
-
-								t->isGlobal = originalDecl->isGlobal;
-
-								//For mem reference assignment
-								t->memLoc = originalDecl->memLoc;
-								t->memSize = originalDecl->memSize;
 							}
 
 
@@ -602,7 +614,26 @@ void scopeAndType(TreeNode * t)
 								printError(9, t->lineno, t->attr.name, 0, na, na, 0);
 								t -> type = undefined;
 								t -> badCall = true;
-								t -> isGlobal = false;
+
+								//TODO: Ask question here:
+								//seems to be a magic # from the tests?
+								//Maybe where his program is when counting size?
+								t -> memSize = -3;
+							}
+
+							// If no error, make assignments to var ptr
+							else
+							{
+								if(originalDecl != NULL)
+								{
+
+
+									t->isGlobal = originalDecl->isGlobal;
+
+									//For mem reference assignment
+									t->memLoc = originalDecl->memLoc;
+									t->memSize = originalDecl->memSize;
+								}
 							}
 
 							if(t->child[0] != NULL)
@@ -872,7 +903,11 @@ void scopeAndType(TreeNode * t)
 
 				default:
 					break;
-			}	
+			}
+
+			//change the location if static
+			
+
 		}
 
 	}

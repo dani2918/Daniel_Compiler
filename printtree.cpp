@@ -401,6 +401,7 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 								//printf("symtab depth is: %d\n", symTab.depth());
 								printf("ref: Param, ");
 							}
+							//Treat like a global if we treated func like variable
 							else if (t->isGlobal)
 							{
 								printf("ref: Global, ");
