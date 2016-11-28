@@ -260,9 +260,18 @@ void scopeAndType(TreeNode * t)
 							}
 
 							// skip if we have a redefinition error
+							// A lot of this makes the nodes match the tests
 							if(alreadyInTable == false) 
 							{
-								t->memLoc = 0;
+								if(t->isArray)
+								{
+									t->memLoc = -1;
+								}
+								else
+								{
+									t->memLoc = 0;
+								}
+								t->isGlobal = false;
 							}
 							//Statics
 							else if(t->isStatic)
@@ -628,21 +637,13 @@ void scopeAndType(TreeNode * t)
 								t -> type = undefined;
 								t -> badCall = true;
 
+
 								//TODO: Ask question here:
 								//seems to be a magic # from the tests?
 								//Maybe where his program is when counting size?
 							}
 
-							// // If no error, make assignments to var ptr
-							// else
-							// {
-							// 	if(originalDecl != NULL)
-							// 	{
 
-
-						
-							// 	}
-							// }
 
 							if(t->child[0] != NULL)
 							{
