@@ -95,6 +95,7 @@ typedef struct treeNode
     int memLoc;
 
     bool isGlobal;
+    bool badCall;
 
    } TreeNode;
 

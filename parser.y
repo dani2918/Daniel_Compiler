@@ -814,7 +814,7 @@ simpleExpression		: simpleExpression OR andExpression
 								$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
 								$$ -> attr.name = strdup($2 -> tokenString);
-
+								$$ -> lineno = $2 -> lineno;
 							}
 						| simpleExpression OR error
 							{$$ = NULL;}
@@ -832,6 +832,7 @@ andExpression			: andExpression AND unaryRelExpression
 								$$ -> child[1] = $3;
 								$$ -> numChildren = 2;
 								$$ -> attr.name = strdup($2 -> tokenString);
+								$$ -> lineno = $2 -> lineno;
 						}
 						| andExpression AND error
 							{$$ = NULL;}
@@ -1176,12 +1177,12 @@ int main(int argc, char *argv[])
 	*/
 
 	// print -P w types after errors
-	if (printingTree == 1 && capP) //1)
+	if (printingTree == 1 && capP && !syntaxErrors) //1)
 	{
 		printTree(savedTree, capP);
 	}
 
-	printf("Offset for end of global space: %d\n", getGlobalOff());
+	if(!syntaxErrors) printf("Offset for end of global space: %d\n", getGlobalOff());
 	printf("Number of warnings: %d\n", numWarnings);
 	printf("Number of errors: %d\n", numErrors);
 	//symTab.print(pointerPrintStr);

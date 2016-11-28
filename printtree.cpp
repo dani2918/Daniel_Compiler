@@ -369,6 +369,10 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 								{
 									printf("ref: Global, ");
 								}
+								else if (t->isStatic)
+								{
+									printf("ref: Static, ");
+								}
 								else
 								{
 									printf("ref: Local, ");
@@ -387,7 +391,7 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 							printSize = true;
 
 							//Determine if we're in local or global scope
-							if(t->type == undefined)
+							if(t->type == undefined && !t->badCall)
 							{
 								//printf("symtab depth is: %d\n", symTab.depth());
 								printf("ref: None, ");
@@ -401,6 +405,10 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 							{
 								printf("ref: Global, ");
 							}
+							else if (t->isStatic)
+							{
+								printf("ref: Static, ");
+							}
 							else
 							{
 								printf("ref: Local, ");
@@ -410,7 +418,7 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 						if(t->kind.exp == CallK)
 						{
 							printSize = true;
-							printf(" [ref: None, ");
+							printf("[ref: None, ");
 						}
 
 					default:

@@ -26,6 +26,7 @@ int checkCount = 0;
 bool returnFlag = false;
 int whileLevels = 0;
 TreeNode * returnCheck;
+TreeNode * savedFunc;
 
 
 int localOff = 0;
@@ -184,7 +185,7 @@ void scopeAndType(TreeNode * t)
 
 		    //TODO: remove these boiler plate assignments
 		    t->memSize = 1;
-		    t->memLoc = 0;
+		    // t->memLoc = 0;
 
 			switch (t -> nodekind)
 			{
@@ -280,6 +281,16 @@ void scopeAndType(TreeNode * t)
                 					t->memLoc = localOff;
                 				}
           	      				localOff -= t->memSize; 
+
+          	      				//If we're in a function change mem size on a vardecl
+          	      				if(t->isArray)
+      	      					{
+      	      						savedFunc -> memSize -= t->arrLen+1;
+      	      					}
+      	      					else
+      	      					{
+      	      						savedFunc -> memSize--;
+      	      					}
             				}
 
 								// switch types
@@ -311,7 +322,10 @@ void scopeAndType(TreeNode * t)
 							symTab.enter(t->attr.name);
 							t-> isFun = true;
 							funcFlag = true;
-							t->memSize = -3;
+
+							t->memSize = -2;
+							savedFunc = t;
+							
 							localOff = -2;
 							for (int i = 0; i < 3; i++)
 							{
@@ -334,6 +348,19 @@ void scopeAndType(TreeNode * t)
 
 							returnFlag = false;
 							symTab.leave();
+
+							
+							TreeNode * c;
+           					c = t->child[0];
+				            while(c != NULL) 
+				            {
+				                t->memSize--;
+				                c = c->sibling;
+				            }
+
+				           // t->memSize -= 2;
+				            t->memLoc = 0;
+
 							localOff = 0;
 
 							returnCheck = NULL;
@@ -401,6 +428,8 @@ void scopeAndType(TreeNode * t)
 					{
 						case compoundStmt:
 
+							int savedOff;
+							savedOff = localOff;
 							if (!funcFlag)
 							{	
 								symTab.enter("Compound Statement");
@@ -426,6 +455,8 @@ void scopeAndType(TreeNode * t)
 										}
 								}
 							}
+							t->memSize = localOff;
+							localOff = savedOff;
 			
 							break;
 						case returnStmt:
@@ -542,6 +573,7 @@ void scopeAndType(TreeNode * t)
 							{
 								printError(11, t->lineno, t->attr.name, 0, na, na, 0);
 								t->type = undefined;
+								t->memSize = 1;
 								//t->isArray = false;
 							}
 							else
@@ -551,7 +583,12 @@ void scopeAndType(TreeNode * t)
 								t -> isArray = originalDecl -> isArray;
 								t -> isStatic = originalDecl -> isStatic;
 								t -> isParam = originalDecl -> isParam;
-								t -> isGlobal = originalDecl -> isGlobal;
+								
+
+								//TODO: Check to make sure IDKs can't be global
+								// t -> isGlobal = originalDecl -> isGlobal;
+
+								t->isGlobal = originalDecl->isGlobal;
 
 								//For mem reference assignment
 								t->memLoc = originalDecl->memLoc;
@@ -564,6 +601,8 @@ void scopeAndType(TreeNode * t)
 							{
 								printError(9, t->lineno, t->attr.name, 0, na, na, 0);
 								t -> type = undefined;
+								t -> badCall = true;
+								t -> isGlobal = false;
 							}
 
 							if(t->child[0] != NULL)
