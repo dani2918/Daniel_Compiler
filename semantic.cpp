@@ -267,10 +267,7 @@ void scopeAndType(TreeNode * t)
 							//Statics
 							else if(t->isStatic)
                				{
-               					if(globalOff == 0)
-               					{
-               						globalOff = -1;
-               					}
+
 								if(t->isArray)
 								{
 				    				t->memLoc = globalOff - 1;

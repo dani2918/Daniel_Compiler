@@ -167,7 +167,7 @@ recDeclaration 			: RECORD ID LCUR localDeclarations RCUR
 								//st.print(pointerPrintStr); 
 								$$ -> child[0] = $4;
 								$$ -> numChildren = 1;
-								
+								$$ -> lineno = $2 -> lineno;
 							}
 						;
 
@@ -471,6 +471,7 @@ paramId 				: ID
 								$$ -> attr.name = strdup($1 -> tokenString);
 								$$->isArray = false;
 								$$->isParam = true;
+								$$ -> lineno = $1 -> lineno;
 							}
 						| ID LBRAC RBRAC
 							{
@@ -478,6 +479,7 @@ paramId 				: ID
 								$$ -> attr.name = strdup($1 -> tokenString);
 								$$->isArray = true;
 								$$->isParam = true;
+								$$ -> lineno = $1 -> lineno;
 							}	
 						| error RBRAC
 							{yyerrok; $$ = NULL;}	
@@ -974,6 +976,7 @@ mutable					: ID
 							{
 								$$ = newExpNode(IdK);
 								$$ -> attr.name = $1 -> tokenString;
+								$$ -> lineno = $1 -> lineno;
 							}
 						| mutable LBRAC expression RBRAC 
 							{
@@ -995,6 +998,7 @@ mutable					: ID
 								t ->isArray = false;
 								$$ -> child[1] = t;
 								$$ -> numChildren = 2;
+								$$ -> lineno = $3 -> lineno;
 							}
 						;						
 
