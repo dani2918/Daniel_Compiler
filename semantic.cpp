@@ -345,7 +345,7 @@ void scopeAndType(TreeNode * t)
 							t-> isFun = true;
 							funcFlag = true;
 
-							t->memSize = -2;
+							t->memSize = -2;;
 							savedFunc = t;
 							
 							localOff = -2;
@@ -380,7 +380,7 @@ void scopeAndType(TreeNode * t)
 				                c = c->sibling;
 				            }
 
-				           // t->memSize -= 2;
+				            //t->memSize -= 2;
 				            t->memLoc = 0;
 
 							localOff = 0;
@@ -414,6 +414,7 @@ void scopeAndType(TreeNode * t)
 
 						case paramDeclaration:
 							//printf("Param %s \n", t->attr.name);
+
 							if(t-> isArray == true)
 							{
 								t->memSize = t->arrLen+1;
@@ -423,8 +424,17 @@ void scopeAndType(TreeNode * t)
 								t->memSize = 1;
 							}
 
-							t->memLoc = localOff;
-							localOff--;
+							//If we have redefinition error
+							if(alreadyInTable == false) 
+							{
+								t->memLoc = 0;
+								savedFunc -> memSize++;
+							}
+							else
+							{
+								t->memLoc = localOff;
+								localOff--;
+							}
 
 							switch (t->type)
 								{
@@ -604,6 +614,12 @@ void scopeAndType(TreeNode * t)
 								t -> isArray = originalDecl -> isArray;
 								t -> isStatic = originalDecl -> isStatic;
 								t -> isParam = originalDecl -> isParam;
+
+									t->isGlobal = originalDecl->isGlobal;
+
+									//For mem reference assignment
+									t->memLoc = originalDecl->memLoc;
+									t->memSize = originalDecl->memSize;
 								
 							}
 
@@ -618,23 +634,18 @@ void scopeAndType(TreeNode * t)
 								//TODO: Ask question here:
 								//seems to be a magic # from the tests?
 								//Maybe where his program is when counting size?
-								t -> memSize = -3;
 							}
 
-							// If no error, make assignments to var ptr
-							else
-							{
-								if(originalDecl != NULL)
-								{
+							// // If no error, make assignments to var ptr
+							// else
+							// {
+							// 	if(originalDecl != NULL)
+							// 	{
 
 
-									t->isGlobal = originalDecl->isGlobal;
-
-									//For mem reference assignment
-									t->memLoc = originalDecl->memLoc;
-									t->memSize = originalDecl->memSize;
-								}
-							}
+						
+							// 	}
+							// }
 
 							if(t->child[0] != NULL)
 							{
