@@ -3,6 +3,7 @@
  #include <stdio.h>
  #include <stdlib.h>
  #include <unistd.h>
+ #include <string.h>
  #include "globals.h"
  #include "scanType.h"
  #include "syntaxTree.h"
@@ -10,8 +11,11 @@
  #include "printtree.h"
  #include "semantic.h"
  #include "yyerror.h"
+ #include "codegen.h"
 
  #include "parser.tab.h"
+
+ using namespace std;
 
 #define YYERROR_VERBOSE 1
 
@@ -31,6 +35,9 @@
  static TreeNode * setupTree;
  int savedLineNo;
 
+ char * infileName;
+ //char * tmFileName;
+
  ExpType storedType;
  bool isStatic = false;
  TreeNode * nullablePlaceholder;
@@ -39,11 +46,6 @@
  int firstTimeThrough = 0;
 
 
-//void yyerror(const char *errMsg)
-//{
- //	printf("ERROR(%d): %s\n", lineno, errMsg);
-
-//}
 
 void printToken(int lineno, char* tokenString)
 {
@@ -1138,11 +1140,19 @@ int main(int argc, char *argv[])
 	if(optCount < argc)
 	{
 		FILE *infile = fopen(argv[optCount], "r");
+		
+
 		if (infile == NULL)
 		{
 			printError(-1, 0, argv[optCount], 0, na, na, 0);
 			exit(-1);
 		}
+		
+
+		//Gets filename, appends ".tm"
+		infileName = argv[optCount];
+	
+
 		yyin = infile;
 	}
 	initErrorProcessing();
@@ -1190,6 +1200,12 @@ int main(int argc, char *argv[])
 	printf("Number of warnings: %d\n", numWarnings);
 	printf("Number of errors: %d\n", numErrors);
 	//symTab.print(pointerPrintStr);
+
+	if (numErrors == 0)
+	{
+
+		generateCode(savedTree, infileName);
+	}
 
 	return 0;
 }

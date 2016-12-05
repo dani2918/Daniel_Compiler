@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "globals.h"
 #include "emitcode.h"
 
 extern FILE *code;
@@ -191,5 +192,25 @@ void backPatchAJumpToHere(char *cmd, int reg, int addr, char *comment)
     emitRMAbs(cmd, reg, currloc, comment);  // cmd = JZR, JNZ
     emitBackup(currloc);            // restore addr
 }
+
+
+// Gives the header as in Heckendorn's .tm files
+void emitHeader(char *c)
+{
+    std::string line1, line2, line3, line4;
+    line1 = "C- compiler version C-F16";
+    line2 =  "Built: ";
+    line3 = "Author: Matthew Daniel";
+    line4 = "File compiled: ";
+    line4 += c;
+
+
+    emitComment(strdup(line1.c_str()));
+    emitComment(strdup(line2.c_str())); 
+    emitComment(strdup(line3.c_str()));     
+    emitComment(strdup(line4.c_str()));  
+}
+
+
 
 

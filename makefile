@@ -1,7 +1,7 @@
 BIN  = parser
 CC   = g++
-SRCS = $(BIN).y $(BIN).l syntaxTree.cpp symbolTable.cpp printtree.cpp typeCheck.cpp semantic.cpp yyerror.cpp
-OBJS = lex.yy.o $(BIN).tab.o syntaxTree.o symbolTable.o printtree.o typeCheck.o semantic.o yyerror.o
+SRCS = $(BIN).y $(BIN).l syntaxTree.cpp symbolTable.cpp printtree.cpp typeCheck.cpp semantic.cpp yyerror.cpp emitcode.cpp codegen.cpp
+OBJS = lex.yy.o $(BIN).tab.o syntaxTree.o symbolTable.o printtree.o typeCheck.o semantic.o yyerror.o emitcode.o codegen.o
 LIBS = -lm 
 CCFLAGS = -g
 
@@ -33,6 +33,12 @@ semantic.o: semantic.cpp semantic.h globals.h
 yyerror.o: yyerror.cpp yyerror.h globals.h
 	$(CC) $(CCFLAGS) -c yyerror.cpp
 
+emitcode.o: emitcode.cpp emitcode.h globals.h
+	$(CC) $(CCFLAGS) -c emitcode.cpp
+
+codegen.o: codegen.cpp codegen.h globals.h
+	$(CC) $(CCFLAGS) -c codegen.cpp
+
 
 
 
@@ -44,10 +50,10 @@ clean:
 	rm -f $(OBJS) $(BIN) syntaxTree.o lex.yy.c $(BIN).tab.h $(BIN).tab.c $(BIN).tar *~ *.output 
 
 tar:
-	tar -cvf $(BIN).tar $(SRCS) globals.h scanType.h syntaxTree.h symbolTable.h printtree.h semantic.h typeCheck.h yyerror.h makefile 
+	tar -cvf $(BIN).tar $(SRCS) globals.h scanType.h syntaxTree.h symbolTable.h printtree.h semantic.h typeCheck.h yyerror.h emitcode.h codegen.h makefile 
 
 submit: 
-	curl -F student=daniel -F assignment="CS445 F16 Assignment 6" -F "submittedfile=@parser.tar" "http://ec2-52-89-93-46.us-west-2.compute.amazonaws.com/cgi-bin/fileCapture.py"
+	curl -F student=daniel -F assignment="CS445 F16 Assignment 7 small" -F "submittedfile=@parser.tar" "http://ec2-52-89-93-46.us-west-2.compute.amazonaws.com/cgi-bin/fileCapture.py"
 
 
 

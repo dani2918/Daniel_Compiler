@@ -54,4 +54,6 @@ void backPatchAJumpToHere(char *cmd, int reg, int addr, char *comment);
 
 void emitLit(char *s);
 
+void emitHeader(char *c);
+
 #endif
