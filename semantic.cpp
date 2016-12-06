@@ -466,6 +466,7 @@ void scopeAndType(TreeNode * t)
 					{
 						case compoundStmt:
 
+							t->memSize = -2;
 							int savedOff;
 							savedOff = localOff;
 							if (!funcFlag)
@@ -474,9 +475,9 @@ void scopeAndType(TreeNode * t)
 								for (int i = 0; i < 3; i++)
 								{
 									if (t->child[i] != NULL)
-										{
-											scopeAndTypeR(t->child[i]);
-										}
+									{
+										scopeAndTypeR(t->child[i]);
+									}
 								}
 								
 								symTab.leave();
@@ -487,13 +488,20 @@ void scopeAndType(TreeNode * t)
 								for (int i = 0; i < 3; i++)
 								{
 									if (t->child[i] != NULL)
-										{
-											scopeAndTypeR(t->child[i]);
-										}
+									{
+										scopeAndTypeR(t->child[i]);
+									}
 								}
 							}
 							// t->memSize = localOff;
 							// localOff = savedOff;
+							TreeNode * c;
+           					c = t->child[0];
+				            while(c != NULL) 
+				            {
+				                t->memSize--;
+				                c = c->sibling;
+				            }
 			
 							break;
 						case returnStmt:

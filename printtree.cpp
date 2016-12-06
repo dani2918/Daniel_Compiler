@@ -416,18 +416,19 @@ void printTree(TreeNode * t, int sibCount, int childCount, childSib cs)
 							}
 						}
 
-						if(t->kind.exp == CallK)
-						{
-							printSize = true;
-							printf("[ref: None, ");
-						}
+						// if(t->kind.exp == CallK)
+						// {
+						// 	printSize = true;
+						// 	printf("[ref: None, ");
+						// }
 
 					case StmtK:
-						// if(t->kind.stmt == compoundStmt)
-						// {
-						// 	printf(" [" );
-						// 	printSize = true;
-						// }
+						if(t->kind.stmt == compoundStmt)
+						{
+							printf("[" );
+							printf("ref: None, ");
+							printSize = true;
+						}
 						break;	
 					default:
 						break;	

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include "globals.h"
 #include "codegen.h"
 #include "emitcode.h"
@@ -9,6 +10,11 @@ using namespace std;
 
 extern int globalOff;
 extern int localOff;
+int fOffset = 0;
+int tOffset = 0;
+int offset = 0;
+
+int numParams;
 
 char * tmFileName;
 
@@ -205,11 +211,15 @@ void processCode(TreeNode * t)
 
 					case paramDeclaration:
 						if(t-> isArray == true)
-								{
-								}
-								else
-								{
-								}
+						{
+						}
+						else
+						{
+						}
+						
+
+
+
 
 						// if(!capP)
 						// {	
@@ -244,10 +254,12 @@ void processCode(TreeNode * t)
 					case compoundStmt:
 						emitComment((char*)"COMPOUND");
 						emitComment((char*)"Compound Body");
+						fOffset = t->memSize;
 					    for(int i = 0; i < 3; i++) 
 				    	{
 				    		processCodeR(t->child[i]);
 				    	}
+				    	fOffset = 0;
 				    	emitComment((char*)"END COMPOUND");
 						break;
 					case returnStmt:
@@ -264,17 +276,24 @@ void processCode(TreeNode * t)
 				break;
 
 			case ExpK:
-				emitComment((char*)"EXPRESSION");
+				
+				if(t->isParam)
+				{
+					numParams++;
+					string np = to_string(numParams);
+					emitComment((char*)"                      Load param", (char*)np.c_str());
+					fOffset -= 2;
+				}
 				switch(t->kind.exp)
 				{
 					case IdK:
 						if(t-> isArray == true)
-							{
-								
-							}
-							else
-							{
-							}
+						{
+							
+						}
+						else
+						{
+						}
 						break;
 
 					
@@ -282,6 +301,7 @@ void processCode(TreeNode * t)
 						break;
 
 					case AssK:
+						emitComment((char*)"EXPRESSION");
 						break;
 
 					case constK:
@@ -296,6 +316,7 @@ void processCode(TreeNode * t)
 								}
 								break;
 							case integer:
+								emitRM((char*)"LDC", AC, t->attr.value, AC3, (char*)"Load integer constant");
 								break;
 							case character:
 								break;
@@ -305,10 +326,32 @@ void processCode(TreeNode * t)
 						break;
 
 					case CallK:
+						TreeNode * callName;
+						callName = (TreeNode*)symTab.lookup(t->attr.name);
+						int funJump;
+						offset = fOffset + tOffset;
+						numParams = 0;
+						emitComment((char*)"EXPRESSION");
 						// Spaces match .tm tests
 						emitComment((char*)"                      Begin call to ", t->attr.name);
 
-						//emitRM((char*)"ST", FP, )
+						emitRM((char*)"ST", FP, offset, FP, (char*)"Store old fp in ghost frame");
+
+						for(int i = 0; i < 3; i++) 
+						{
+							processCodeR(t->child[i]);
+						}
+
+
+						
+						emitComment((char*)"                      Jump to", t->attr.name);
+						emitRM((char*)"LDA", FP, offset, FP, (char*)"Load address of new frame");
+						emitRM((char*)"LDA", AC, FP, PC, (char*)"Return address in ac");
+
+						funJump = callName->tmLoc - emitSkip(0);
+						emitRM((char*)"LDA", PC, funJump, PC, (char*)"CALL", t->attr.name);
+						emitRM((char*)"LDA", AC, 0, RT, (char*)"Save the result in ac");
+						emitComment((char*)"                      End call to", t->attr.name);
 
 						break;
 
@@ -319,7 +362,10 @@ void processCode(TreeNode * t)
 			default:
 				break;
 			}
-
+		if(t->isParam)
+		{
+			emitRM((char*)"ST", AC, fOffset, FP, (char*)"Store parameter");
+		}	
 	}
 }
 

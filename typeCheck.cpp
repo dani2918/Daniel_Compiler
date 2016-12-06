@@ -409,11 +409,13 @@ void checkParams(TreeNode * t, TreeNode * originalDecl, TreeNode * callName, Tre
 	
 	while(1)
 	{
+
 		//If both lists are done, then return
 		if(t == NULL && originalDecl == NULL)
 		{
 			return;
 		}
+		t->isParam = true;
 		//Too few params passed
 		if (t == NULL)
 		{
