@@ -695,6 +695,7 @@ returnStmt				: RETURN SEMI
 								$$ -> child[0] = $2;
 								$$ -> numChildren = 1;
 								$$ -> type = Void;
+
 								
 							}
 						;
@@ -705,6 +706,7 @@ breakStmt 				: BREAK SEMI
 								$$ = newStmtNode(breakStmt);
 								$$ -> attr.name = $1 -> tokenString;
 								$$ -> type = Void;
+								$$ -> lineno = $1 -> lineno;
 								
 							}
 						;
@@ -1203,7 +1205,6 @@ int main(int argc, char *argv[])
 
 	if (numErrors == 0)
 	{
-
 		generateCode(savedTree, infileName);
 	}
 

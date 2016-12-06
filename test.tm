@@ -1,7 +1,7 @@
-* C- compiler version C-F16e
-* Built: Nov 13, 2016
-* Author: Robert B. Heckendorn
-* File compiled:  a00.c-
+* C- compiler version C-F16
+* Built: 
+* Author: Matthew Daniel
+* File compiled: /Users/MattDaniel/Desktop/CS_445/Daniel_Compiler/testDataA7/a01.c-
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
@@ -77,6 +77,8 @@
  42:     ST  3,-1(1)	Store return address. 
 * COMPOUND
 * Compound Body
+* EXPRESSION
+*                       Begin call to  output
 * END COMPOUND
 * Add standard closing in case there is no return statement
  43:    LDC  2,0(6)	Set return value to 0 

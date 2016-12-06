@@ -48,6 +48,7 @@ void emitComment(char *c)
 // t = 2nd source register
 // c = a comment to be printed if TraceCode is TRUE
 // 
+//
 void emitRO(char *op, int r, int s, int t, char *c, char *cc)
 {
     fprintf(code, "%3d:  %5s  %d,%d,%d\t%s %s\n", emitLoc, op, r, s, t, c, cc);
@@ -69,6 +70,7 @@ void emitRO(char *op, int r, int s, int t, char *c)
 // s = the base register
 // c = a comment to be printed if TraceCode is TRUE
 // 
+//INSTRUCTIONS: LDC, LDA, LD, LDL, LDI, ST, STI, JNZ, JZR
 void emitRM(char *op, int r, int d, int s, char *c, char *cc)
 {
     fprintf(code, "%3d:  %5s  %d,%d(%d)\t%s %s\n", emitLoc, op, r, d, s, c, cc);
@@ -194,10 +196,12 @@ void backPatchAJumpToHere(char *cmd, int reg, int addr, char *comment)
 }
 
 
-// Gives the header as in Heckendorn's .tm files
+
+
+// Gives the header as in Dr. Heckendorn's .tm files
 void emitHeader(char *c)
 {
-    std::string line1, line2, line3, line4;
+    std::string line1, line2, line3, line4, line5;
     line1 = "C- compiler version C-F16";
     line2 =  "Built: ";
     line3 = "Author: Matthew Daniel";
@@ -209,6 +213,21 @@ void emitHeader(char *c)
     emitComment(strdup(line2.c_str())); 
     emitComment(strdup(line3.c_str()));     
     emitComment(strdup(line4.c_str()));  
+
+    emitDivider();
+
+    emitSkip(1);
+}
+
+void emitDivider()
+{
+    std::string line1, line2;
+    line1 = "";
+    line2 = "** ** ** ** ** ** ** ** ** ** ** **";
+     emitComment(strdup(line1.c_str()));
+    emitComment(strdup(line2.c_str())); 
+
+
 }
 
 
