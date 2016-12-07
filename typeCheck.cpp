@@ -18,7 +18,7 @@
 void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bool &leftGood, bool &rightGood, bool &mismatch, ExpType &wrongLHS, ExpType &wrongRHS, bool &isArrayLHS, bool &isArrayRHS, int &arrayError, ExpType &operandType,  bool isFunLHS,  bool isFunRHS)
 {
 	std::string strName(name);
-	
+	t->isUnary = false;
 	// for and or booleans
 	if (strName == "and" || strName == "or")
 	{
@@ -273,7 +273,7 @@ void checkTypes(TreeNode * t, char * name, TreeNode * left, TreeNode * right, bo
 {
 	std::string strName(name);
 		//printf("\n\n %s !!\n", strName.c_str());
-
+	t->isUnary = true;
 	// Unary star
 	if(strName == "*")
 	{

@@ -1111,7 +1111,7 @@ int main(int argc, char *argv[])
 	numErrors = 0;
 	bool syntaxErrors = false;
 
-	bool capP;
+	bool capP = false;
 
 
 	
@@ -1198,7 +1198,10 @@ int main(int argc, char *argv[])
 		printTree(savedTree, capP);
 	}
 
-	if(!syntaxErrors) printf("Offset for end of global space: %d\n", getGlobalOff());
+	if(!syntaxErrors && capP)
+	{
+		printf("Offset for end of global space: %d\n", getGlobalOff());
+	}
 	printf("Number of warnings: %d\n", numWarnings);
 	printf("Number of errors: %d\n", numErrors);
 	//symTab.print(pointerPrintStr);

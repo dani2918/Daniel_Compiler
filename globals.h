@@ -97,6 +97,7 @@ typedef struct treeNode
     bool isGlobal;
     bool badCall;
 
+    bool isUnary;
     int tmLoc;
 
    } TreeNode;

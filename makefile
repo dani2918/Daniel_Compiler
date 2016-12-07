@@ -1,9 +1,9 @@
 BIN  = parser
 CC   = g++
-SRCS = $(BIN).y $(BIN).l syntaxTree.cpp symbolTable.cpp printtree.cpp typeCheck.cpp semantic.cpp yyerror.cpp emitcode.cpp codegen.cpp
-OBJS = lex.yy.o $(BIN).tab.o syntaxTree.o symbolTable.o printtree.o typeCheck.o semantic.o yyerror.o emitcode.o codegen.o
+SRCS = $(BIN).y $(BIN).l syntaxTree.cpp symbolTable.cpp printtree.cpp typeCheck.cpp semantic.cpp yyerror.cpp emitcode.cpp codegen.cpp tm.c
+OBJS = lex.yy.o $(BIN).tab.o syntaxTree.o symbolTable.o printtree.o typeCheck.o semantic.o yyerror.o emitcode.o codegen.o 
 LIBS = -lm 
-CCFLAGS = -g
+CCFLAGS = -g 
 
 
 $(BIN): $(OBJS)

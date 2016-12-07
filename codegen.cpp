@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <string.h>
+#include <string>
+#include <sstream>
 #include "globals.h"
 #include "codegen.h"
 #include "emitcode.h"
@@ -13,6 +14,9 @@ extern int localOff;
 int fOffset = 0;
 int tOffset = 0;
 int offset = 0;
+
+int curPtr = 0;
+char * savedOp = NULL;
 
 int numParams;
 
@@ -105,7 +109,7 @@ void processIO(TreeNode * t)
 	}
 
 	//Move on to rest of code
-	processCode(t);
+	processCodeR(t);
 
 }
 
@@ -133,36 +137,28 @@ void processCode(TreeNode * t)
 				{
 					case varDeclaration:
 
+						for(int i = 0; i < 3; i++) 
+			    		{
+			    			processCodeR(t->child[i]);
+			    		}
+
 						//Differentiate between var and param
 
 						if(t-> isArray == true)
-							{
-							}
-							else
-							{
-							}
+						{
+						}
+						else
+						{
+						}
+						if(t->isGlobal || t ->isStatic)
+						{
+							
+				    		//emitRM((char*)"ST", AC, t->memLoc, FP, (char*)"Store variable", (char*)t->attr.name);
+						}
+						else
+						{
 
-							// switch types, maybe do this iff -p?
-							// if(!capP)
-							// {
-							// 	switch (t->type)
-							// 	{
-									
-							// 		case integer:
-							// 			break;
-							// 		case boolean:
-							// 			break;
-							// 		case character:
-							// 			break;	
-							// 		case record:
-							// 			break;
-							// 		default:
-							// 			break;
-							// 	}
-							// }
-							// else
-							// {
-							// }
+						}
 
 						break;
 
@@ -263,6 +259,10 @@ void processCode(TreeNode * t)
 				    	emitComment((char*)"END COMPOUND");
 						break;
 					case returnStmt:
+						emitComment((char*)"RETURN");
+						emitRM((char*)"LD", AC, -1, FP,  (char*)"Load return address");
+						emitRM((char*)"LD", FP, 0, FP, (char*)"Adjust fp");
+    					emitRM((char*)"LDA", PC, 0, AC, (char*)"Return");
 						break;
 					case selectionStmt:
 						break;
@@ -280,34 +280,79 @@ void processCode(TreeNode * t)
 				if(t->isParam)
 				{
 					numParams++;
-					string np = to_string(numParams);
+					string np = man_to_string(numParams);
 					emitComment((char*)"                      Load param", (char*)np.c_str());
+
+					//TODO: Check this
 					fOffset -= 2;
 				}
+				// else
+				// {
+				// 	
+				// }
 				switch(t->kind.exp)
 				{
 					case IdK:
+
+					if(t->isStatic || t->isGlobal) 
+					{
+						curPtr = GP;
+					}
+       				else
+       				{ 
+       					curPtr = FP;
+       				}
+
 						if(t-> isArray == true)
 						{
 							
 						}
 						else
 						{
+							//If we're in an assignment, store
+							if(savedOp != NULL)
+							{
+								emitRM((char*)"ST", AC, t->memLoc, curPtr, (char*)"Store variable", (char*)t->attr.name);
+							}
+							else
+							{
+								emitRM((char*)"LD", AC, t->memLoc, curPtr, (char*)"Load variable", (char*)t->attr.name);
+							}
 						}
 						break;
 
 					
 					case OpK:
+						if(t->isStatic || t->isGlobal) 
+						{
+							curPtr = GP;
+						}
+           				else
+           				{ 
+           					curPtr = FP;
+           				}
 						break;
 
 					case AssK:
 						emitComment((char*)"EXPRESSION");
+						savedOp = t->attr.name;
+
+						//If binary, process RHS first
+						if(!t->isUnary)
+						{
+							processCodeR(t->child[1]);
+						}
+						processCodeR(t->child[0]);
+						
+						savedOp = NULL;
+
 						break;
 
 					case constK:
 						switch(t -> type)
 						{
 							case boolean:
+								emitRM((char*)"LDC", AC, t->attr.bvalue, AC3, (char*)"Load Boolean constant");
 								if(t->attr.bvalue == true)
 								{
 								}
@@ -319,6 +364,7 @@ void processCode(TreeNode * t)
 								emitRM((char*)"LDC", AC, t->attr.value, AC3, (char*)"Load integer constant");
 								break;
 							case character:
+								emitRM((char*)"LDC", AC, t->attr.cvalue, AC3, (char*)"Load character constant");
 								break;
 							default:
 								break;
@@ -329,6 +375,8 @@ void processCode(TreeNode * t)
 						TreeNode * callName;
 						callName = (TreeNode*)symTab.lookup(t->attr.name);
 						int funJump;
+						int oldfOffset; oldfOffset = fOffset; 
+						int oldtOffset; oldtOffset = tOffset;
 						offset = fOffset + tOffset;
 						numParams = 0;
 						emitComment((char*)"EXPRESSION");
@@ -336,12 +384,16 @@ void processCode(TreeNode * t)
 						emitComment((char*)"                      Begin call to ", t->attr.name);
 
 						emitRM((char*)"ST", FP, offset, FP, (char*)"Store old fp in ghost frame");
+						fOffset = -2;
 
 						for(int i = 0; i < 3; i++) 
 						{
 							processCodeR(t->child[i]);
 						}
 
+						//restore after recursion
+						fOffset = oldfOffset;
+						tOffset = oldtOffset;
 
 						
 						emitComment((char*)"                      Jump to", t->attr.name);
@@ -364,7 +416,7 @@ void processCode(TreeNode * t)
 			}
 		if(t->isParam)
 		{
-			emitRM((char*)"ST", AC, fOffset, FP, (char*)"Store parameter");
+			emitRM((char*)"ST", AC, fOffset - numParams, FP, (char*)"Store parameter");
 		}	
 	}
 }
@@ -404,7 +456,14 @@ void processInitGlobalsStatics(TreeNode * t)
 
 }
 
-
+//Function to replace to_string 
+//Since we can't compile w c++ 11 on test machine
+std::string man_to_string(int i)
+{
+	stringstream ss;
+    ss << i;
+    return ss.str();
+}
 
 
 

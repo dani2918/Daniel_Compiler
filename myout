@@ -11,7 +11,8 @@ Sibling: 5  Func outnl returns type void [ref: Global, size: -2, loc: 0] [type v
 Sibling: 6  Func main returns type void [ref: Global, size: -2, loc: 0] [type void] [line: 2]
 !   Child: 1  Compound [ref: None, size: -2, loc: 0] [type void] [line: 3]
 !   !   Child: 1  Call: output [type void] [line: 4]
-!   !   !   Child: 0  Const: 987 [type int] [line: 4]
+!   !   !   Child: 0  Const: 982 [type int] [line: 4]
+!   !   Sibling: 0  Call: outnl [type void] [line: 5]
 Offset for end of global space: 0
 Number of warnings: 0
 Number of errors: 0

@@ -1,7 +1,7 @@
 * C- compiler version C-F16
 * Built: 
 * Author: Matthew Daniel
-* File compiled: /Users/MattDaniel/Desktop/CS_445/Daniel_Compiler/testDataA7/a01.c-
+* File compiled: /Users/MattDaniel/Desktop/CS_445/Daniel_Compiler/testDataA7/b01.c-
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
@@ -81,29 +81,37 @@
 *                       Begin call to  output
  43:     ST  1,-2(1)	Store old fp in ghost frame 
 *                       Load param 1
- 44:    LDC  3,987(6)	Load integer constant 
- 45:     ST  3,-4(1)	Store parameter 
+ 44:     ST  3,-5(1)	Store parameter 
 *                       Jump to output
- 46:    LDA  1,-2(1)	Load address of new frame 
- 47:    LDA  3,1(7)	Return address in ac 
- 48:    LDA  7,-43(7)	CALL output
- 49:    LDA  3,0(2)	Save the result in ac 
+ 45:    LDA  1,-2(1)	Load address of new frame 
+ 46:    LDA  3,1(7)	Return address in ac 
+ 47:    LDA  7,-42(7)	CALL output
+ 48:    LDA  3,0(2)	Save the result in ac 
 *                       End call to output
+* EXPRESSION
+*                       Begin call to  outnl
+ 49:     ST  1,-2(1)	Store old fp in ghost frame 
+*                       Jump to outnl
+ 50:    LDA  1,-2(1)	Load address of new frame 
+ 51:    LDA  3,1(7)	Return address in ac 
+ 52:    LDA  7,-16(7)	CALL outnl
+ 53:    LDA  3,0(2)	Save the result in ac 
+*                       End call to outnl
 * END COMPOUND
 * Add standard closing in case there is no return statement
- 50:    LDC  2,0(6)	Set return value to 0 
- 51:     LD  3,-1(1)	Load return address 
- 52:     LD  1,0(1)	Adjust fp 
- 53:    LDA  7,0(3)	Return 
+ 54:    LDC  2,0(6)	Set return value to 0 
+ 55:     LD  3,-1(1)	Load return address 
+ 56:     LD  1,0(1)	Adjust fp 
+ 57:    LDA  7,0(3)	Return 
 * END FUNCTION main
-  0:    LDA  7,53(7)	Jump to init [backpatch] 
+  0:    LDA  7,57(7)	Jump to init [backpatch] 
 * INIT
- 54:     LD  0,0(0)	Set the global pointer 
- 55:    LDA  1,0(0)	set first frame at end of globals 
- 56:     ST  1,0(1)	store old fp (point to self) 
+ 58:     LD  0,0(0)	Set the global pointer 
+ 59:    LDA  1,0(0)	set first frame at end of globals 
+ 60:     ST  1,0(1)	store old fp (point to self) 
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS
- 57:    LDA  3,1(7)	Return address in ac 
- 58:    LDA  7,-17(7)	Jump to main 
- 59:   HALT  0,0,0	DONE! 
+ 61:    LDA  3,1(7)	Return address in ac 
+ 62:    LDA  7,-21(7)	Jump to main 
+ 63:   HALT  0,0,0	DONE! 
 * END INIT

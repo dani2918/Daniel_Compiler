@@ -10,6 +10,7 @@ void processIO(TreeNode * t);
 void processInit(TreeNode * t);
 void processInitGlobalsStatics(TreeNode * t);
 
+std::string man_to_string(int i);
 
 
 
