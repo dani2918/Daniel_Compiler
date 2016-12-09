@@ -8,11 +8,22 @@ Sibling: 3  Func inputc returns type char [ref: Global, size: -2, loc: 0] [type 
 Sibling: 4  Func outputc returns type void [ref: Global, size: -3, loc: 0] [type void] [line: -1]
 !   Child: 0  Param *dummy*  [ref: Param, size: 1, loc: -2] [type char] [line: -1]
 Sibling: 5  Func outnl returns type void [ref: Global, size: -2, loc: 0] [type void] [line: -1]
-Sibling: 6  Func main returns type void [ref: Global, size: -2, loc: 0] [type void] [line: 2]
-!   Child: 1  Compound [ref: None, size: -2, loc: 0] [type void] [line: 3]
-!   !   Child: 1  Call: output [type void] [line: 4]
-!   !   !   Child: 0  Const: 982 [type int] [line: 4]
-!   !   Sibling: 0  Call: outnl [type void] [line: 5]
-Offset for end of global space: 0
+Sibling: 6  Var x  [ref: Global, size: 1, loc: 0] [type int] [line: 2]
+Sibling: 7  Func main returns type void [ref: Global, size: -3, loc: 0] [type void] [line: 4]
+!   Child: 1  Compound [ref: None, size: -3, loc: 0] [type void] [line: 5]
+!   !   Child: 0  Var y  [ref: Local, size: 1, loc: -2] [type int] [line: 6]
+!   !   Child: 1  Assign: = [type int] [line: 8]
+!   !   !   Child: 0  Id: x  [ref: Global, size: 1, loc: 0] [type int] [line: 8]
+!   !   !   Child: 1  Const: 341 [type int] [line: 8]
+!   !   Sibling: 0  Assign: = [type int] [line: 9]
+!   !   !   Child: 0  Id: y  [ref: Local, size: 1, loc: -2] [type int] [line: 9]
+!   !   !   Child: 1  Const: 273 [type int] [line: 9]
+!   !   Sibling: 1  Call: output [type void] [line: 10]
+!   !   !   Child: 0  Id: x  [ref: Param, size: 1, loc: 0] [type int] [line: 10]
+!   !   Sibling: 2  Call: outnl [type void] [line: 11]
+!   !   Sibling: 3  Call: output [type void] [line: 12]
+!   !   !   Child: 0  Id: y  [ref: Param, size: 1, loc: -2] [type int] [line: 12]
+!   !   Sibling: 4  Call: outnl [type void] [line: 13]
+Offset for end of global space: -1
 Number of warnings: 0
 Number of errors: 0

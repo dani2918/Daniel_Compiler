@@ -14,6 +14,7 @@ extern int localOff;
 int fOffset = 0;
 int tOffset = 0;
 int offset = 0;
+int compoundMemSize;
 
 int curPtr = 0;
 char * savedOp = NULL;
@@ -163,6 +164,11 @@ void processCode(TreeNode * t)
 						break;
 
 					case funDeclaration:
+
+
+
+
+
 						t ->tmLoc = emitSkip(0) - 1;
 						emitComment((char*)"FUNCTION", t->attr.name);
 
@@ -213,31 +219,6 @@ void processCode(TreeNode * t)
 						{
 						}
 						
-
-
-
-
-						// if(!capP)
-						// {	
-						// 	switch (t->type)
-						// 	{
-								
-						// 		case integer:
-						// 			break;
-						// 		case boolean:
-						// 			break;
-						// 		case character:
-						// 			break;	
-						// 		case record:
-						// 			break;
-						// 		default:
-						// 			break;
-						// 	}
-						// }
-						// else
-						// {
-						// }
-
 				}
 				
 				break;
@@ -248,14 +229,13 @@ void processCode(TreeNode * t)
 				switch(t->kind.stmt)
 				{
 					case compoundStmt:
+						compoundMemSize = t->memSize;
 						emitComment((char*)"COMPOUND");
 						emitComment((char*)"Compound Body");
-						fOffset = t->memSize;
 					    for(int i = 0; i < 3; i++) 
 				    	{
 				    		processCodeR(t->child[i]);
 				    	}
-				    	fOffset = 0;
 				    	emitComment((char*)"END COMPOUND");
 						break;
 					case returnStmt:
@@ -284,7 +264,7 @@ void processCode(TreeNode * t)
 					emitComment((char*)"                      Load param", (char*)np.c_str());
 
 					//TODO: Check this
-					fOffset -= 2;
+					//fOffset -= 2;
 				}
 				// else
 				// {
@@ -331,6 +311,93 @@ void processCode(TreeNode * t)
            				{ 
            					curPtr = FP;
            				}
+           				savedOp = t->attr.name;
+
+						//processCodeR(t->child[0]);
+						if(t->isUnary)
+						{
+							processCodeR(t->child[0]);
+							if (strcmp(savedOp, "*") == 0)
+							{
+								emitRM((char*)"LD", AC, 1, AC, (char*)"Load array size");
+							}	
+							else if (strcmp(savedOp, "?") == 0)
+							{
+								emitRO((char*)"RND", AC, AC, 6, (char*)"Op", savedOp);
+							}
+							else if (strcmp(savedOp, "not") == 0)
+							{
+								emitRM((char*)"LDC", AC1, 1, AC3, (char*)"Load 1");
+								emitRO((char*)"XOR", AC, AC, AC1, (char*)"Op NOT");
+							}
+						}
+						else
+						{
+							processCodeR(t->child[0]);
+							int copytOffset = tOffset;
+							tOffset --;
+							emitRM((char*)"ST", AC, fOffset + copytOffset, FP, (char*)"Save left side");
+							processCodeR(t->child[1]);
+							emitRM((char*)"LD", AC1, fOffset + copytOffset, FP, (char*)"Load left into ac1");
+						}
+
+						//annoyingly can't do a switch stmt on a char *
+
+						if (strcmp(savedOp, "*") == 0)
+						{
+							emitRO((char*)"MUL", AC, AC1, AC, (char*)"Op", savedOp);
+						}	
+						else if (strcmp(savedOp, "+") == 0)
+						{
+							emitRO((char*)"ADD", AC, AC1, AC, (char*)"Op", savedOp);
+						}
+						else if (strcmp(savedOp, "-") == 0)
+						{
+							emitRO((char*)"SUB", AC, AC1, AC, (char*)"Op", savedOp);
+						}
+						else if (strcmp(savedOp, "/") == 0)
+						{
+							emitRO((char*)"DIV", AC, AC1, AC, (char*)"Op", savedOp);
+						}
+						else if (strcmp(savedOp, ">") == 0)
+						{
+							emitRO((char*)"TGT", AC, AC1, AC, (char*)"Op", savedOp);
+						}
+						else if (strcmp(savedOp, "<") == 0)
+						{
+							emitRO((char*)"TLT", AC, AC1, AC, (char*)"Op", savedOp);
+						}
+						else if (strcmp(savedOp, ">=") == 0)
+						{
+							emitRO((char*)"TGE", AC, AC1, AC, (char*)"Op", savedOp);
+						}
+						else if (strcmp(savedOp, "<=") == 0)
+						{
+							emitRO((char*)"TLE", AC, AC1, AC, (char*)"Op", savedOp);
+						}
+						else if (strcmp(savedOp, "!=") == 0)
+						{
+							emitRO((char*)"TNE", AC, AC1, AC, (char*)"Op", savedOp);
+						}
+						else if (strcmp(savedOp, "==") == 0)
+						{
+							emitRO((char*)"TEQ", AC, AC1, AC, (char*)"Op", savedOp);
+						}
+						else if (strcmp(savedOp, "and") == 0)
+						{
+							emitRO((char*)"AND", AC, AC1, AC, (char*)"Op AND");
+						}
+						else if (strcmp(savedOp, "or") == 0)
+						{
+							emitRO((char*)"OR", AC, AC1, AC, (char*)"Op OR");
+						}
+						else if (strcmp(savedOp, "%") == 0)
+						{
+							emitRO((char*)"DIV", AC2, AC1, AC, (char*)"Op", savedOp);
+							emitRO((char*)"MUL", AC2, AC2, AC, (char*)"");
+							emitRO((char*)"SUB", AC, AC1, AC2, (char*)"");
+						}
+
 						break;
 
 					case AssK:
@@ -343,8 +410,8 @@ void processCode(TreeNode * t)
 							processCodeR(t->child[1]);
 						}
 						processCodeR(t->child[0]);
-						
 						savedOp = NULL;
+						//tOffset --;
 
 						break;
 
@@ -374,17 +441,27 @@ void processCode(TreeNode * t)
 					case CallK:
 						TreeNode * callName;
 						callName = (TreeNode*)symTab.lookup(t->attr.name);
+						
+						//'save' all variables so that we don't lose 
+						// values in recruisve call
+						fOffset = compoundMemSize;
 						int funJump;
-						int oldfOffset; oldfOffset = fOffset; 
-						int oldtOffset; oldtOffset = tOffset;
-						offset = fOffset + tOffset;
+						int copyfOffset; copyfOffset = fOffset; 
+						int copytOffset; copytOffset = tOffset;
+
+						// This changes the offset for params in recursive call
+						// But not for anything in CallK
+						fOffset -= 2;
+
+						// int copyCompSize; copyCompSize = compoundMemSize;
 						numParams = 0;
+						offset = copytOffset + copyfOffset;
+
 						emitComment((char*)"EXPRESSION");
 						// Spaces match .tm tests
 						emitComment((char*)"                      Begin call to ", t->attr.name);
-
 						emitRM((char*)"ST", FP, offset, FP, (char*)"Store old fp in ghost frame");
-						fOffset = -2;
+
 
 						for(int i = 0; i < 3; i++) 
 						{
@@ -392,8 +469,9 @@ void processCode(TreeNode * t)
 						}
 
 						//restore after recursion
-						fOffset = oldfOffset;
-						tOffset = oldtOffset;
+						fOffset = copyfOffset;
+						tOffset = copytOffset;
+						//compoundMemSize = copyCompSize;
 
 						
 						emitComment((char*)"                      Jump to", t->attr.name);
@@ -405,6 +483,8 @@ void processCode(TreeNode * t)
 						emitRM((char*)"LDA", AC, 0, RT, (char*)"Save the result in ac");
 						emitComment((char*)"                      End call to", t->attr.name);
 
+						// Resets fOff (see above)
+						fOffset += 2;
 						break;
 
 					default:
@@ -416,7 +496,8 @@ void processCode(TreeNode * t)
 			}
 		if(t->isParam)
 		{
-			emitRM((char*)"ST", AC, fOffset - numParams, FP, (char*)"Store parameter");
+			emitRM((char*)"ST", AC, fOffset, FP, (char*)"Store parameter");
+			fOffset --;
 		}	
 	}
 }
