@@ -15,12 +15,10 @@ int fOffset = 0;
 int tOffset = 0;
 int offset = 0;
 int compoundMemSize;
-
+bool storeMode = false;
 int curPtr = 0;
 char * savedOp = NULL;
-
 int numParams;
-
 char * tmFileName;
 
 
@@ -290,9 +288,10 @@ void processCode(TreeNode * t)
 						else
 						{
 							//If we're in an assignment, store
-							if(savedOp != NULL)
+							if(savedOp != NULL && storeMode)
 							{
 								emitRM((char*)"ST", AC, t->memLoc, curPtr, (char*)"Store variable", (char*)t->attr.name);
+								storeMode = false;
 							}
 							else
 							{
@@ -404,12 +403,16 @@ void processCode(TreeNode * t)
 						emitComment((char*)"EXPRESSION");
 						savedOp = t->attr.name;
 
+						storeMode = true;
 						//If binary, process RHS first
 						if(!t->isUnary)
 						{
 							processCodeR(t->child[1]);
 						}
 						processCodeR(t->child[0]);
+
+						
+
 						savedOp = NULL;
 						//tOffset --;
 

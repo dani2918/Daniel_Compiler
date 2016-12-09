@@ -1,7 +1,7 @@
 * C- compiler version C-F16
 * Built: 
 * Author: Matthew Daniel
-* File compiled: /Users/MattDaniel/Desktop/CS_445/Daniel_Compiler/testDataA7/c01.c-
+* File compiled: /Users/MattDaniel/Desktop/CS_445/Daniel_Compiler/testDataA7/c05.c-
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
@@ -79,50 +79,57 @@
 * Compound Body
 * EXPRESSION
  43:    LDC  3,73(6)	Load integer constant 
- 44:     ST  3,-2(1)	Store variable x
+ 44:     ST  3,0(1)	Save left side 
+ 45:    LDC  3,2(6)	Load integer constant 
+ 46:     LD  4,0(1)	Load left into ac1 
 * EXPRESSION
- 45:    LDC  3,211(6)	Load integer constant 
- 46:     ST  3,-3(1)	Store variable y
+ 47:    LDC  3,211(6)	Load integer constant 
+ 48:     ST  3,-1(1)	Save left side 
+ 49:    LDC  3,1(6)	Load integer constant 
+ 50:     LD  4,-1(1)	Load left into ac1 
 * EXPRESSION
 *                       Begin call to  output
- 47:     ST  1,-4(1)	Store old fp in ghost frame 
+ 51:     ST  1,-4(1)	Store old fp in ghost frame 
 *                       Load param 1
- 48:     ST  3,-2(1)	Store variable x
- 49:     ST  3,-6(1)	Save left side 
- 50:     ST  3,-3(1)	Store variable y
- 51:     LD  4,-6(1)	Load left into ac1 
- 52:    ADD  3,4,3	Op +
- 53:     ST  3,-6(1)	Store parameter 
+ 52:     ST  3,-6(1)	Save left side 
+ 53:    LDC  3,2(6)	Load integer constant 
+ 54:     LD  4,-6(1)	Load left into ac1 
+ 55:     ST  3,-7(1)	Save left side 
+ 56:     ST  3,-8(1)	Save left side 
+ 57:    LDC  3,1(6)	Load integer constant 
+ 58:     LD  4,-8(1)	Load left into ac1 
+ 59:     LD  4,-7(1)	Load left into ac1 
+ 60:     ST  3,-4(1)	Store parameter 
 *                       Jump to output
- 54:    LDA  1,-4(1)	Load address of new frame 
- 55:    LDA  3,1(7)	Return address in ac 
- 56:    LDA  7,-51(7)	CALL output
- 57:    LDA  3,0(2)	Save the result in ac 
+ 61:    LDA  1,-4(1)	Load address of new frame 
+ 62:    LDA  3,1(7)	Return address in ac 
+ 63:    LDA  7,-58(7)	CALL output
+ 64:    LDA  3,0(2)	Save the result in ac 
 *                       End call to output
 * EXPRESSION
 *                       Begin call to  outnl
- 58:     ST  1,-4(1)	Store old fp in ghost frame 
+ 65:     ST  1,-4(1)	Store old fp in ghost frame 
 *                       Jump to outnl
- 59:    LDA  1,-4(1)	Load address of new frame 
- 60:    LDA  3,1(7)	Return address in ac 
- 61:    LDA  7,-25(7)	CALL outnl
- 62:    LDA  3,0(2)	Save the result in ac 
+ 66:    LDA  1,-4(1)	Load address of new frame 
+ 67:    LDA  3,1(7)	Return address in ac 
+ 68:    LDA  7,-32(7)	CALL outnl
+ 69:    LDA  3,0(2)	Save the result in ac 
 *                       End call to outnl
 * END COMPOUND
 * Add standard closing in case there is no return statement
- 63:    LDC  2,0(6)	Set return value to 0 
- 64:     LD  3,-1(1)	Load return address 
- 65:     LD  1,0(1)	Adjust fp 
- 66:    LDA  7,0(3)	Return 
+ 70:    LDC  2,0(6)	Set return value to 0 
+ 71:     LD  3,-1(1)	Load return address 
+ 72:     LD  1,0(1)	Adjust fp 
+ 73:    LDA  7,0(3)	Return 
 * END FUNCTION main
-  0:    LDA  7,66(7)	Jump to init [backpatch] 
+  0:    LDA  7,73(7)	Jump to init [backpatch] 
 * INIT
- 67:     LD  0,0(0)	Set the global pointer 
- 68:    LDA  1,0(0)	set first frame at end of globals 
- 69:     ST  1,0(1)	store old fp (point to self) 
+ 74:     LD  0,0(0)	Set the global pointer 
+ 75:    LDA  1,-9(0)	set first frame at end of globals 
+ 76:     ST  1,0(1)	store old fp (point to self) 
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS
- 70:    LDA  3,1(7)	Return address in ac 
- 71:    LDA  7,-30(7)	Jump to main 
- 72:   HALT  0,0,0	DONE! 
+ 77:    LDA  3,1(7)	Return address in ac 
+ 78:    LDA  7,-37(7)	Jump to main 
+ 79:   HALT  0,0,0	DONE! 
 * END INIT
