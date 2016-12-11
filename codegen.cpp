@@ -21,6 +21,8 @@ char * savedOp = NULL;
 int numParams;
 char * tmFileName;
 
+char * copySavedOp;
+
 
 
 
@@ -295,12 +297,13 @@ void processCode(TreeNode * t)
 								if(t->child[0] != NULL)
 								{
 									processCodeR(t->child[0]);
-									emitRM((char*)"LDA", 5, t->memLoc, curPtr, (char*)"Load address of base of array", (char*)t->attr.name);
-									
+									emitRM((char*)"LDA", AC1, t->memLoc, curPtr, (char*)"Load address of base of array", (char*)t->attr.name);
+
 								}
 								else
 								{
-									emitRM((char*)"LDA", 5, t->memLoc, curPtr, (char*)"Load address of base of array", (char*)t->attr.name);
+									emitRM((char*)"LDA", AC, t->memLoc, curPtr, (char*)"Load address of base of array", (char*)t->attr.name);
+
 								}
 							}
 							else
@@ -316,7 +319,6 @@ void processCode(TreeNode * t)
 								emitRM((char*)"LD", AC1, (fOffset + tOffset), FP, (char*)"Restore index");
 								emitRM((char*)"LDA", AC2, t->memLoc, curPtr, (char*)"Load address of base of array", (char*)t->attr.name);
 								emitRO((char*)"SUB", AC2, AC2, AC1, (char*)"Compute offset of value");
-
 
 								emitRM((char*)"ST", AC, 0, AC2, (char*)"Store variable", (char*)t->attr.name);
 
@@ -346,6 +348,11 @@ void processCode(TreeNode * t)
            				}
            				savedOp = t->attr.name;
 
+           				if (strcmp(savedOp, "[") != 0)
+           				{
+           					storeMode = false;
+           				}
+
 						//processCodeR(t->child[0]);
 						if(t->isUnary)
 						{
@@ -368,15 +375,22 @@ void processCode(TreeNode * t)
 						{
 
 							processCodeR(t->child[0]);
-							if(strcmp(savedOp, "[") != 0)
+
+							//If we're not storing, load
+							if(!storeMode)
 							{
 								int copytOffset = tOffset;
 								tOffset --;
 								emitRM((char*)"ST", AC, fOffset + copytOffset, FP, (char*)"Save left side");
 								processCodeR(t->child[1]);
 								emitRM((char*)"LD", AC1, fOffset + copytOffset, FP, (char*)"Load left into ac1");
+								
 							}
+
+													
 						}
+
+						savedOp = t->attr.name;
 
 						//annoyingly can't do a switch stmt on a char *
 
@@ -434,6 +448,13 @@ void processCode(TreeNode * t)
 							emitRO((char*)"MUL", AC2, AC2, AC, (char*)"");
 							emitRO((char*)"SUB", AC, AC1, AC2, (char*)"");
 						}
+						else if (strcmp(savedOp, "[") == 0 && !storeMode)
+						{
+
+							emitRO((char*)"SUB", AC, AC1, AC, (char*)"compute location from index");
+							emitRM((char*)"LD", AC, 0, AC, (char*)"Load array element");
+							tOffset ++;
+						}
 
 						break;
 
@@ -441,12 +462,13 @@ void processCode(TreeNode * t)
 
 						emitComment((char*)"EXPRESSION");
 						savedOp = t->attr.name;
-						storeMode = true;
+						storeMode = false;
 
 						if(left->child[0] != NULL)
 						{
 							if(left->child[0]->isArray)
 							{
+
 								processCodeR(left->child[1]);
 								
 								emitRM((char*)"ST", AC, fOffset + tOffset, FP, (char*)"Save index");
@@ -454,7 +476,11 @@ void processCode(TreeNode * t)
 
 							}
 						}
+						storeMode = true;
 
+						savedOp = t->attr.name;
+
+						
 						
 						//If binary, process RHS first
 						if(!t->isUnary)
@@ -463,8 +489,9 @@ void processCode(TreeNode * t)
 						}
 						processCodeR(t->child[0]);
 
+						savedOp = t->attr.name;
 						
-
+						
 						savedOp = NULL;
 						//tOffset --;
 
@@ -503,6 +530,7 @@ void processCode(TreeNode * t)
 						int funJump;
 						int copyfOffset; copyfOffset = fOffset; 
 						int copytOffset; copytOffset = tOffset;
+						bool copyStoreMode; copyStoreMode = storeMode;
 
 						// This changes the offset for params in recursive call
 						// But not for anything in CallK
@@ -526,7 +554,8 @@ void processCode(TreeNode * t)
 						//restore after recursion
 						fOffset = copyfOffset;
 						tOffset = copytOffset;
-						//compoundMemSize = copyCompSize;
+						storeMode = copyStoreMode;
+
 
 						
 						emitComment((char*)"                      Jump to", t->attr.name);
@@ -590,7 +619,28 @@ void processInit(TreeNode * t)
 
 void processInitGlobalsStatics(TreeNode * t)
 {
+	fOffset = -2;
+	if (t == NULL)
+	{
+		return;
+	}
+	if(t->nodekind == DeclK && t->kind.decl == varDeclaration)
+	{
+		if(t->isGlobal || t->isStatic)
+		{
+			if(t->isArray)
+			{
+				emitRM((char*)"LDC", AC, t->memSize - 1, AC3, (char*)"load size of array", (char*)t->attr.name);
+				emitRM((char*)"ST", AC, t->memLoc + 1, 0, (char*)"save size of array", (char*)t->attr.name);
+			}
+		}
+	}
 
+	for(int i = 0; i < 3; i++)
+	{
+		processInitGlobalsStatics(t->child[i]);
+	}
+	processInitGlobalsStatics(t->sibling);
 }
 
 //Function to replace to_string 

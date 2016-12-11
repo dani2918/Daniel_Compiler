@@ -97,41 +97,56 @@
 *                       Begin call to  output
  57:     ST  1,-2(1)	Store old fp in ghost frame 
 *                       Load param 1
- 58:     LD  4,-4(1)	Restore index 
- 59:    LDA  5,-1(0)	Load address of base of array x
- 60:    SUB  5,5,4	Compute offset of value 
- 61:     ST  3,0(5)	Store variable x
- 62:     ST  3,-4(1)	Store parameter 
+ 58:    LDA  3,-1(0)	Load address of base of array x
+ 59:     ST  3,-4(1)	Save left side 
+ 60:    LDC  3,2(6)	Load integer constant 
+ 61:     LD  4,-4(1)	Load left into ac1 
+ 62:    SUB  3,4,3	compute location from index 
+ 63:     LD  3,0(3)	Load array element 
+ 64:     ST  3,-4(1)	Save left side 
+ 65:    LDA  3,-5(0)	Load address of base of array y
+ 66:     ST  3,-5(1)	Save left side 
+ 67:    LDC  3,1(6)	Load integer constant 
+ 68:     LD  4,-5(1)	Load left into ac1 
+ 69:    SUB  3,4,3	compute location from index 
+ 70:     LD  3,0(3)	Load array element 
+ 71:     LD  4,-4(1)	Load left into ac1 
+ 72:    ADD  3,4,3	Op +
+ 73:     ST  3,-4(1)	Store parameter 
 *                       Jump to output
- 63:    LDA  1,-2(1)	Load address of new frame 
- 64:    LDA  3,1(7)	Return address in ac 
- 65:    LDA  7,-60(7)	CALL output
- 66:    LDA  3,0(2)	Save the result in ac 
+ 74:    LDA  1,-2(1)	Load address of new frame 
+ 75:    LDA  3,1(7)	Return address in ac 
+ 76:    LDA  7,-71(7)	CALL output
+ 77:    LDA  3,0(2)	Save the result in ac 
 *                       End call to output
 * EXPRESSION
 *                       Begin call to  outnl
- 67:     ST  1,-2(1)	Store old fp in ghost frame 
+ 78:     ST  1,-2(1)	Store old fp in ghost frame 
 *                       Jump to outnl
- 68:    LDA  1,-2(1)	Load address of new frame 
- 69:    LDA  3,1(7)	Return address in ac 
- 70:    LDA  7,-34(7)	CALL outnl
- 71:    LDA  3,0(2)	Save the result in ac 
+ 79:    LDA  1,-2(1)	Load address of new frame 
+ 80:    LDA  3,1(7)	Return address in ac 
+ 81:    LDA  7,-45(7)	CALL outnl
+ 82:    LDA  3,0(2)	Save the result in ac 
 *                       End call to outnl
 * END COMPOUND
 * Add standard closing in case there is no return statement
- 72:    LDC  2,0(6)	Set return value to 0 
- 73:     LD  3,-1(1)	Load return address 
- 74:     LD  1,0(1)	Adjust fp 
- 75:    LDA  7,0(3)	Return 
+ 83:    LDC  2,0(6)	Set return value to 0 
+ 84:     LD  3,-1(1)	Load return address 
+ 85:     LD  1,0(1)	Adjust fp 
+ 86:    LDA  7,0(3)	Return 
 * END FUNCTION main
-  0:    LDA  7,75(7)	Jump to init [backpatch] 
+  0:    LDA  7,86(7)	Jump to init [backpatch] 
 * INIT
- 76:     LD  0,0(0)	Set the global pointer 
- 77:    LDA  1,-9(0)	set first frame at end of globals 
- 78:     ST  1,0(1)	store old fp (point to self) 
+ 87:     LD  0,0(0)	Set the global pointer 
+ 88:    LDA  1,-9(0)	set first frame at end of globals 
+ 89:     ST  1,0(1)	store old fp (point to self) 
 * INIT GLOBALS AND STATICS
+ 90:    LDC  3,3(6)	load size of array x
+ 91:     ST  3,0(0)	save size of array x
+ 92:    LDC  3,4(6)	load size of array y
+ 93:     ST  3,-4(0)	save size of array y
 * END INIT GLOBALS AND STATICS
- 79:    LDA  3,1(7)	Return address in ac 
- 80:    LDA  7,-39(7)	Jump to main 
- 81:   HALT  0,0,0	DONE! 
+ 94:    LDA  3,1(7)	Return address in ac 
+ 95:    LDA  7,-54(7)	Jump to main 
+ 96:   HALT  0,0,0	DONE! 
 * END INIT

@@ -50,10 +50,11 @@ clean:
 	rm -f $(OBJS) $(BIN) syntaxTree.o lex.yy.c $(BIN).tab.h $(BIN).tab.c $(BIN).tar *~ *.output 
 
 tar:
+	make
 	tar -cvf $(BIN).tar $(SRCS) globals.h scanType.h syntaxTree.h symbolTable.h printtree.h semantic.h typeCheck.h yyerror.h emitcode.h codegen.h makefile 
 
 submit: 
-	curl -F student=daniel -F assignment="CS445 F16 Assignment 7 small" -F "submittedfile=@parser.tar" "http://ec2-52-89-93-46.us-west-2.compute.amazonaws.com/cgi-bin/fileCapture.py"
+	curl -F student=daniel -F assignment="CS445 F16 Assignment 7" -F "submittedfile=@parser.tar" "http://ec2-52-89-93-46.us-west-2.compute.amazonaws.com/cgi-bin/fileCapture.py"
 
 
 
