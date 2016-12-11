@@ -14,12 +14,14 @@ extern int localOff;
 int fOffset = 0;
 int tOffset = 0;
 int offset = 0;
-int compoundMemSize;
+int compoundMemSize = 0;
 bool storeMode = false;
 int curPtr = 0;
 char * savedOp = NULL;
 int numParams;
 char * tmFileName;
+
+
 
 
 FILE * code;
@@ -128,6 +130,7 @@ void processCode(TreeNode * t)
 {
 	if(t != NULL)
 	{
+		
 		switch(t->nodekind)
 		{
 			case DeclK:
@@ -227,7 +230,7 @@ void processCode(TreeNode * t)
 				switch(t->kind.stmt)
 				{
 					case compoundStmt:
-						compoundMemSize = t->memSize;
+					 	fOffset = compoundMemSize = t->memSize;
 						emitComment((char*)"COMPOUND");
 						emitComment((char*)"Compound Body");
 					    for(int i = 0; i < 3; i++) 
@@ -254,7 +257,9 @@ void processCode(TreeNode * t)
 				break;
 
 			case ExpK:
-				
+				TreeNode * left; TreeNode * right;
+				left = t->child[0];
+				right = t->child[1];
 				if(t->isParam)
 				{
 					numParams++;
@@ -270,32 +275,61 @@ void processCode(TreeNode * t)
 				// }
 				switch(t->kind.exp)
 				{
+				
+
 					case IdK:
 
-					if(t->isStatic || t->isGlobal) 
-					{
-						curPtr = GP;
-					}
-       				else
-       				{ 
-       					curPtr = FP;
-       				}
-
-						if(t-> isArray == true)
+						if(t->isStatic || t->isGlobal) 
 						{
-							
+							curPtr = GP;
 						}
-						else
+	       				else
+	       				{ 
+	       					curPtr = FP;
+	       				}
+
+	   					if(!storeMode)
 						{
-							//If we're in an assignment, store
-							if(savedOp != NULL && storeMode)
+							if(t-> isArray == true)
 							{
-								emitRM((char*)"ST", AC, t->memLoc, curPtr, (char*)"Store variable", (char*)t->attr.name);
-								storeMode = false;
+								if(t->child[0] != NULL)
+								{
+									processCodeR(t->child[0]);
+									emitRM((char*)"LDA", 5, t->memLoc, curPtr, (char*)"Load address of base of array", (char*)t->attr.name);
+									
+								}
+								else
+								{
+									emitRM((char*)"LDA", 5, t->memLoc, curPtr, (char*)"Load address of base of array", (char*)t->attr.name);
+								}
 							}
 							else
 							{
 								emitRM((char*)"LD", AC, t->memLoc, curPtr, (char*)"Load variable", (char*)t->attr.name);
+							}
+						}
+						else
+						{
+							if(t->isArray)
+							{	
+								// Restore index at offset
+								emitRM((char*)"LD", AC1, (fOffset + tOffset), FP, (char*)"Restore index");
+								emitRM((char*)"LDA", AC2, t->memLoc, curPtr, (char*)"Load address of base of array", (char*)t->attr.name);
+								emitRO((char*)"SUB", AC2, AC2, AC1, (char*)"Compute offset of value");
+
+
+								emitRM((char*)"ST", AC, 0, AC2, (char*)"Store variable", (char*)t->attr.name);
+
+							}
+							else
+							{
+								//If we're in an assignment, store
+								if(savedOp != NULL && storeMode)
+								{
+									emitRM((char*)"ST", AC, t->memLoc, curPtr, (char*)"Store variable", (char*)t->attr.name);
+									storeMode = false;
+								}
+								
 							}
 						}
 						break;
@@ -332,12 +366,16 @@ void processCode(TreeNode * t)
 						}
 						else
 						{
+
 							processCodeR(t->child[0]);
-							int copytOffset = tOffset;
-							tOffset --;
-							emitRM((char*)"ST", AC, fOffset + copytOffset, FP, (char*)"Save left side");
-							processCodeR(t->child[1]);
-							emitRM((char*)"LD", AC1, fOffset + copytOffset, FP, (char*)"Load left into ac1");
+							if(strcmp(savedOp, "[") != 0)
+							{
+								int copytOffset = tOffset;
+								tOffset --;
+								emitRM((char*)"ST", AC, fOffset + copytOffset, FP, (char*)"Save left side");
+								processCodeR(t->child[1]);
+								emitRM((char*)"LD", AC1, fOffset + copytOffset, FP, (char*)"Load left into ac1");
+							}
 						}
 
 						//annoyingly can't do a switch stmt on a char *
@@ -400,10 +438,24 @@ void processCode(TreeNode * t)
 						break;
 
 					case AssK:
+
 						emitComment((char*)"EXPRESSION");
 						savedOp = t->attr.name;
-
 						storeMode = true;
+
+						if(left->child[0] != NULL)
+						{
+							if(left->child[0]->isArray)
+							{
+								processCodeR(left->child[1]);
+								
+								emitRM((char*)"ST", AC, fOffset + tOffset, FP, (char*)"Save index");
+								//tOffset--;
+
+							}
+						}
+
+						
 						//If binary, process RHS first
 						if(!t->isUnary)
 						{
@@ -492,6 +544,7 @@ void processCode(TreeNode * t)
 
 					default:
 						break;
+					left = right = NULL;
 				}	
 
 			default:
