@@ -285,8 +285,6 @@ void processCode(TreeNode * t)
 			    		}
 			    		emitRM((char*)"JZR", AC, jumpToThen - emitSkip(0) - 1, PC, (char*)"Jump around the THEN if false [backpatch]");
 			    		
-
-			    		
 			    		emitBackup(saveJump);
 
 			    		if(t->child[2] != NULL)
@@ -305,11 +303,23 @@ void processCode(TreeNode * t)
 
 						break;
 					case iterationStmt:
+						int saveWhileJump, whilePlace, breakPlace;
 						emitComment((char*)"WHILE");
-						for(int i = 0; i < 3; i++) 
-				    	{
-				    		processCodeR(t->child[i]);
-				    	}
+						saveWhileJump = emitSkip(0);
+			    		processCodeR(t->child[0]);
+			    		emitRM((char*)"JNZ", AC, 1, PC, (char*)"Jump to while part");
+			    		whilePlace = emitSkip(1);
+
+			    		breakPlace = emitSkip(0);
+			    		emitComment((char*)"DO");
+			    		processCodeR(t->child[1]);
+
+			    		emitRM((char*)"LDA", PC, saveWhileJump - whilePlace - 1, PC, (char*)"go to beginning of the loop");
+			    		saveWhileJump = emitSkip(0);
+			    		emitBackup(whilePlace);
+			    		emitRM((char*)"LDA", PC, saveWhileJump - whilePlace - 1, PC, (char*)"Jump past loop [backpatch]");
+
+
 						break;
 					case breakStmt:
 						emitComment((char*)"BREAK");
