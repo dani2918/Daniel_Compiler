@@ -29,6 +29,8 @@ int numParams;
 char * tmFileName;
 int oldIndex = -999;
 int newIndex;
+int saveBreakPlace = 0;
+int breakPlace = 0;
 
 char * copySavedOp;
 
@@ -263,6 +265,13 @@ void processCode(TreeNode * t)
 						break;
 					case returnStmt:
 						emitComment((char*)"RETURN");
+						processCodeR(t->child[0]);
+
+						if(t->child[0] != NULL)
+						{
+							emitRM((char*)"LDA", RT, 0, AC, (char*)"Copy result to rt register");
+						}
+
 						emitRM((char*)"LD", AC, -1, FP,  (char*)"Load return address");
 						emitRM((char*)"LD", FP, 0, FP, (char*)"Adjust fp");
     					emitRM((char*)"LDA", PC, 0, AC, (char*)"Return");
@@ -303,26 +312,36 @@ void processCode(TreeNode * t)
 
 						break;
 					case iterationStmt:
-						int saveWhileJump, whilePlace, breakPlace;
+						int saveWhileJump, whileJump, whilePlace;
+						//breakPlace = 0;
 						emitComment((char*)"WHILE");
-						saveWhileJump = emitSkip(0);
+						saveWhileJump = whileJump = emitSkip(0);
 			    		processCodeR(t->child[0]);
 			    		emitRM((char*)"JNZ", AC, 1, PC, (char*)"Jump to while part");
 			    		whilePlace = emitSkip(1);
 
+			    		saveBreakPlace = breakPlace;
 			    		breakPlace = emitSkip(0);
+			    		
 			    		emitComment((char*)"DO");
 			    		processCodeR(t->child[1]);
 
-			    		emitRM((char*)"LDA", PC, saveWhileJump - whilePlace - 1, PC, (char*)"go to beginning of the loop");
-			    		saveWhileJump = emitSkip(0);
+			    		saveWhileJump = emitSkip(0) + 1;
+			    		emitRM((char*)"LDA", PC, whileJump - emitSkip(0) - 1, PC, (char*)"go to beginning of loop");
+			    		whileJump = emitSkip(0);
 			    		emitBackup(whilePlace);
-			    		emitRM((char*)"LDA", PC, saveWhileJump - whilePlace - 1, PC, (char*)"Jump past loop [backpatch]");
+			    		emitRM((char*)"LDA", PC, whileJump - whilePlace - 1, PC, (char*)"Jump past loop [backpatch]");
 
+			    		emitBackup(saveWhileJump);
 
+			    		breakPlace = saveBreakPlace ;
+			    		emitComment((char*)"ENDWHILE");
 						break;
 					case breakStmt:
 						emitComment((char*)"BREAK");
+						emitRM((char*)"LDA", PC, (breakPlace - emitSkip(0) - 2), PC, (char*)"break");
+
+
 						break;
 					default:
 						break;
@@ -627,7 +646,7 @@ void processCode(TreeNode * t)
 							emitRM((char*)"LD", AC, 0, AC, (char*)"Load array element");
 							tOffset ++;
 						}						
-						}
+					}
 
 						
 
@@ -642,6 +661,10 @@ void processCode(TreeNode * t)
 						assignOp = false;
 						lhsOp = false;
 						opIsUnary = false;
+
+						// printf("assk: %s\n", t->attr.name);
+						// printf("foff: %d \n", fOffset);
+						// printf("Toff: %d \n\n", tOffset);
 
 						if(left->child[0] != NULL)
 						{
@@ -669,16 +692,30 @@ void processCode(TreeNode * t)
 								if (strcmp(savedOp, "=") == 0 || strcmp(savedOp, "+=") == 0 || strcmp(savedOp, "-=") == 0
 									|| strcmp(savedOp, "*=") == 0 || strcmp(savedOp, "/=") == 0)
 								{	
+
 									emitRM((char*)"ST", AC, fOffset + tOffset, FP, (char*)"Save index");
-									//tOffset--;
+									
 								}
+								
 							}
 						}
 
 						lhsOp = assignOp = storeMode = opIsUnary = false;
+						if (left != NULL && right != NULL)
+						{
+							if(left->nodekind == ExpK && right -> nodekind == ExpK)
+							{
+								if((left -> kind.exp == AssK && right -> kind.exp == AssK) || 
+									(left -> kind.exp == OpK && right -> kind.exp == OpK))
+								{
+									tOffset--;
+								}
+							}
+						}
 
 						processCodeR(t->child[1]);
 						savedOp = t->attr.name;
+
 
 
 						if (strcmp(savedOp, "=") == 0)
@@ -686,6 +723,7 @@ void processCode(TreeNode * t)
 							storeMode = true;
 							assignOp = false;
 							processCodeR(t->child[0]);
+
 						}
 						else
 						{
@@ -718,6 +756,7 @@ void processCode(TreeNode * t)
 							processCodeR(t->child[0]);
 						}
 
+
 						savedOp = t->attr.name;
 						
 						
@@ -729,6 +768,10 @@ void processCode(TreeNode * t)
 						savedOp = NULL;
 						//tOffset --;
 
+						if(left->child[0] != NULL && left->child[0]->isArray)
+						{
+
+						}
 						break;
 
 					case constK:
@@ -760,7 +803,7 @@ void processCode(TreeNode * t)
 						
 						//'save' all variables so that we don't lose 
 						// values in recruisve call
-						fOffset = compoundMemSize;
+						//fOffset = compoundMemSize;
 						int funJump;
 						int copyfOffset; copyfOffset = fOffset; 
 						int copytOffset; copytOffset = tOffset;
@@ -783,6 +826,9 @@ void processCode(TreeNode * t)
 
 						processCodeR(t->child[0]);
 
+
+						// Resets fOff (see above)
+						fOffset += 2;
 						//restore after recursion
 						fOffset = copyfOffset;
 						tOffset = copytOffset;
@@ -799,8 +845,7 @@ void processCode(TreeNode * t)
 						emitRM((char*)"LDA", AC, 0, RT, (char*)"Save the result in ac");
 						emitComment((char*)"                      End call to", t->attr.name);
 
-						// Resets fOff (see above)
-						fOffset += 2;
+						
 						break;
 
 					default:
