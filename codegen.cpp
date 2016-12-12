@@ -31,6 +31,8 @@ int oldIndex = -999;
 int newIndex;
 int saveBreakPlace = 0;
 int breakPlace = 0;
+int offArray[256];
+int oai = 0;
 
 char * copySavedOp;
 
@@ -188,11 +190,6 @@ void processCode(TreeNode * t)
 						break;
 
 					case funDeclaration:
-
-						// if(t->child[1] == NULL)
-						// {
-						// 	tOffset -= 2;
-						// }
 
 						t ->tmLoc = emitSkip(0) - 1;
 						emitComment((char*)"FUNCTION", t->attr.name);
@@ -804,6 +801,7 @@ void processCode(TreeNode * t)
 						//'save' all variables so that we don't lose 
 						// values in recruisve call
 						//fOffset = compoundMemSize;
+						
 						int funJump;
 						int copyfOffset; copyfOffset = fOffset; 
 						int copytOffset; copytOffset = tOffset;
@@ -818,6 +816,10 @@ void processCode(TreeNode * t)
 						// int copyCompSize; copyCompSize = compoundMemSize;
 						numParams = 0;
 						offset = copytOffset + copyfOffset;
+
+						//Keep offsets in a stack
+						offArray[oai] = offset;
+						oai++;
 
 						emitComment((char*)"EXPRESSION");
 						// Spaces match .tm tests
@@ -834,6 +836,8 @@ void processCode(TreeNode * t)
 						tOffset = copytOffset;
 						storeMode = copyStoreMode;
 
+						oai--;
+						offset = offArray[oai];
 
 						
 						emitComment((char*)"                      Jump to", t->attr.name);
