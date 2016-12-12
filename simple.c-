@@ -1,5 +1,7 @@
-
-main()
+  main()
 {
-	int cat;
+    int z[10];
+
+    z[3] = 445;
+    output(z[cat(3)]);
 }

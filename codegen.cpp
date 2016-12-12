@@ -818,6 +818,9 @@ void processCode(TreeNode * t)
 					case CallK:
 						TreeNode * callName;
 						callName = (TreeNode*)symTab.lookup(t->attr.name);
+
+						// printf("call name is: %s\n", callName->attr.name);
+						// printf(" foffset is: %d \n", fOffset);
 						
 						//'save' all variables so that we don't lose 
 						// values in recruisve call
@@ -847,11 +850,16 @@ void processCode(TreeNode * t)
 						emitComment((char*)"                      Begin call to ", t->attr.name);
 						emitRM((char*)"ST", FP, offset, FP, (char*)"Store old fp in ghost frame");
 
-						processCodeR(t->child[0]);
+						// printf(" foffset2 is: %d \n", fOffset);
+						// printf(" toffset is: %d \n", tOffset);
+						fOffset = fOffset + tOffset;
+						for(int i = 0; i < 3; i++)
+						{
+							processCodeR(t->child[i]);
+						}
 
 
 						// Resets fOff (see above)
-						fOffset += 2;
 						//restore after recursion
 						fOffset = copyfOffset;
 						tOffset = copytOffset;
