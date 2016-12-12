@@ -16,6 +16,8 @@ int tOffset = 0;
 int offset = 0;
 int compoundMemSize = 0;
 bool storeMode = false;
+bool assignOp = false;
+bool lhsOp = false;
 int curPtr = 0;
 char * savedOp = NULL;
 int numParams;
@@ -268,13 +270,9 @@ void processCode(TreeNode * t)
 					string np = man_to_string(numParams);
 					emitComment((char*)"                      Load param", (char*)np.c_str());
 
-					//TODO: Check this
-					//fOffset -= 2;
+					
 				}
-				// else
-				// {
-				// 	
-				// }
+			
 				switch(t->kind.exp)
 				{
 				
@@ -307,8 +305,24 @@ void processCode(TreeNode * t)
 								}
 							}
 							else
-							{
-								emitRM((char*)"LD", AC, t->memLoc, curPtr, (char*)"Load variable", (char*)t->attr.name);
+							{	
+							
+								if(lhsOp)
+								{
+									if(t->isUnary)
+									{
+										emitRM((char*)"LD", AC, t->memLoc, curPtr, (char*)"load lhs variable", (char*)t->attr.name);
+									}
+									else
+									{
+										emitRM((char*)"LD", AC1, t->memLoc, curPtr, (char*)"load lhs variable", (char*)t->attr.name);
+									}
+								}
+								else
+								{
+									emitRM((char*)"LD", AC, t->memLoc, curPtr, (char*)"Load variable", (char*)t->attr.name);
+								}
+								
 							}
 						}
 						else
@@ -320,11 +334,43 @@ void processCode(TreeNode * t)
 								emitRM((char*)"LDA", AC2, t->memLoc, curPtr, (char*)"Load address of base of array", (char*)t->attr.name);
 								emitRO((char*)"SUB", AC2, AC2, AC1, (char*)"Compute offset of value");
 
+								if(assignOp)
+								{	
+									if(t->isUnary)
+									{
+										emitRM((char*)"LD", AC, t->memLoc, curPtr, (char*)"load lhs variable", (char*)t->attr.name);
+									}
+									else
+									{
+										emitRM((char*)"LD", AC1, t->memLoc, curPtr, (char*)"load lhs variable", (char*)t->attr.name);
+									}
+								}
+
 								emitRM((char*)"ST", AC, 0, AC2, (char*)"Store variable", (char*)t->attr.name);
 
 							}
 							else
 							{
+								if(assignOp)
+								{
+									if(t->isUnary)
+									{
+										emitRM((char*)"LD", AC, t->memLoc, curPtr, (char*)"load lhs variable", (char*)t->attr.name);
+									}
+									else
+									{
+										emitRM((char*)"LD", AC1, t->memLoc, curPtr, (char*)"load lhs variable", (char*)t->attr.name);
+									}
+
+									if (strcmp(savedOp, "+=") == 0)
+									{
+										emitRO((char*)"ADD", AC, AC1, AC, (char*)"op", savedOp);
+									}
+									if (strcmp(savedOp, "-=") == 0)
+									{
+										emitRO((char*)"SUB", AC, AC1, AC, (char*)"op", savedOp);
+									}
+								}
 								//If we're in an assignment, store
 								if(savedOp != NULL && storeMode)
 								{
@@ -463,35 +509,44 @@ void processCode(TreeNode * t)
 						emitComment((char*)"EXPRESSION");
 						savedOp = t->attr.name;
 						storeMode = false;
+						assignOp = false;
+						lhsOp = false;
 
 						if(left->child[0] != NULL)
 						{
 							if(left->child[0]->isArray)
 							{
-
 								processCodeR(left->child[1]);
-								
 								emitRM((char*)"ST", AC, fOffset + tOffset, FP, (char*)"Save index");
 								//tOffset--;
-
 							}
 						}
-						storeMode = true;
 
+						lhsOp = assignOp = storeMode = false;
+
+						processCodeR(t->child[1]);
 						savedOp = t->attr.name;
 
-						
-						
-						//If binary, process RHS first
-						if(!t->isUnary)
+
+						if (strcmp(savedOp, "=") == 0)
 						{
-							processCodeR(t->child[1]);
+							storeMode = true;
+							assignOp = false;
+							processCodeR(t->child[0]);
 						}
-						processCodeR(t->child[0]);
+						else
+						{
+							storeMode = true;
+							assignOp = true;
+							lhsOp = true;
+							processCodeR(t->child[0]);
+						}
 
 						savedOp = t->attr.name;
 						
 						
+						assignOp = false;
+						lhsOp = false;
 						savedOp = NULL;
 						//tOffset --;
 
