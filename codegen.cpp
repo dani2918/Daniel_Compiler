@@ -19,10 +19,16 @@ bool storeMode = false;
 bool assignOp = false;
 bool lhsOp = false;
 bool opIsUnary = false;
+bool restoreIndex = true;
+bool inGlobalsStatics = false;
+bool carryOldOp = false;
 int curPtr = 0;
 char * savedOp = NULL;
+char * oldSavedOp = NULL;
 int numParams;
 char * tmFileName;
+int oldIndex = -999;
+int newIndex;
 
 char * copySavedOp;
 
@@ -31,7 +37,7 @@ char * copySavedOp;
 
 FILE * code;
 
-#define TEST_MACHINE 1
+#define TEST_MACHINE 0
 
 // 
 void createTMFile(char * infileName)
@@ -143,16 +149,16 @@ void processCode(TreeNode * t)
 				switch (t->kind.decl)
 				{
 					case varDeclaration:
+						storeMode = false;
 
-
-						// if(t->isGlobal)
-						// {
+						if(!t->isGlobal)
+						{
 							if(t->isArray)
 							{
 								emitRM((char*)"LDC", AC, t->memSize - 1, AC3, (char*)"load size of array", (char*)t->attr.name);
 								emitRM((char*)"ST", AC, t->memLoc + 1, FP, (char*)"save size of array", (char*)t->attr.name);
 							}
-						//}
+						}
 
 						for(int i = 0; i < 3; i++) 
 			    		{
@@ -188,6 +194,7 @@ void processCode(TreeNode * t)
 
 						t ->tmLoc = emitSkip(0) - 1;
 						emitComment((char*)"FUNCTION", t->attr.name);
+						//inDecl = true;
 
 						emitRM((char*)"ST", AC, -1, FP, (char*)"Store return address.");
 						for(int i = 0; i < 3; i++) 
@@ -200,7 +207,6 @@ void processCode(TreeNode * t)
 						emitRM((char*)"LD", AC, -1, FP, (char*)"Load return address");
 						emitRM((char*)"LD", FP, 0, FP, (char*)"Adjust fp");
     					emitRM((char*)"LDA", PC, 0, AC, (char*)"Return");
-
 
 
 				    	emitComment((char*)"END FUNCTION", t->attr.name);
@@ -261,7 +267,7 @@ void processCode(TreeNode * t)
 						emitRM((char*)"LD", FP, 0, FP, (char*)"Adjust fp");
     					emitRM((char*)"LDA", PC, 0, AC, (char*)"Return");
 						break;
-					case selectionStmt:
+					case selectionStmt: 
 						int saveJump, jumpToThen, ifPlace;
 						emitComment((char*)"IF");
 			    		processCodeR(t->child[0]);
@@ -331,6 +337,15 @@ void processCode(TreeNode * t)
 				
 
 					case IdK:
+						char * ldStr;
+						if(t->memSize == 1)
+						{
+							ldStr = (char*)"LD";
+						}
+						else
+						{
+							ldStr = (char*)"LDA";
+						}
 
 						if(t->isStatic || t->isGlobal) 
 						{
@@ -348,12 +363,12 @@ void processCode(TreeNode * t)
 								if(t->child[0] != NULL)
 								{
 									processCodeR(t->child[0]);
-									emitRM((char*)"LDA", AC1, t->memLoc, curPtr, (char*)"  of array", (char*)t->attr.name);
-
+									emitRM((char*)ldStr, AC1, t->memLoc, curPtr, (char*)"Load address of base of array", (char*)t->attr.name);
+									emitRO((char*)"SUB", AC, AC1, AC, (char*)"Compute offset of value");
 								}
 								else
 								{
-									emitRM((char*)"LDA", AC, t->memLoc, curPtr, (char*)"Load address of base of array", (char*)t->attr.name);
+									emitRM((char*)ldStr, AC, t->memLoc, curPtr, (char*)"Load address of base of array", (char*)t->attr.name);
 
 								}
 							}
@@ -384,19 +399,30 @@ void processCode(TreeNode * t)
 							{	
 
 								// Restore index at offset
-								emitRM((char*)"LD", AC1, (fOffset + tOffset), FP, (char*)"Restore index");
-								emitRM((char*)"LDA", AC2, t->memLoc, curPtr, (char*)"Load address of base of array", (char*)t->attr.name);
-								emitRO((char*)"SUB", AC2, AC2, AC1, (char*)"Compute offset of value");
+								if(restoreIndex)
+								{
+									emitRM((char*)"LD", AC1, (fOffset + tOffset), FP, (char*)"Restore index");
+									emitRM((char*)ldStr, AC2, t->memLoc, curPtr, (char*)"Load address of base of array", (char*)t->attr.name);
+									emitRO((char*)"SUB", AC2, AC2, AC1, (char*)"Compute offset of value");
+								}
+								else
+								{
+									emitRM((char*)ldStr, AC2, t->memLoc, curPtr, (char*)"Load address of base of array", (char*)t->attr.name);
+									emitRO((char*)"SUB", AC2, AC2, AC, (char*)"Compute offset of value");
+
+									// printf("saved op is: %s\n", savedOp);
+								}
+								
 
 								if(assignOp)
 								{	
 									if(opIsUnary)
 									{
-										emitRM((char*)"LD", AC, t->memLoc, curPtr, (char*)"load lhs variable", (char*)t->attr.name);
+										emitRM((char*)"LD", AC, 0, AC2, (char*)"load lhs variable", (char*)t->attr.name);
 									}
 									else
 									{
-										emitRM((char*)"LD", AC1, t->memLoc, curPtr, (char*)"load lhs variable", (char*)t->attr.name);
+										emitRM((char*)"LD", AC1, 0, AC2, (char*)"load lhs variable", (char*)t->attr.name);
 									}
 
 									if (strcmp(savedOp, "+=") == 0)
@@ -473,6 +499,7 @@ void processCode(TreeNode * t)
            				{ 
            					curPtr = FP;
            				}
+           				oldSavedOp = savedOp;
            				savedOp = t->attr.name;
 
            				if (strcmp(savedOp, "[") != 0)
@@ -506,7 +533,11 @@ void processCode(TreeNode * t)
 						}
 						else
 						{
-
+							//If we have an array operator, carry through the older operator
+							if (carryOldOp)
+							{
+								savedOp = oldSavedOp;
+							}
 							processCodeR(t->child[0]);
 
 							//If we're not storing, load
@@ -595,6 +626,7 @@ void processCode(TreeNode * t)
 					case AssK:
 
 						emitComment((char*)"EXPRESSION");
+						oldSavedOp = savedOp;
 						savedOp = t->attr.name;
 						storeMode = false;
 						assignOp = false;
@@ -603,12 +635,32 @@ void processCode(TreeNode * t)
 
 						if(left->child[0] != NULL)
 						{
+							storeMode = false;
 							if(left->child[0]->isArray)
 							{
 								processCodeR(left->child[1]);
-								if (strcmp(savedOp, "=") == 0)
+								newIndex = left->child[1]->attr.value;
+								if(newIndex == oldIndex && strcmp(savedOp, "=") != 0)
+								{
+									restoreIndex = false;
+								}
+								else
+								{
+									if(strcmp(savedOp, "++") == 0 || strcmp(savedOp, "--") == 0)
+									{
+										restoreIndex = false;
+										oldIndex = newIndex;
+									}
+									else
+									{
+										restoreIndex = true;
+									}
+								}
+								if (strcmp(savedOp, "=") == 0 || strcmp(savedOp, "+=") == 0 || strcmp(savedOp, "-=") == 0
+									|| strcmp(savedOp, "*=") == 0 || strcmp(savedOp, "/=") == 0)
 								{	
 									emitRM((char*)"ST", AC, fOffset + tOffset, FP, (char*)"Save index");
+									//tOffset--;
 								}
 							}
 						}
@@ -635,8 +687,22 @@ void processCode(TreeNode * t)
 							{
 								opIsUnary = false;
 							}
-
-							storeMode = true;
+							if(t->child[0] != NULL)
+							{
+								if(strcmp(t->child[0]->attr.name, "[") == 0 )
+								{
+									// if(strcmp(t->attr.name, "=") == 0 )
+									// {
+									// 	restoreIndex = false;
+									// }
+									if(strcmp(t->attr.name, "=") != 0 )
+									{
+										carryOldOp = true;
+									}
+									
+								}
+								storeMode = true;
+							}
 							assignOp = true;
 							lhsOp = true;
 							processCodeR(t->child[0]);
@@ -648,6 +714,8 @@ void processCode(TreeNode * t)
 						assignOp = false;
 						lhsOp = false;
 						opIsUnary = false;
+						restoreIndex = true;
+						carryOldOp = false;
 						savedOp = NULL;
 						//tOffset --;
 
@@ -688,6 +756,8 @@ void processCode(TreeNode * t)
 						int copytOffset; copytOffset = tOffset;
 						bool copyStoreMode; copyStoreMode = storeMode;
 
+						storeMode = false;
+
 						// This changes the offset for params in recursive call
 						// But not for anything in CallK
 						fOffset -= 2;
@@ -701,11 +771,7 @@ void processCode(TreeNode * t)
 						emitComment((char*)"                      Begin call to ", t->attr.name);
 						emitRM((char*)"ST", FP, offset, FP, (char*)"Store old fp in ghost frame");
 
-
-						for(int i = 0; i < 3; i++) 
-						{
-							processCodeR(t->child[i]);
-						}
+						processCodeR(t->child[0]);
 
 						//restore after recursion
 						fOffset = copyfOffset;
@@ -730,16 +796,18 @@ void processCode(TreeNode * t)
 					default:
 						break;
 					left = right = NULL;
+
 				}	
 
+				if(t->isParam)
+				{
+					emitRM((char*)"ST", AC, fOffset, FP, (char*)"Store parameter");
+					fOffset --;
+				}	
 			default:
 				break;
 			}
-		if(t->isParam)
-		{
-			emitRM((char*)"ST", AC, fOffset, FP, (char*)"Store parameter");
-			fOffset --;
-		}	
+		
 	}
 }
 
@@ -775,6 +843,7 @@ void processInit(TreeNode * t)
 
 void processInitGlobalsStatics(TreeNode * t)
 {
+	inGlobalsStatics = true;
 	fOffset = -2;
 	if (t == NULL)
 	{

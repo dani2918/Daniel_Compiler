@@ -621,13 +621,15 @@ void scopeAndType(TreeNode * t)
 								t-> type = originalDecl -> type;
 								t -> isArray = originalDecl -> isArray;
 								t -> isStatic = originalDecl -> isStatic;
-								t -> isParam = originalDecl -> isParam;
 
-									t->isGlobal = originalDecl->isGlobal;
+								//TODO: Check to make sure this is right
+								//t -> isParam = originalDecl -> isParam;
 
-									//For mem reference assignment
-									t->memLoc = originalDecl->memLoc;
-									t->memSize = originalDecl->memSize;
+								t->isGlobal = originalDecl->isGlobal;
+
+								//For mem reference assignment
+								t->memLoc = originalDecl->memLoc;
+								t->memSize = originalDecl->memSize;
 								
 							}
 
