@@ -493,15 +493,9 @@ void scopeAndType(TreeNode * t)
 									}
 								}
 							}
-							// t->memSize = localOff;
-							// localOff = savedOff;
-							TreeNode * c;
-           					c = t->child[0];
-				            while(c != NULL) 
-				            {
-				                t->memSize--;
-				                c = c->sibling;
-				            }
+							t->memSize = localOff;
+							localOff = savedOff;
+							
 			
 							break;
 						case returnStmt:
