@@ -33,6 +33,8 @@ int saveBreakPlace = 0;
 int breakPlace = 0;
 int offArray[256];
 int oai = 0;
+TreeNode * checkCompound;
+int np = 0;
 
 char * copySavedOp;
 
@@ -41,7 +43,7 @@ char * copySavedOp;
 
 FILE * code;
 
-#define TEST_MACHINE 0
+#define TEST_MACHINE 1
 
 // 
 void createTMFile(char * infileName)
@@ -162,12 +164,21 @@ void processCode(TreeNode * t)
 								emitRM((char*)"LDC", AC, t->memSize - 1, AC3, (char*)"load size of array", (char*)t->attr.name);
 								emitRM((char*)"ST", AC, t->memLoc + 1, FP, (char*)"save size of array", (char*)t->attr.name);
 							}
+							else
+							{
+								//initalized
+								if(t->child[0] != NULL)
+								{
+									processCodeR(t->child[0]);
+									emitRM((char*)"ST", AC, t->memLoc, FP, (char*)"Store variable", (char*)t->attr.name);
+								}
+							}
 						}
 
-						for(int i = 0; i < 3; i++) 
-			    		{
-			    			processCodeR(t->child[i]);
-			    		}
+						// for(int i = 0; i < 3; i++) 
+			   //  		{
+			   //  			processCodeR(t->child[i]);
+			   //  		}
 
 						//Differentiate between var and param
 
@@ -194,6 +205,21 @@ void processCode(TreeNode * t)
 						t ->tmLoc = emitSkip(0) - 1;
 						emitComment((char*)"FUNCTION", t->attr.name);
 						//inDecl = true;
+
+						//set foffset to numParams if there is no compound stmt
+						checkCompound = t->child[0];
+						np = 0;
+
+						while(checkCompound != NULL)
+						{
+							checkCompound = checkCompound -> sibling;
+							np++;
+						}
+						if(!(t->child[1]->nodekind == StmtK && t->child[1]->kind.stmt == compoundStmt))
+						{
+							fOffset -= np + 2;
+						}
+
 
 						emitRM((char*)"ST", AC, -1, FP, (char*)"Store return address.");
 						for(int i = 0; i < 3; i++) 
@@ -246,8 +272,6 @@ void processCode(TreeNode * t)
 				break;
 			
 			case StmtK:
-
-				//print stmt kind
 				switch(t->kind.stmt)
 				{
 					case compoundStmt:
@@ -263,6 +287,9 @@ void processCode(TreeNode * t)
 						break;
 					case returnStmt:
 						emitComment((char*)"RETURN");
+
+						//printf("fOffset is: %d\n", fOffset);
+
 						processCodeR(t->child[0]);
 
 						if(t->child[0] != NULL)
@@ -706,7 +733,9 @@ void processCode(TreeNode * t)
 										restoreIndex = true;
 									}
 								}
-								if (strcmp(savedOp, "=") == 0 || strcmp(savedOp, "+=") == 0 || strcmp(savedOp, "-=") == 0
+								// printf("saved op is: %s\n", savedOp);
+								if (strcmp(savedOp, "+") == 0 || strcmp(savedOp, "-") == 0 || strcmp(savedOp, "*") == 0 || strcmp(savedOp, "/") == 0 
+									|| strcmp(savedOp, "=") == 0 || strcmp(savedOp, "+=") == 0 || strcmp(savedOp, "-=") == 0
 									|| strcmp(savedOp, "*=") == 0 || strcmp(savedOp, "/=") == 0)
 								{	
 
@@ -946,6 +975,16 @@ void processInitGlobalsStatics(TreeNode * t)
 			{
 				emitRM((char*)"LDC", AC, t->memSize - 1, AC3, (char*)"load size of array", (char*)t->attr.name);
 				emitRM((char*)"ST", AC, t->memLoc + 1, 0, (char*)"save size of array", (char*)t->attr.name);
+			}
+			else
+			{
+				//If initalized 
+				if(t->child[0] != NULL)
+				{
+					processCodeR(t->child[0]);
+					emitRM((char*)"ST", AC, t->memLoc, GP, (char*)"Store variable", (char*)t->attr.name);
+
+				}
 			}
 		}
 	}

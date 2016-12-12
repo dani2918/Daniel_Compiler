@@ -1,7 +1,7 @@
 * C- compiler version C-F16
 * Built: 
 * Author: Matthew Daniel
-* File compiled: /Users/MattDaniel/Desktop/CS_445/Daniel_Compiler/testDataA7/c05.c-
+* File compiled: /Users/MattDaniel/Desktop/CS_445/Daniel_Compiler/testDataA7/var.c-
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
@@ -73,80 +73,369 @@
 * END FUNCTION outnl
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
-* FUNCTION main
+* FUNCTION cat
  42:     ST  3,-1(1)	Store return address. 
 * COMPOUND
 * Compound Body
 * EXPRESSION
- 43:    LDC  3,2(6)	Load integer constant 
- 44:     ST  3,-2(1)	Save index 
- 45:    LDC  3,73(6)	Load integer constant 
- 46:     LD  4,-2(1)	Restore index 
- 47:    LDA  5,-1(0)	Load address of base of array x
- 48:    SUB  5,5,4	Compute offset of value 
- 49:     ST  3,0(5)	Store variable x
-* EXPRESSION
- 50:    LDC  3,1(6)	Load integer constant 
- 51:     ST  3,-2(1)	Save index 
- 52:    LDC  3,211(6)	Load integer constant 
- 53:     LD  4,-2(1)	Restore index 
- 54:    LDA  5,-5(0)	Load address of base of array y
- 55:    SUB  5,5,4	Compute offset of value 
- 56:     ST  3,0(5)	Store variable y
+*                       Begin call to  output
+ 43:     ST  1,-4(1)	Store old fp in ghost frame 
+*                       Load param 1
+ 44:     LD  3,-2(1)	Load variable x
+ 45:     ST  3,-6(1)	Store parameter 
+*                       Jump to output
+ 46:    LDA  1,-4(1)	Load address of new frame 
+ 47:    LDA  3,1(7)	Return address in ac 
+ 48:    LDA  7,-43(7)	CALL output
+ 49:    LDA  3,0(2)	Save the result in ac 
+*                       End call to output
 * EXPRESSION
 *                       Begin call to  output
- 57:     ST  1,-2(1)	Store old fp in ghost frame 
+ 50:     ST  1,-4(1)	Store old fp in ghost frame 
 *                       Load param 1
- 58:    LDA  3,-1(0)	Load address of base of array x
- 59:     ST  3,-4(1)	Save left side 
- 60:    LDC  3,2(6)	Load integer constant 
- 61:     LD  4,-4(1)	Load left into ac1 
- 62:    SUB  3,4,3	compute location from index 
- 63:     LD  3,0(3)	Load array element 
- 64:     ST  3,-5(1)	Save left side 
- 65:    LDA  3,-5(0)	Load address of base of array y
- 66:     ST  3,-6(1)	Save left side 
- 67:    LDC  3,1(6)	Load integer constant 
- 68:     LD  4,-6(1)	Load left into ac1 
- 69:    SUB  3,4,3	compute location from index 
- 70:     LD  3,0(3)	Load array element 
- 71:     LD  4,-5(1)	Load left into ac1 
- 72:    ADD  3,4,3	Op +
- 73:     ST  3,-4(1)	Store parameter 
+ 51:     LD  3,-3(1)	Load address of base of array xa
+ 52:     ST  3,-6(1)	Save left side 
+ 53:    LDC  3,3(6)	Load integer constant 
+ 54:     LD  4,-6(1)	Load left into ac1 
+ 55:    SUB  3,4,3	compute location from index 
+ 56:     LD  3,0(3)	Load array element 
+ 57:     ST  3,-6(1)	Store parameter 
 *                       Jump to output
- 74:    LDA  1,-2(1)	Load address of new frame 
- 75:    LDA  3,1(7)	Return address in ac 
- 76:    LDA  7,-71(7)	CALL output
- 77:    LDA  3,0(2)	Save the result in ac 
+ 58:    LDA  1,-4(1)	Load address of new frame 
+ 59:    LDA  3,1(7)	Return address in ac 
+ 60:    LDA  7,-55(7)	CALL output
+ 61:    LDA  3,0(2)	Save the result in ac 
 *                       End call to output
 * EXPRESSION
 *                       Begin call to  outnl
- 78:     ST  1,-2(1)	Store old fp in ghost frame 
+ 62:     ST  1,-4(1)	Store old fp in ghost frame 
 *                       Jump to outnl
- 79:    LDA  1,-2(1)	Load address of new frame 
- 80:    LDA  3,1(7)	Return address in ac 
- 81:    LDA  7,-45(7)	CALL outnl
- 82:    LDA  3,0(2)	Save the result in ac 
+ 63:    LDA  1,-4(1)	Load address of new frame 
+ 64:    LDA  3,1(7)	Return address in ac 
+ 65:    LDA  7,-29(7)	CALL outnl
+ 66:    LDA  3,0(2)	Save the result in ac 
 *                       End call to outnl
 * END COMPOUND
 * Add standard closing in case there is no return statement
- 83:    LDC  2,0(6)	Set return value to 0 
- 84:     LD  3,-1(1)	Load return address 
- 85:     LD  1,0(1)	Adjust fp 
- 86:    LDA  7,0(3)	Return 
+ 67:    LDC  2,0(6)	Set return value to 0 
+ 68:     LD  3,-1(1)	Load return address 
+ 69:     LD  1,0(1)	Adjust fp 
+ 70:    LDA  7,0(3)	Return 
+* END FUNCTION cat
+* FUNCTION dog
+ 71:     ST  3,-1(1)	Store return address. 
+* COMPOUND
+* Compound Body
+* EXPRESSION
+*                       Begin call to  output
+ 72:     ST  1,-4(1)	Store old fp in ghost frame 
+*                       Load param 1
+ 73:     LD  3,-2(1)	Load variable x
+ 74:     ST  3,-6(1)	Store parameter 
+*                       Jump to output
+ 75:    LDA  1,-4(1)	Load address of new frame 
+ 76:    LDA  3,1(7)	Return address in ac 
+ 77:    LDA  7,-72(7)	CALL output
+ 78:    LDA  3,0(2)	Save the result in ac 
+*                       End call to output
+* EXPRESSION
+*                       Begin call to  output
+ 79:     ST  1,-4(1)	Store old fp in ghost frame 
+*                       Load param 1
+ 80:     LD  3,-3(1)	Load address of base of array xa
+ 81:     ST  3,-6(1)	Save left side 
+ 82:    LDC  3,3(6)	Load integer constant 
+ 83:     LD  4,-6(1)	Load left into ac1 
+ 84:    SUB  3,4,3	compute location from index 
+ 85:     LD  3,0(3)	Load array element 
+ 86:     ST  3,-6(1)	Store parameter 
+*                       Jump to output
+ 87:    LDA  1,-4(1)	Load address of new frame 
+ 88:    LDA  3,1(7)	Return address in ac 
+ 89:    LDA  7,-84(7)	CALL output
+ 90:    LDA  3,0(2)	Save the result in ac 
+*                       End call to output
+* EXPRESSION
+*                       Begin call to  outnl
+ 91:     ST  1,-4(1)	Store old fp in ghost frame 
+*                       Jump to outnl
+ 92:    LDA  1,-4(1)	Load address of new frame 
+ 93:    LDA  3,1(7)	Return address in ac 
+ 94:    LDA  7,-58(7)	CALL outnl
+ 95:    LDA  3,0(2)	Save the result in ac 
+*                       End call to outnl
+* EXPRESSION
+ 96:    LDC  3,668(6)	Load integer constant 
+ 97:     ST  3,-2(1)	Store variable x
+* EXPRESSION
+ 98:    LDC  3,1(6)	Load integer constant 
+ 99:     ST  3,-4(1)	Save left side 
+100:    LDC  3,2(6)	Load integer constant 
+101:     LD  4,-4(1)	Load left into ac1 
+102:    ADD  3,4,3	Op +
+103:     ST  3,-4(1)	Save index 
+104:    LDC  3,669(6)	Load integer constant 
+105:     LD  4,-4(1)	Restore index 
+106:     LD  5,-3(1)	Load address of base of array xa
+107:    SUB  5,5,4	Compute offset of value 
+108:     ST  3,0(5)	Store variable xa
+* EXPRESSION
+*                       Begin call to  output
+109:     ST  1,-4(1)	Store old fp in ghost frame 
+*                       Load param 1
+110:     LD  3,-2(1)	Load variable x
+111:     ST  3,-6(1)	Store parameter 
+*                       Jump to output
+112:    LDA  1,-4(1)	Load address of new frame 
+113:    LDA  3,1(7)	Return address in ac 
+114:    LDA  7,-109(7)	CALL output
+115:    LDA  3,0(2)	Save the result in ac 
+*                       End call to output
+* EXPRESSION
+*                       Begin call to  output
+116:     ST  1,-4(1)	Store old fp in ghost frame 
+*                       Load param 1
+117:     LD  3,-3(1)	Load address of base of array xa
+118:     ST  3,-6(1)	Save left side 
+119:    LDC  3,3(6)	Load integer constant 
+120:     LD  4,-6(1)	Load left into ac1 
+121:    SUB  3,4,3	compute location from index 
+122:     LD  3,0(3)	Load array element 
+123:     ST  3,-6(1)	Store parameter 
+*                       Jump to output
+124:    LDA  1,-4(1)	Load address of new frame 
+125:    LDA  3,1(7)	Return address in ac 
+126:    LDA  7,-121(7)	CALL output
+127:    LDA  3,0(2)	Save the result in ac 
+*                       End call to output
+* EXPRESSION
+*                       Begin call to  outnl
+128:     ST  1,-4(1)	Store old fp in ghost frame 
+*                       Jump to outnl
+129:    LDA  1,-4(1)	Load address of new frame 
+130:    LDA  3,1(7)	Return address in ac 
+131:    LDA  7,-95(7)	CALL outnl
+132:    LDA  3,0(2)	Save the result in ac 
+*                       End call to outnl
+* EXPRESSION
+133:    LDC  3,670(6)	Load integer constant 
+134:     ST  3,0(0)	Store variable g
+* EXPRESSION
+135:    LDC  3,2(6)	Load integer constant 
+136:     ST  3,-4(1)	Save left side 
+137:    LDC  3,1(6)	Load integer constant 
+138:     LD  4,-4(1)	Load left into ac1 
+139:    ADD  3,4,3	Op +
+140:     ST  3,-4(1)	Save index 
+141:    LDC  3,671(6)	Load integer constant 
+142:     LD  4,-4(1)	Restore index 
+143:    LDA  5,-2(0)	Load address of base of array ga
+144:    SUB  5,5,4	Compute offset of value 
+145:     ST  3,0(5)	Store variable ga
+* EXPRESSION
+*                       Begin call to  output
+146:     ST  1,-4(1)	Store old fp in ghost frame 
+*                       Load param 1
+147:     LD  3,0(0)	Load variable g
+148:     ST  3,-6(1)	Store parameter 
+*                       Jump to output
+149:    LDA  1,-4(1)	Load address of new frame 
+150:    LDA  3,1(7)	Return address in ac 
+151:    LDA  7,-146(7)	CALL output
+152:    LDA  3,0(2)	Save the result in ac 
+*                       End call to output
+* EXPRESSION
+*                       Begin call to  output
+153:     ST  1,-4(1)	Store old fp in ghost frame 
+*                       Load param 1
+154:    LDA  3,-2(0)	Load address of base of array ga
+155:     ST  3,-6(1)	Save left side 
+156:    LDC  3,3(6)	Load integer constant 
+157:     LD  4,-6(1)	Load left into ac1 
+158:    SUB  3,4,3	compute location from index 
+159:     LD  3,0(3)	Load array element 
+160:     ST  3,-6(1)	Store parameter 
+*                       Jump to output
+161:    LDA  1,-4(1)	Load address of new frame 
+162:    LDA  3,1(7)	Return address in ac 
+163:    LDA  7,-158(7)	CALL output
+164:    LDA  3,0(2)	Save the result in ac 
+*                       End call to output
+* EXPRESSION
+*                       Begin call to  outnl
+165:     ST  1,-4(1)	Store old fp in ghost frame 
+*                       Jump to outnl
+166:    LDA  1,-4(1)	Load address of new frame 
+167:    LDA  3,1(7)	Return address in ac 
+168:    LDA  7,-132(7)	CALL outnl
+169:    LDA  3,0(2)	Save the result in ac 
+*                       End call to outnl
+* EXPRESSION
+*                       Begin call to  cat
+170:     ST  1,-4(1)	Store old fp in ghost frame 
+*                       Load param 1
+171:     LD  3,-2(1)	Load variable x
+172:     ST  3,-6(1)	Store parameter 
+*                       Load param 2
+173:     LD  3,-3(1)	Load address of base of array xa
+174:     ST  3,-7(1)	Store parameter 
+*                       Jump to cat
+175:    LDA  1,-4(1)	Load address of new frame 
+176:    LDA  3,1(7)	Return address in ac 
+177:    LDA  7,-136(7)	CALL cat
+178:    LDA  3,0(2)	Save the result in ac 
+*                       End call to cat
+* EXPRESSION
+*                       Begin call to  cat
+179:     ST  1,-4(1)	Store old fp in ghost frame 
+*                       Load param 1
+180:     LD  3,0(0)	Load variable g
+181:     ST  3,-6(1)	Store parameter 
+*                       Load param 2
+182:    LDA  3,-2(0)	Load address of base of array ga
+183:     ST  3,-7(1)	Store parameter 
+*                       Jump to cat
+184:    LDA  1,-4(1)	Load address of new frame 
+185:    LDA  3,1(7)	Return address in ac 
+186:    LDA  7,-145(7)	CALL cat
+187:    LDA  3,0(2)	Save the result in ac 
+*                       End call to cat
+* END COMPOUND
+* Add standard closing in case there is no return statement
+188:    LDC  2,0(6)	Set return value to 0 
+189:     LD  3,-1(1)	Load return address 
+190:     LD  1,0(1)	Adjust fp 
+191:    LDA  7,0(3)	Return 
+* END FUNCTION dog
+* FUNCTION main
+192:     ST  3,-1(1)	Store return address. 
+* COMPOUND
+* Compound Body
+193:    LDC  3,10(6)	load size of array ya
+194:     ST  3,-3(1)	save size of array ya
+* EXPRESSION
+195:    LDC  3,666(6)	Load integer constant 
+196:     ST  3,-2(1)	Store variable y
+* EXPRESSION
+197:    LDC  3,1(6)	Load integer constant 
+198:     ST  3,-14(1)	Save left side 
+199:    LDC  3,2(6)	Load integer constant 
+200:     LD  4,-14(1)	Load left into ac1 
+201:    ADD  3,4,3	Op +
+202:     ST  3,-14(1)	Save index 
+203:    LDC  3,667(6)	Load integer constant 
+204:     LD  4,-14(1)	Restore index 
+205:    LDA  5,-4(1)	Load address of base of array ya
+206:    SUB  5,5,4	Compute offset of value 
+207:     ST  3,0(5)	Store variable ya
+* EXPRESSION
+*                       Begin call to  output
+208:     ST  1,-14(1)	Store old fp in ghost frame 
+*                       Load param 1
+209:     LD  3,-2(1)	Load variable y
+210:     ST  3,-16(1)	Store parameter 
+*                       Jump to output
+211:    LDA  1,-14(1)	Load address of new frame 
+212:    LDA  3,1(7)	Return address in ac 
+213:    LDA  7,-208(7)	CALL output
+214:    LDA  3,0(2)	Save the result in ac 
+*                       End call to output
+* EXPRESSION
+*                       Begin call to  output
+215:     ST  1,-14(1)	Store old fp in ghost frame 
+*                       Load param 1
+216:    LDA  3,-4(1)	Load address of base of array ya
+217:     ST  3,-16(1)	Save left side 
+218:    LDC  3,3(6)	Load integer constant 
+219:     LD  4,-16(1)	Load left into ac1 
+220:    SUB  3,4,3	compute location from index 
+221:     LD  3,0(3)	Load array element 
+222:     ST  3,-16(1)	Store parameter 
+*                       Jump to output
+223:    LDA  1,-14(1)	Load address of new frame 
+224:    LDA  3,1(7)	Return address in ac 
+225:    LDA  7,-220(7)	CALL output
+226:    LDA  3,0(2)	Save the result in ac 
+*                       End call to output
+* EXPRESSION
+*                       Begin call to  outnl
+227:     ST  1,-14(1)	Store old fp in ghost frame 
+*                       Jump to outnl
+228:    LDA  1,-14(1)	Load address of new frame 
+229:    LDA  3,1(7)	Return address in ac 
+230:    LDA  7,-194(7)	CALL outnl
+231:    LDA  3,0(2)	Save the result in ac 
+*                       End call to outnl
+* EXPRESSION
+*                       Begin call to  dog
+232:     ST  1,-14(1)	Store old fp in ghost frame 
+*                       Load param 1
+233:     LD  3,-2(1)	Load variable y
+234:     ST  3,-16(1)	Store parameter 
+*                       Load param 2
+235:    LDA  3,-4(1)	Load address of base of array ya
+236:     ST  3,-17(1)	Store parameter 
+*                       Jump to dog
+237:    LDA  1,-14(1)	Load address of new frame 
+238:    LDA  3,1(7)	Return address in ac 
+239:    LDA  7,-169(7)	CALL dog
+240:    LDA  3,0(2)	Save the result in ac 
+*                       End call to dog
+* EXPRESSION
+*                       Begin call to  output
+241:     ST  1,-14(1)	Store old fp in ghost frame 
+*                       Load param 1
+242:     LD  3,-2(1)	Load variable y
+243:     ST  3,-16(1)	Store parameter 
+*                       Jump to output
+244:    LDA  1,-14(1)	Load address of new frame 
+245:    LDA  3,1(7)	Return address in ac 
+246:    LDA  7,-241(7)	CALL output
+247:    LDA  3,0(2)	Save the result in ac 
+*                       End call to output
+* EXPRESSION
+*                       Begin call to  output
+248:     ST  1,-14(1)	Store old fp in ghost frame 
+*                       Load param 1
+249:    LDA  3,-4(1)	Load address of base of array ya
+250:     ST  3,-16(1)	Save left side 
+251:    LDC  3,3(6)	Load integer constant 
+252:     LD  4,-16(1)	Load left into ac1 
+253:    SUB  3,4,3	compute location from index 
+254:     LD  3,0(3)	Load array element 
+255:     ST  3,-16(1)	Store parameter 
+*                       Jump to output
+256:    LDA  1,-14(1)	Load address of new frame 
+257:    LDA  3,1(7)	Return address in ac 
+258:    LDA  7,-253(7)	CALL output
+259:    LDA  3,0(2)	Save the result in ac 
+*                       End call to output
+* EXPRESSION
+*                       Begin call to  outnl
+260:     ST  1,-14(1)	Store old fp in ghost frame 
+*                       Jump to outnl
+261:    LDA  1,-14(1)	Load address of new frame 
+262:    LDA  3,1(7)	Return address in ac 
+263:    LDA  7,-227(7)	CALL outnl
+264:    LDA  3,0(2)	Save the result in ac 
+*                       End call to outnl
+* END COMPOUND
+* Add standard closing in case there is no return statement
+265:    LDC  2,0(6)	Set return value to 0 
+266:     LD  3,-1(1)	Load return address 
+267:     LD  1,0(1)	Adjust fp 
+268:    LDA  7,0(3)	Return 
 * END FUNCTION main
-  0:    LDA  7,86(7)	Jump to init [backpatch] 
+  0:    LDA  7,268(7)	Jump to init [backpatch] 
 * INIT
- 87:     LD  0,0(0)	Set the global pointer 
- 88:    LDA  1,-9(0)	set first frame at end of globals 
- 89:     ST  1,0(1)	store old fp (point to self) 
+269:     LD  0,0(0)	Set the global pointer 
+270:    LDA  1,-12(0)	set first frame at end of globals 
+271:     ST  1,0(1)	store old fp (point to self) 
 * INIT GLOBALS AND STATICS
- 90:    LDC  3,3(6)	load size of array x
- 91:     ST  3,0(0)	save size of array x
- 92:    LDC  3,4(6)	load size of array y
- 93:     ST  3,-4(0)	save size of array y
+272:    LDC  3,10(6)	load size of array ga
+273:     ST  3,-1(0)	save size of array ga
 * END INIT GLOBALS AND STATICS
- 94:    LDA  3,1(7)	Return address in ac 
- 95:    LDA  7,-54(7)	Jump to main 
- 96:   HALT  0,0,0	DONE! 
+274:    LDA  3,1(7)	Return address in ac 
+275:    LDA  7,-84(7)	Jump to main 
+276:   HALT  0,0,0	DONE! 
 * END INIT
