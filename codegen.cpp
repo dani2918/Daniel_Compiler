@@ -25,7 +25,7 @@ bool carryOldOp = false;
 int curPtr = 0;
 char * savedOp = NULL;
 char * oldSavedOp = NULL;
-int numParams;
+int numParams = 0;
 char * tmFileName;
 int oldIndex = -999;
 int newIndex;
@@ -576,7 +576,8 @@ void processCode(TreeNode * t)
 									if((left -> kind.exp == AssK && right -> kind.exp == AssK) || 
 										(left -> kind.exp == OpK && right -> kind.exp == OpK))
 									{
-										tOffset--;
+										//if(strcmp(left->attr.name, "[") != 0 && strcmp(left->attr.name, "[") != 0 )
+											tOffset--;
 									}
 								}
 							}	
@@ -724,7 +725,8 @@ void processCode(TreeNode * t)
 								if((left -> kind.exp == AssK && right -> kind.exp == AssK) || 
 									(left -> kind.exp == OpK && right -> kind.exp == OpK))
 								{
-									tOffset--;
+									//if(strcmp(left->attr.name, "[") != 0 && strcmp(left->attr.name, "[") != 0 )
+										tOffset--;
 								}
 							}
 						}
@@ -880,6 +882,7 @@ void processCode(TreeNode * t)
 				if(t->isParam)
 				{
 					emitRM((char*)"ST", AC, fOffset, FP, (char*)"Store parameter");
+					
 					fOffset --;
 				}	
 			default:
