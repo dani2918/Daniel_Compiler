@@ -252,6 +252,7 @@ void processCode(TreeNode * t)
 				{
 					case compoundStmt:
 					 	fOffset = compoundMemSize = t->memSize;
+					 	tOffset = 0;
 						emitComment((char*)"COMPOUND");
 						emitComment((char*)"Compound Body");
 					    for(int i = 0; i < 3; i++) 
@@ -525,6 +526,7 @@ void processCode(TreeNode * t)
            				{ 
            					curPtr = FP;
            				}
+
            				oldSavedOp = savedOp;
            				savedOp = t->attr.name;
 
@@ -565,6 +567,19 @@ void processCode(TreeNode * t)
 								savedOp = oldSavedOp;
 							}
 							processCodeR(t->child[0]);
+
+							//TODO: Check this out!!
+							if (left != NULL && right != NULL)
+							{
+								if(left->nodekind == ExpK && right -> nodekind == ExpK)
+								{
+									if((left -> kind.exp == AssK && right -> kind.exp == AssK) || 
+										(left -> kind.exp == OpK && right -> kind.exp == OpK))
+									{
+										tOffset--;
+									}
+								}
+							}	
 
 							//If we're not storing, load
 							if(!storeMode)
@@ -641,11 +656,15 @@ void processCode(TreeNode * t)
 
 							emitRO((char*)"SUB", AC, AC1, AC, (char*)"compute location from index");
 							emitRM((char*)"LD", AC, 0, AC, (char*)"Load array element");
-							tOffset ++;
+
+							if(tOffset < 0)
+							{
+								tOffset ++;
+							}
 						}						
 					}
 
-						
+					
 
 						break;
 
