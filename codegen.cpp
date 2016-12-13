@@ -640,9 +640,13 @@ void processCode(TreeNode * t)
 								int copytOffset = tOffset;
 								
 								tOffset --;
+								// printf("toffset is: %d\n", tOffset);
 								emitRM((char*)"ST", AC, fOffset + copytOffset, FP , (char*)"Save left side");
+								tOffset++; fOffset--;
 								processCodeR(t->child[1]);
+								tOffset--; fOffset++;
 								emitRM((char*)"LD", AC1, fOffset + copytOffset , FP, (char*)"Load left into ac1");
+
 								// if(exprFlag) 
 								// {
 								// 	//printf("exprFlag at line: %d\n", t->lineno);
