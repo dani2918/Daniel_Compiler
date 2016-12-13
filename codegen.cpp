@@ -643,12 +643,12 @@ void processCode(TreeNode * t)
 								emitRM((char*)"ST", AC, fOffset + copytOffset, FP , (char*)"Save left side");
 								processCodeR(t->child[1]);
 								emitRM((char*)"LD", AC1, fOffset + copytOffset , FP, (char*)"Load left into ac1");
-								if(exprFlag) 
-								{
-									//printf("exprFlag at line: %d\n", t->lineno);
-									tOffset++;
-									exprFlag = false;
-								}
+								// if(exprFlag) 
+								// {
+								// 	//printf("exprFlag at line: %d\n", t->lineno);
+								// 	tOffset++;
+								// 	exprFlag = false;
+								// }
 								// tOffset ++;
 
 								checkArrs = false;

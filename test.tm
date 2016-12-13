@@ -1,7 +1,7 @@
 * C- compiler version C-F16
 * Built: 
 * Author: Matthew Daniel
-* File compiled: /Users/MattDaniel/Desktop/CS_445/Daniel_Compiler/testDataA7/f08.c-
+* File compiled: /Users/MattDaniel/Desktop/CS_445/Daniel_Compiler/testDataA7/b0b.c-
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
@@ -73,66 +73,190 @@
 * END FUNCTION outnl
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
-* FUNCTION cat
+* FUNCTION main
  42:     ST  3,-1(1)	Store return address. 
 * COMPOUND
 * Compound Body
-* RETURN
- 43:    LDC  3,93(6)	Load integer constant 
- 44:    LDA  2,0(3)	Copy result to rt register 
- 45:     LD  3,-1(1)	Load return address 
- 46:     LD  1,0(1)	Adjust fp 
- 47:    LDA  7,0(3)	Return 
-* END COMPOUND
-* Add standard closing in case there is no return statement
- 48:    LDC  2,0(6)	Set return value to 0 
- 49:     LD  3,-1(1)	Load return address 
- 50:     LD  1,0(1)	Adjust fp 
- 51:    LDA  7,0(3)	Return 
-* END FUNCTION cat
-* FUNCTION main
- 52:     ST  3,-1(1)	Store return address. 
-* COMPOUND
-* Compound Body
 * EXPRESSION
-*                       Begin call to  output
- 53:     ST  1,-2(1)	Store old fp in ghost frame 
+*                       Begin call to  outputb
+ 43:     ST  1,-2(1)	Store old fp in ghost frame 
 *                       Load param 1
- 54:    LDC  3,781(6)	Load integer constant 
- 55:     ST  3,-4(1)	Save left side 
+ 44:    LDC  3,0(6)	Load Boolean constant 
+ 45:     ST  3,-4(1)	Save left side 
+ 46:    LDC  3,0(6)	Load Boolean constant 
+ 47:     LD  4,-4(1)	Load left into ac1 
+ 48:     OR  3,4,3	Op OR 
+ 49:     ST  3,-4(1)	Store parameter 
+*                       Jump to outputb
+ 50:    LDA  1,-2(1)	Load address of new frame 
+ 51:    LDA  3,1(7)	Return address in ac 
+ 52:    LDA  7,-35(7)	CALL outputb
+ 53:    LDA  3,0(2)	Save the result in ac 
+*                       End call to outputb
 * EXPRESSION
-*                       Begin call to  cat
- 56:     ST  1,-4(1)	Store old fp in ghost frame 
-*                       Jump to cat
- 57:    LDA  1,-4(1)	Load address of new frame 
- 58:    LDA  3,1(7)	Return address in ac 
- 59:    LDA  7,-18(7)	CALL cat
- 60:    LDA  3,0(2)	Save the result in ac 
-*                       End call to cat
- 61:     LD  4,-4(1)	Load left into ac1 
- 62:    ADD  3,4,3	Op +
- 63:     ST  3,-4(1)	Store parameter 
-*                       Jump to output
- 64:    LDA  1,-2(1)	Load address of new frame 
- 65:    LDA  3,1(7)	Return address in ac 
- 66:    LDA  7,-61(7)	CALL output
- 67:    LDA  3,0(2)	Save the result in ac 
-*                       End call to output
+*                       Begin call to  outputb
+ 54:     ST  1,-3(1)	Store old fp in ghost frame 
+*                       Load param 1
+ 55:    LDC  3,0(6)	Load Boolean constant 
+ 56:     ST  3,-5(1)	Save left side 
+ 57:    LDC  3,1(6)	Load Boolean constant 
+ 58:     LD  4,-5(1)	Load left into ac1 
+ 59:     OR  3,4,3	Op OR 
+ 60:     ST  3,-5(1)	Store parameter 
+*                       Jump to outputb
+ 61:    LDA  1,-2(1)	Load address of new frame 
+ 62:    LDA  3,1(7)	Return address in ac 
+ 63:    LDA  7,-46(7)	CALL outputb
+ 64:    LDA  3,0(2)	Save the result in ac 
+*                       End call to outputb
+* EXPRESSION
+*                       Begin call to  outputb
+ 65:     ST  1,-4(1)	Store old fp in ghost frame 
+*                       Load param 1
+ 66:    LDC  3,1(6)	Load Boolean constant 
+ 67:     ST  3,-6(1)	Save left side 
+ 68:    LDC  3,0(6)	Load Boolean constant 
+ 69:     LD  4,-6(1)	Load left into ac1 
+ 70:     OR  3,4,3	Op OR 
+ 71:     ST  3,-6(1)	Store parameter 
+*                       Jump to outputb
+ 72:    LDA  1,-2(1)	Load address of new frame 
+ 73:    LDA  3,1(7)	Return address in ac 
+ 74:    LDA  7,-57(7)	CALL outputb
+ 75:    LDA  3,0(2)	Save the result in ac 
+*                       End call to outputb
+* EXPRESSION
+*                       Begin call to  outputb
+ 76:     ST  1,-5(1)	Store old fp in ghost frame 
+*                       Load param 1
+ 77:    LDC  3,1(6)	Load Boolean constant 
+ 78:     ST  3,-7(1)	Save left side 
+ 79:    LDC  3,1(6)	Load Boolean constant 
+ 80:     LD  4,-7(1)	Load left into ac1 
+ 81:     OR  3,4,3	Op OR 
+ 82:     ST  3,-7(1)	Store parameter 
+*                       Jump to outputb
+ 83:    LDA  1,-2(1)	Load address of new frame 
+ 84:    LDA  3,1(7)	Return address in ac 
+ 85:    LDA  7,-68(7)	CALL outputb
+ 86:    LDA  3,0(2)	Save the result in ac 
+*                       End call to outputb
+* EXPRESSION
+*                       Begin call to  outputb
+ 87:     ST  1,-6(1)	Store old fp in ghost frame 
+*                       Load param 1
+ 88:    LDC  3,0(6)	Load Boolean constant 
+ 89:     ST  3,-8(1)	Save left side 
+ 90:    LDC  3,0(6)	Load Boolean constant 
+ 91:     LD  4,-8(1)	Load left into ac1 
+ 92:    AND  3,4,3	Op AND 
+ 93:     ST  3,-8(1)	Store parameter 
+*                       Jump to outputb
+ 94:    LDA  1,-2(1)	Load address of new frame 
+ 95:    LDA  3,1(7)	Return address in ac 
+ 96:    LDA  7,-79(7)	CALL outputb
+ 97:    LDA  3,0(2)	Save the result in ac 
+*                       End call to outputb
+* EXPRESSION
+*                       Begin call to  outputb
+ 98:     ST  1,-7(1)	Store old fp in ghost frame 
+*                       Load param 1
+ 99:    LDC  3,0(6)	Load Boolean constant 
+100:     ST  3,-9(1)	Save left side 
+101:    LDC  3,1(6)	Load Boolean constant 
+102:     LD  4,-9(1)	Load left into ac1 
+103:    AND  3,4,3	Op AND 
+104:     ST  3,-9(1)	Store parameter 
+*                       Jump to outputb
+105:    LDA  1,-2(1)	Load address of new frame 
+106:    LDA  3,1(7)	Return address in ac 
+107:    LDA  7,-90(7)	CALL outputb
+108:    LDA  3,0(2)	Save the result in ac 
+*                       End call to outputb
+* EXPRESSION
+*                       Begin call to  outputb
+109:     ST  1,-8(1)	Store old fp in ghost frame 
+*                       Load param 1
+110:    LDC  3,1(6)	Load Boolean constant 
+111:     ST  3,-10(1)	Save left side 
+112:    LDC  3,0(6)	Load Boolean constant 
+113:     LD  4,-10(1)	Load left into ac1 
+114:    AND  3,4,3	Op AND 
+115:     ST  3,-10(1)	Store parameter 
+*                       Jump to outputb
+116:    LDA  1,-2(1)	Load address of new frame 
+117:    LDA  3,1(7)	Return address in ac 
+118:    LDA  7,-101(7)	CALL outputb
+119:    LDA  3,0(2)	Save the result in ac 
+*                       End call to outputb
+* EXPRESSION
+*                       Begin call to  outputb
+120:     ST  1,-9(1)	Store old fp in ghost frame 
+*                       Load param 1
+121:    LDC  3,1(6)	Load Boolean constant 
+122:     ST  3,-11(1)	Save left side 
+123:    LDC  3,1(6)	Load Boolean constant 
+124:     LD  4,-11(1)	Load left into ac1 
+125:    AND  3,4,3	Op AND 
+126:     ST  3,-11(1)	Store parameter 
+*                       Jump to outputb
+127:    LDA  1,-2(1)	Load address of new frame 
+128:    LDA  3,1(7)	Return address in ac 
+129:    LDA  7,-112(7)	CALL outputb
+130:    LDA  3,0(2)	Save the result in ac 
+*                       End call to outputb
+* EXPRESSION
+*                       Begin call to  outputb
+131:     ST  1,-10(1)	Store old fp in ghost frame 
+*                       Load param 1
+132:    LDC  3,0(6)	Load Boolean constant 
+133:    LDC  4,1(6)	Load 1 
+134:    XOR  3,3,4	Op NOT 
+135:     ST  3,-12(1)	Store parameter 
+*                       Jump to outputb
+136:    LDA  1,-2(1)	Load address of new frame 
+137:    LDA  3,1(7)	Return address in ac 
+138:    LDA  7,-121(7)	CALL outputb
+139:    LDA  3,0(2)	Save the result in ac 
+*                       End call to outputb
+* EXPRESSION
+*                       Begin call to  outputb
+140:     ST  1,-10(1)	Store old fp in ghost frame 
+*                       Load param 1
+141:    LDC  3,1(6)	Load Boolean constant 
+142:    LDC  4,1(6)	Load 1 
+143:    XOR  3,3,4	Op NOT 
+144:     ST  3,-12(1)	Store parameter 
+*                       Jump to outputb
+145:    LDA  1,-2(1)	Load address of new frame 
+146:    LDA  3,1(7)	Return address in ac 
+147:    LDA  7,-130(7)	CALL outputb
+148:    LDA  3,0(2)	Save the result in ac 
+*                       End call to outputb
+* EXPRESSION
+*                       Begin call to  outnl
+149:     ST  1,-10(1)	Store old fp in ghost frame 
+*                       Jump to outnl
+150:    LDA  1,-2(1)	Load address of new frame 
+151:    LDA  3,1(7)	Return address in ac 
+152:    LDA  7,-116(7)	CALL outnl
+153:    LDA  3,0(2)	Save the result in ac 
+*                       End call to outnl
 * END COMPOUND
 * Add standard closing in case there is no return statement
- 68:    LDC  2,0(6)	Set return value to 0 
- 69:     LD  3,-1(1)	Load return address 
- 70:     LD  1,0(1)	Adjust fp 
- 71:    LDA  7,0(3)	Return 
+154:    LDC  2,0(6)	Set return value to 0 
+155:     LD  3,-1(1)	Load return address 
+156:     LD  1,0(1)	Adjust fp 
+157:    LDA  7,0(3)	Return 
 * END FUNCTION main
-  0:    LDA  7,71(7)	Jump to init [backpatch] 
+  0:    LDA  7,157(7)	Jump to init [backpatch] 
 * INIT
- 72:     LD  0,0(0)	Set the global pointer 
- 73:    LDA  1,0(0)	set first frame at end of globals 
- 74:     ST  1,0(1)	store old fp (point to self) 
+158:     LD  0,0(0)	Set the global pointer 
+159:    LDA  1,0(0)	set first frame at end of globals 
+160:     ST  1,0(1)	store old fp (point to self) 
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS
- 75:    LDA  3,1(7)	Return address in ac 
- 76:    LDA  7,-25(7)	Jump to main 
- 77:   HALT  0,0,0	DONE! 
+161:    LDA  3,1(7)	Return address in ac 
+162:    LDA  7,-121(7)	Jump to main 
+163:   HALT  0,0,0	DONE! 
 * END INIT
