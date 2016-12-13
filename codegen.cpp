@@ -35,15 +35,21 @@ int offArray[256];
 int oai = 0;
 TreeNode * checkCompound;
 int np = 0;
+bool sentFromRet = false;
+bool checkArrs = false;
+int exprNo = 0;
+int checkExprNo = -1;
+bool exprFlag = false;
+bool exprHasOp = false;
+//bool noAssign = true;
+
 
 char * copySavedOp;
 
 
-
-
 FILE * code;
 
-#define TEST_MACHINE 1
+#define TEST_MACHINE 0
 
 // 
 void createTMFile(char * infileName)
@@ -176,9 +182,9 @@ void processCode(TreeNode * t)
 						}
 
 						// for(int i = 0; i < 3; i++) 
-			   //  		{
-			   //  			processCodeR(t->child[i]);
-			   //  		}
+			   		//  		{
+			   		//  			processCodeR(t->child[i]);
+			  		 //  		}
 
 						//Differentiate between var and param
 
@@ -215,9 +221,12 @@ void processCode(TreeNode * t)
 							checkCompound = checkCompound -> sibling;
 							np++;
 						}
-						if(!(t->child[1]->nodekind == StmtK && t->child[1]->kind.stmt == compoundStmt))
+						if(t->child[1] != NULL)
 						{
-							fOffset -= np + 2;
+							if(!(t->child[1]->nodekind == StmtK && t->child[1]->kind.stmt == compoundStmt))
+							{
+								fOffset -= np + 2;
+							}
 						}
 
 
@@ -288,7 +297,7 @@ void processCode(TreeNode * t)
 					case returnStmt:
 						emitComment((char*)"RETURN");
 
-						//printf("fOffset is: %d\n", fOffset);
+						sentFromRet = true;
 
 						processCodeR(t->child[0]);
 
@@ -300,8 +309,10 @@ void processCode(TreeNode * t)
 						emitRM((char*)"LD", AC, -1, FP,  (char*)"Load return address");
 						emitRM((char*)"LD", FP, 0, FP, (char*)"Adjust fp");
     					emitRM((char*)"LDA", PC, 0, AC, (char*)"Return");
+    					sentFromRet = false;
 						break;
 					case selectionStmt: 
+						exprFlag = false;
 						int saveJump, jumpToThen, ifPlace;
 						emitComment((char*)"IF");
 			    		processCodeR(t->child[0]);
@@ -338,6 +349,7 @@ void processCode(TreeNode * t)
 						break;
 					case iterationStmt:
 						int saveWhileJump, whileJump, whilePlace;
+						exprFlag = false;
 						//breakPlace = 0;
 						emitComment((char*)"WHILE");
 						saveWhileJump = whileJump = emitSkip(0);
@@ -545,6 +557,7 @@ void processCode(TreeNode * t)
 
 					
 					case OpK:
+						
 						if(t->isStatic || t->isGlobal) 
 						{
 							curPtr = GP;
@@ -557,10 +570,14 @@ void processCode(TreeNode * t)
            				oldSavedOp = savedOp;
            				savedOp = t->attr.name;
 
-           				if (strcmp(savedOp, "[") != 0)
+
+           				//printf(" op is: %s, noAssign is: %d, lineno %d\n", t->attr.name, noAssign, t->lineno);
+           				if (strcmp(savedOp, "[") != 0 || sentFromRet)// || noAssign)
            				{
+           					exprHasOp = true;
            					storeMode = false;
            				}
+
 
 						//processCodeR(t->child[0]);
 						if(t->isUnary)
@@ -585,6 +602,7 @@ void processCode(TreeNode * t)
 								emitRM((char*)"LDC", AC1, 0, AC3, (char*)"Load 0");
 								emitRO((char*)"SUB", AC, AC1, AC, (char*)"Op unary -");
 							}
+
 						}
 						else
 						{
@@ -603,8 +621,11 @@ void processCode(TreeNode * t)
 									if((left -> kind.exp == AssK && right -> kind.exp == AssK) || 
 										(left -> kind.exp == OpK && right -> kind.exp == OpK))
 									{
-										//if(strcmp(left->attr.name, "[") != 0 && strcmp(left->attr.name, "[") != 0 )
-											tOffset--;
+										if(strcmp(left->attr.name, "[") == 0 || strcmp(right->attr.name, "[") == 0 )
+										{
+											//printf("Found array!\n");
+										}
+										tOffset--;
 									}
 								}
 							}	
@@ -613,11 +634,20 @@ void processCode(TreeNode * t)
 							if(!storeMode)
 							{
 								int copytOffset = tOffset;
+								
 								tOffset --;
-								emitRM((char*)"ST", AC, fOffset + copytOffset, FP, (char*)"Save left side");
+								emitRM((char*)"ST", AC, fOffset + copytOffset, FP , (char*)"Save left side");
 								processCodeR(t->child[1]);
-								emitRM((char*)"LD", AC1, fOffset + copytOffset, FP, (char*)"Load left into ac1");
+								emitRM((char*)"LD", AC1, fOffset + copytOffset , FP, (char*)"Load left into ac1");
+								if(exprFlag) 
+								{
+									tOffset++;
+									exprFlag = false;
+								}
 								tOffset ++;
+
+								checkArrs = false;
+								
 								
 							}
 
@@ -685,10 +715,22 @@ void processCode(TreeNode * t)
 							emitRO((char*)"SUB", AC, AC1, AC, (char*)"compute location from index");
 							emitRM((char*)"LD", AC, 0, AC, (char*)"Load array element");
 
-							if(tOffset < 0)
+
+							if(tOffset < 0 && (exprNo == checkExprNo || !exprHasOp))
 							{
 								tOffset ++;
+								//printf("inc at line %d\n", t->lineno);
 							}
+							if(exprNo != checkExprNo && exprHasOp)
+							{
+								//printf("NO inc at line %d\n", t->lineno);
+								exprFlag = true;
+							}
+							if(exprHasOp)
+							{
+								//printf("has op at line: %d\n", t->lineno);
+							}
+							checkExprNo = exprNo;
 						}						
 					}
 
@@ -699,12 +741,25 @@ void processCode(TreeNode * t)
 					case AssK:
 
 						emitComment((char*)"EXPRESSION");
+						exprNo++;
+						exprFlag = false;
+						exprHasOp = false;
 						oldSavedOp = savedOp;
 						savedOp = t->attr.name;
 						storeMode = false;
 						assignOp = false;
 						lhsOp = false;
 						opIsUnary = false;
+					    // noAssign = false;
+						
+						//printf("assign, line: %d\n", t->lineno);
+
+						//checkArrs = checkArrayBothSides(t, false, false, checkArrs);
+						// if(checkArrs)
+						// {
+						// 	//printf("found two on line: %d\n", t->lineno);
+						// 	//checkArrs = false;
+						// }
 
 						// printf("assk: %s\n", t->attr.name);
 						// printf("foff: %d \n", fOffset);
@@ -754,7 +809,10 @@ void processCode(TreeNode * t)
 								if((left -> kind.exp == AssK && right -> kind.exp == AssK) || 
 									(left -> kind.exp == OpK && right -> kind.exp == OpK))
 								{
-									//if(strcmp(left->attr.name, "[") != 0 && strcmp(left->attr.name, "[") != 0 )
+									if(strcmp(left->attr.name, "[") == 0 || strcmp(right->attr.name, "[") == 0 )
+									{
+										//printf("Found array!\n");
+									}
 										tOffset--;
 								}
 							}
@@ -819,6 +877,8 @@ void processCode(TreeNode * t)
 						{
 
 						}
+
+						
 						break;
 
 					case constK:
@@ -913,6 +973,7 @@ void processCode(TreeNode * t)
 					default:
 						break;
 					left = right = NULL;
+					// noAssign = true;
 
 				}	
 
@@ -1006,9 +1067,67 @@ std::string man_to_string(int i)
 }
 
 
+// bool checkArrayBothSides(TreeNode * t, bool leftArr, bool rightArr, bool &ans)
+// {
+// 	bool la;
+// 	bool ra;
+// 	checkRightArray(t->child[1], ra);
+// 	checkLeftArray(t->child[0], la);
+// 	if(la && ra)
+// 	{
 
+// 		return true;
+// 	}
+// 	else
+// 	{
+// 		return false;
+// 	}
+// }
 
+// void checkRightArray(TreeNode * t, bool &ans)
+// {
+// 	if(t->isArray)
+// 	{
+// 		ans = true;
+// 		//printf("t right is array\n");
+		
+// 	}
+// 	for(int i = 0; i < 3; i++)
+// 	{
+// 		if(t->child[i] != NULL)
+// 		{
+// 			checkRightArray(t->child[i], ans);
+// 		}
+// 	}
+// 	if(t->sibling != NULL)
+// 	{
+// 		checkRightArray(t->sibling, ans);
+// 	}
+	
+// }
 
+// void checkLeftArray(TreeNode * t, bool &ans)
+// {
+	
+// 	if(t->isArray)
+// 	{
+// 		ans = true;
+// 		// printf("t left is array\n");
+		
+// 	}
+// 	for(int i = 0; i < 3; i++)
+// 	{
+// 		if(t->child[i] != NULL)
+// 		{
+// 			checkLeftArray(t->child[i], ans);
+// 		}
+// 	}
+// 	if(t->sibling != NULL)
+// 	{
+// 		checkLeftArray(t->sibling, ans);
+// 	}
+
+// }
 
 
 

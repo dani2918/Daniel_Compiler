@@ -11,6 +11,10 @@ void processInit(TreeNode * t);
 void processInitGlobalsStatics(TreeNode * t);
 
 std::string man_to_string(int i);
+// bool checkArrayBothSides(TreeNode * t, bool leftArr, bool rightArr, bool &ans);
+// void checkRightArray(TreeNode * t, bool &ans);
+// void checkLeftArray(TreeNode * t, bool &ans);
+
 
 
 

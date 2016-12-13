@@ -415,7 +415,10 @@ void checkParams(TreeNode * t, TreeNode * originalDecl, TreeNode * callName, Tre
 		{
 			return;
 		}
-		t->isParam = true;
+		if(t != NULL)
+		{
+			t->isParam = true;
+		}
 		//Too few params passed
 		if (t == NULL)
 		{
