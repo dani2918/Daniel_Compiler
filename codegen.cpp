@@ -44,6 +44,10 @@ bool exprHasOp = false;
 bool incToff = false;
 //bool noAssign = true;
 
+bool endCall = false;
+int callCount = 0;
+
+
 TreeNode * paramNode;
 TreeNode * copyParamNode;
 
@@ -647,6 +651,11 @@ void processCode(TreeNode * t)
 								tOffset--; fOffset++;
 								emitRM((char*)"LD", AC1, fOffset + copytOffset , FP, (char*)"Load left into ac1");
 
+								if(endCall)
+								{
+									tOffset++;
+									endCall = false;
+								}
 								// if(exprFlag) 
 								// {
 								// 	//printf("exprFlag at line: %d\n", t->lineno);
@@ -923,6 +932,8 @@ void processCode(TreeNode * t)
 						break;
 
 					case CallK:
+						endCall = false;
+						callCount++;
 						TreeNode * callName;
 						callName = (TreeNode*)symTab.lookup(t->attr.name);
 
@@ -1020,7 +1031,12 @@ void processCode(TreeNode * t)
 						emitRM((char*)"LDA", AC, 0, RT, (char*)"Save the result in ac");
 						emitComment((char*)"                      End call to", t->attr.name);
 
-						
+						callCount--;
+						//If nested calls, goff-- 
+						if(callCount > 0)
+						{
+							endCall = true;
+						}
 						break;
 
 					default:
