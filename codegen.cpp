@@ -41,7 +41,11 @@ int exprNo = 0;
 int checkExprNo = -1;
 bool exprFlag = false;
 bool exprHasOp = false;
+bool incToff = false;
 //bool noAssign = true;
+
+TreeNode * paramNode;
+TreeNode * copyParamNode;
 
 
 char * copySavedOp;
@@ -389,14 +393,14 @@ void processCode(TreeNode * t)
 				TreeNode * left; TreeNode * right;
 				left = t->child[0];
 				right = t->child[1];
-				if(t->isParam)
-				{
-					numParams++;
-					string np = man_to_string(numParams);
-					emitComment((char*)"                      Load param", (char*)np.c_str());
+				// if(t->isParam)
+				// {
+				// 	numParams++;
+				// 	string np = man_to_string(numParams);
+				// 	emitComment((char*)"                      Load param", (char*)np.c_str());
 
 					
-				}
+				// }
 			
 				switch(t->kind.exp)
 				{
@@ -641,10 +645,11 @@ void processCode(TreeNode * t)
 								emitRM((char*)"LD", AC1, fOffset + copytOffset , FP, (char*)"Load left into ac1");
 								if(exprFlag) 
 								{
+									//printf("exprFlag at line: %d\n", t->lineno);
 									tOffset++;
 									exprFlag = false;
 								}
-								tOffset ++;
+								// tOffset ++;
 
 								checkArrs = false;
 								
@@ -730,6 +735,11 @@ void processCode(TreeNode * t)
 							{
 								//printf("has op at line: %d\n", t->lineno);
 							}
+							if(incToff)
+							{
+								tOffset ++;
+								incToff = false;
+							}
 							checkExprNo = exprNo;
 						}						
 					}
@@ -785,6 +795,10 @@ void processCode(TreeNode * t)
 									}
 									else
 									{
+										if(strcmp(savedOp, "+=") == 0 || strcmp(savedOp, "-=") == 0 )
+										{
+											incToff = true;
+										}
 										restoreIndex = true;
 									}
 								}
@@ -916,50 +930,85 @@ void processCode(TreeNode * t)
 						//fOffset = compoundMemSize;
 						
 						int funJump;
-						int copyfOffset; copyfOffset = fOffset; 
-						int copytOffset; copytOffset = tOffset;
-						bool copyStoreMode; copyStoreMode = storeMode;
+						// int copyfOffset; copyfOffset = fOffset; 
+						// int copytOffset; copytOffset = tOffset;
+						int copyNumParams; copyNumParams = numParams;
+						// bool copyStoreMode; copyStoreMode = storeMode;
 
 						storeMode = false;
+						int soffset;
 
 						// This changes the offset for params in recursive call
 						// But not for anything in CallK
+						offset = fOffset;
 						fOffset -= 2;
 
 						// int copyCompSize; copyCompSize = compoundMemSize;
-						numParams = 0;
-						offset = copytOffset + copyfOffset;
+						//numParams = 0;
+						// offset = copytOffset + copyfOffset;
 
 						//Keep offsets in a stack
 						offArray[oai] = offset;
 						oai++;
+						// printf("storing: %d\n", offset);
 
 						emitComment((char*)"EXPRESSION");
 						// Spaces match .tm tests
 						emitComment((char*)"                      Begin call to ", t->attr.name);
 						emitRM((char*)"ST", FP, offset, FP, (char*)"Store old fp in ghost frame");
 
+						numParams = 1;
+						paramNode = t ->child[0];
+						while(paramNode != NULL)
+						{
+							
+							string np = man_to_string(numParams);
+							emitComment((char*)"                      Load param", (char*)np.c_str());
+
+							// printf("popping: %d\n", offset);
+							oai--;
+							soffset = offArray[oai];
+
+							processCode(paramNode);
+
+							// printf("soffset is %d\n", soffset);
+							// printf("numParams is %d\n", numParams);
+							
+							emitRM((char*)"ST", AC, soffset - 1 - numParams , FP, (char*)"Store parameter");
+							if(paramNode != NULL)
+							{
+								paramNode = paramNode -> sibling;
+							}
+							numParams++;
+
+
+						}
+
+
+
 						// printf(" foffset2 is: %d \n", fOffset);
 						// printf(" toffset is: %d \n", tOffset);
-						fOffset = fOffset + tOffset;
-						for(int i = 0; i < 3; i++)
-						{
-							processCodeR(t->child[i]);
-						}
+						//fOffset = fOffset + tOffset;
+						// for(int i = 0; i < 3; i++)
+						// {
+						// 	processCodeR(t->child[i]);
+						// }
 
 
 						// Resets fOff (see above)
 						//restore after recursion
-						fOffset = copyfOffset;
-						tOffset = copytOffset;
-						storeMode = copyStoreMode;
+						//fOffset = copyfOffset;
+						// fOffset += 2;
+						// tOffset = copytOffset;
+						// storeMode = copyStoreMode;
 
-						oai--;
-						offset = offArray[oai];
+						// oai--;
+						// offset = offArray[oai];
 
+						fOffset += 2;
 						
 						emitComment((char*)"                      Jump to", t->attr.name);
-						emitRM((char*)"LDA", FP, offset, FP, (char*)"Load address of new frame");
+						emitRM((char*)"LDA", FP, fOffset, FP, (char*)"Load address of new frame");
 						emitRM((char*)"LDA", AC, FP, PC, (char*)"Return address in ac");
 
 						funJump = callName->tmLoc - emitSkip(0);
@@ -977,12 +1026,12 @@ void processCode(TreeNode * t)
 
 				}	
 
-				if(t->isParam)
-				{
-					emitRM((char*)"ST", AC, fOffset, FP, (char*)"Store parameter");
+				// if(t->isParam)
+				// {
+				// 	emitRM((char*)"ST", AC, fOffset, FP, (char*)"Store parameter");
 					
-					fOffset --;
-				}	
+				// 	fOffset --;
+				// }	
 			default:
 				break;
 			}

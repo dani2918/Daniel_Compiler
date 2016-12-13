@@ -1,7 +1,7 @@
 * C- compiler version C-F16
 * Built: 
 * Author: Matthew Daniel
-* File compiled: /Users/MattDaniel/Desktop/CS_445/Daniel_Compiler/testDataA7/f08.c-
+* File compiled: /Users/MattDaniel/Desktop/CS_445/Daniel_Compiler/testDataA7/f07.c-
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
@@ -98,41 +98,13 @@
 *                       Begin call to  output
  53:     ST  1,-2(1)	Store old fp in ghost frame 
 *                       Load param 1
- 54:    LDC  3,781(6)	Load integer constant 
- 55:     ST  3,-4(1)	Save left side 
 * EXPRESSION
 *                       Begin call to  cat
- 56:     ST  1,-4(1)	Store old fp in ghost frame 
+ 54:     ST  1,-4(1)	Store old fp in ghost frame 
 *                       Jump to cat
- 57:    LDA  1,-4(1)	Load address of new frame 
- 58:    LDA  3,1(7)	Return address in ac 
- 59:    LDA  7,-18(7)	CALL cat
- 60:    LDA  3,0(2)	Save the result in ac 
+ 55:    LDA  1,-4(1)	Load address of new frame 
+ 56:    LDA  3,1(7)	Return address in ac 
+ 57:    LDA  7,-16(7)	CALL cat
+ 58:    LDA  3,0(2)	Save the result in ac 
 *                       End call to cat
- 61:     LD  4,-4(1)	Load left into ac1 
- 62:    ADD  3,4,3	Op +
- 63:     ST  3,-4(1)	Store parameter 
-*                       Jump to output
- 64:    LDA  1,-2(1)	Load address of new frame 
- 65:    LDA  3,1(7)	Return address in ac 
- 66:    LDA  7,-61(7)	CALL output
- 67:    LDA  3,0(2)	Save the result in ac 
-*                       End call to output
-* END COMPOUND
-* Add standard closing in case there is no return statement
- 68:    LDC  2,0(6)	Set return value to 0 
- 69:     LD  3,-1(1)	Load return address 
- 70:     LD  1,0(1)	Adjust fp 
- 71:    LDA  7,0(3)	Return 
-* END FUNCTION main
-  0:    LDA  7,71(7)	Jump to init [backpatch] 
-* INIT
- 72:     LD  0,0(0)	Set the global pointer 
- 73:    LDA  1,0(0)	set first frame at end of globals 
- 74:     ST  1,0(1)	store old fp (point to self) 
-* INIT GLOBALS AND STATICS
-* END INIT GLOBALS AND STATICS
- 75:    LDA  3,1(7)	Return address in ac 
- 76:    LDA  7,-25(7)	Jump to main 
- 77:   HALT  0,0,0	DONE! 
-* END INIT
+ 59:     ST  3,-4(1)	Store parameter 
